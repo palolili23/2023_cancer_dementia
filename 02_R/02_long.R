@@ -1,22 +1,26 @@
 library(rio)
 library(lubridate)
 library(tidyverse)
-library(here)
 library(magrittr)
-# library(summarytools)
+
 
 # Import data-----------------------------------------------------
 
-data <- import(here::here("01_data", "no_ltfu", "wide_noltfu.RData"))
+data <- import(here::here("01_data", "clean_data", "wide_noltfu.RData"))
 
 # Create long, as many rows as t2death in years + 1
 
 data_long <- data %>% 
-  select(id, cohort, dementia, cancer, cancer_prev, cancer_date, dementia_date, death_2015, starts_with("t2"),
+  select(id, cohort, dementia, cancer, cancer_prev, cancer_date,
+         dementia_date, death_2015, starts_with("t2"),
          end_fup_2015, e1,
-         sex, age_0, education_three_levels, apoe4, hd_prev, hd_date, diabetes_prev, diabetes_date, stroke_prev, stroke_date) %>% 
+         sex, age_0, education, apoe4, 
+         hd_prev, hd_date, diabetes_prev, diabetes_date, stroke_prev, 
+         stroke_date) %>% 
+  filter(t2death >= 1) %>% 
+  mutate(t2death_y = round(t2death_y,0)) %>% 
   group_by(id) %>% 
-  slice(rep(1:n(), each = t2death_y + 1)) %>% #repeat rows by #years until death
+  slice(rep(1:n(), each = t2death_y + 2)) %>% #repeat rows by #years until death
   ungroup() %>%
   # select(everything(), - matches("[1,2,3,4,5]$"), apoe4) %>% ## delete all covariates
   group_by(id) %>%
@@ -43,7 +47,7 @@ rep_cov <- data %>%
          starts_with("sbp"),
          starts_with("hdl"),
          starts_with("cesd"),
-         -c(end_fup_2015, education_three_levels, cesd6, evt_reg)) %>% 
+         -c(end_fup_2015, education, cesd6, evt_reg)) %>% 
   pivot_longer(-1,
                names_to = c(".value", "visit"),
                names_sep = -1,
@@ -70,8 +74,8 @@ data_long_2014 %<>%
   filter(year >= year(e1)) %>% 
   ungroup()
 
-### Create indicator variables
 
+# Make indicator of disease -----------------------------------------------
 library(zoo)
 
 data_long_2014 <- data_long_2014 %>% 
@@ -143,6 +147,50 @@ data_long_2014 <- data_long_2014 %>%
   status = ifelse(death_v == 1, "Dead", status))
 
 ## Export
-export(data_long_2014, here("01_data", "no_ltfu", "data_long_2014.RData")) 
+
+export(data_long_2014, here::here("01_data", "clean_data", "data_long_2014.RData")) 
 
 
+# Rows up to dementia diagnosis -------------------------------------------
+
+data_long_dem <- data_long_2014 %>%
+  group_by(id) %>% 
+  arrange(id, year) %>% 
+  mutate(end_dementia_death = ifelse(!is.na(dementia_date), 
+                                     as.numeric(year(dementia_date)),
+                                     as.numeric(year(end_fup_2015))),
+         time = row_number()) %>%
+  filter(year <= end_dementia_death,
+         time <= 20) %>%
+  ungroup() %>% 
+  select(id, year, time, end_dementia_death, everything())
+
+data_long_dem %<>%
+  group_by(id) %>%
+  mutate(
+    outcome_plr = ifelse(end_dementia_death == year & dementia == 1, 1, 0),
+    competing_plr = ifelse(!is.na(dementia_date), 0, death_v)) %>%
+  ungroup() %>%
+  arrange(id, time)
+
+data_long_dem %>% 
+  count(outcome_plr, competing_plr)
+
+data %>% count(dementia_20)
+
+### There are some differences between the wide structure and the long,
+### but it is that a few had over 20 years of follow up
+
+dem_a <- data_long_dem %>% filter(outcome_plr == 1) %>% pull(id)
+dem_b <- data %>% filter(dementia_20 == 1) %>% pull(id)
+
+dif <- setdiff(dem_b, dem_a)
+
+data %>% filter(id %in% dif) %>% View()
+
+data_long_dem %>% 
+  filter(id %in% dif) %>% View()
+  count(id) %>% 
+  filter(n < 20)
+
+export(data_long_dem, here::here("01_data", "clean_data", "dementia_long.RData"))

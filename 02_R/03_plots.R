@@ -23,15 +23,16 @@ data_long_2014 %>%
 
 ## Keeps those who died
 data_long_2014 %>% 
-  filter(between(age_0, 60, 75)) %>%
-  group_by(cancer, cohort, year) %>% 
+  # filter(between(age_0, 60, 75)) %>%
+  group_by(cohort, year) %>% 
   count(status) %>%
   mutate(prop = round(100*n/sum(n))) %>% 
   ungroup() %>% 
+  filter(cohort == 1) %>% 
   ggplot(aes(year, prop, fill = status)) +
   geom_area() + 
   scale_fill_manual(values = palette) +
-  facet_wrap( cancer ~ cohort, scales = "free") +
+  # facet_wrap( . ~ cohort, scales = "free") +
   theme_minimal()
 
 data_wide %>% 
@@ -42,7 +43,7 @@ data_wide %>%
 ## Removes those who died after year of death
 data_long_2014 %>% 
   filter(between(age_0, 60, 75)) %>%
-  filter(year <= year(end_fup_2015)) %>% 
+  # filter(year <= year(end_fup_2015)) %>% 
   group_by(cohort, year) %>% 
   count(status) %>%
   mutate(prop = round(100*n/sum(n))) %>% 
@@ -53,12 +54,14 @@ data_long_2014 %>%
   facet_wrap(.~ cohort, scales = "free") +
   theme_minimal()
 
+library(lubridate)
 ## Removes those who had dementia after year of dementia dx
 data_long_2014 %>% 
   mutate(year_dem_death = ifelse(!is.na(dementia_date),
                                  year(dementia_date),
                                  year(end_fup_2015))) %>% 
   filter(year <= year_dem_death) %>% 
+  filter(year <= 2014) %>% 
   # filter(between(age_0, 60, 75)) %>%
   # filter(!status %in% c("Alive, free of cancer and dementia", "Dead")) %>% 
   group_by(cohort, year) %>% 
