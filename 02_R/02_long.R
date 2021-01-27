@@ -11,7 +11,7 @@ data <- import(here::here("01_data", "clean_data", "wide_noltfu.RData"))
 # Create long, as many rows as t2death in years + 1
 
 data_long <- data %>% 
-  select(id, cohort, dementia, cancer, cancer_prev, cancer_date,
+  select(id, cohort, dementia, cancer, cancer_20, cancer_prev, cancer_date,
          dementia_date, death_2015, starts_with("t2"),
          end_fup_2015, e1,
          sex, age_0, education, apoe4, 
@@ -189,7 +189,7 @@ dif <- setdiff(dem_b, dem_a)
 data %>% filter(id %in% dif) %>% View()
 
 data_long_dem %>% 
-  filter(id %in% dif) %>% View()
+  filter(id %in% dif) %>% 
   count(id) %>% 
   filter(n < 20)
 
