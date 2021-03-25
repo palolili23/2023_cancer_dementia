@@ -2,7 +2,7 @@
 title: "Dissecting the causal question underlying the association between cancer and ADRD "
 author: "L. Paloma Rojas-Saunero"
 date: ""
-output: [html_document]
+output: [pdf_document]
 bibliography: cancer_dementia.bib
 ---
 ```{r, echo =  FALSE}
@@ -96,13 +96,11 @@ As illustrated in previous figures, we are interested in the direct effect of Pi
 
 We can visualize this data feature in the causal diagram in Figure 4. In this DAG we include $D_{80}$ as a representation of Death by age 80, an arrow between $P$ and $D_{80}$ since $P$ may increase the mortality risk irrespective of cancer diagnosis. We also include an arrow between $P^*$ and $D_{80}$ since cancer diagnosis, and subsequent treatment (or lack of treatment) may have an effect on death. Last, the arrow from $D_{80}$ and $Y_{85}$ represents the key feature of a competing events data structure: an individual who dies by age 80 cannot subsequently develop ADRD, and since $D_{80}$ and $Y_{85}$ are events related to aging, $C$ represent the shared causes of both events.
 
-In this DAG we observe that, had we measured and adjusted for $L$, we could estimate the total effect of $P$ in $Y_{85}$ without further assumptions. However the total effect is a causal estimand that includes both the direct pathway between $P$ and $Y_{85}$. This means that if Pin1 has an effect on mortality through cancer or other mechanisms, we will observe a protective effect of Pin1 overexpression in ADRD, partially mediated through death. 
+In this DAG we observe that, had we measured and adjusted for $L$, we could estimate the total effect of $P$ in $Y_{85}$ without further assumptions. However the total effect includes all pathways between $P$ and $Y_{85}$. This means that if Pin1 has an effect on mortality through cancer or other mechanisms, we will observe a protective effect of Pin1 overexpression in ADRD, partially or fully mediated through death. 
 
-If the aim is to isolate the direct effect of $P$ in $Y_{85}$ as in Figure 4 (violet arrows), we first need to define the causal estimand of interest. There are at least three causal estimands, each one has different interpretation and relies on different assumptions: the controlled direct effect, the survivor average causal effect and the separable direct effect. Through the next section we will discuss the controlled direct effect since this estimand is tied to frequently used estimators.
+Alternatively, there are several ways to conceptualize the direct effect of $P$ in $Y_{85}$ as in Figure 4 (violet arrows) and several causal parameters (estimands) to represent it, such as: the controlled direct effect (CDE), the survivor average causal effect and the natural separable direct effect. Through this section we will discuss the causal question, assumptions related to death and interpretation of the CDE since this estimand connects to frequently used estimators.
 
-There are several ways to conceptualize direct effects and there are several causal parameters (estimands) to represent it, such as: the controlled direct effect (CDE), the survivor average causal effect and the separable direct effect. Through this section we will discuss the causal question, assumptions related to death and interpretation of the CDE since this estimand is connects to frequently used estimators.
-
-THe CDE represents the effect of Pin1 in ADRD in a setting where we could have prevented death over the study period. 
+THe CDE represents the effect of Pin1 in ADRD in a setting where we could have prevented death over the study period. It relies on the assumption that we have measured all $C$ to block the pathway $Y85 \leftarrow C  \rightarrow D_{80} \rightarrow P \rightarrow P*$. This assumption is defined as the independent censoring assumption conditional on covariates. In this setting death is treated as a censoring event and it can be interpreted as those who died would have the same risk of developing dementia if prevented from dying than those who remained alive and free of dementia at a given time point, conditional on shared causes of dementia and death.
 
 ```{tikz, fig.ext = 'png', echo = FALSE, fig.cap = "Effect of Pin1 in the risk of ADRD by age 85, with cancer diagnosis as proxy of Pin1"}
 \usetikzlibrary{arrows}
@@ -125,7 +123,29 @@ THe CDE represents the effect of Pin1 in ADRD in a setting where we could have p
 \end{tikzpicture}
 ```
 
-## Example using the Rotterdam Study data
+## Motivating example with the RS data
+
+Descriptive statistics
+
+In a population of x, free of cancer and dementia at baseline...
+
+We first do counts:
+
+Time to cancer on average
+
+We show 3 kinds, ever vs. never, time-varying cancer, and weighting by cancer dx.
+
+We now show the risk if U, no U (Combined outcome, crude risk)
+
+We provide additional info on causes of death for both groups, and the extreme scenarios of bounds.
+
+## Discussion
+
+
+Through this example we describe how much do the direct effect of cancer changes if we measure and adjust for $C$ compared to not.
+
+
+
 
 ## Discussion
 
