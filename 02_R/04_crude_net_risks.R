@@ -11,17 +11,16 @@ library(magrittr)
 # Import data -------------------------------------------------------------
 source(here::here("02_R", "04b_auxiliary_fx.R"))
 
-data_wide <-
-  import(here::here("01_data", "clean_data", "wide_noltfu.RData"))
-
 data_long <-
   import(here::here("01_data", "clean_data", "dementia_long.RData"))
 
-# 
-data_wide %>% count(cancer, cancer_20, cancer_prev, cancer_inc)
+data_wide <-
+  data_long %>%
+  group_by(id) %>% 
+  slice(n()) %>% 
+  ungroup()
 
 ## Use these numbers for chart
-data_wide %>% count(cancer_20, dementia_20)
 
 data_long %<>% 
   group_by(id) %>% 
@@ -39,28 +38,6 @@ data_long %<>%
                      competing_plr == 1 ~2,
                      TRUE ~ 0))
 
-long_in_wide <- data_long %>% 
-  group_by(id) %>% 
-  slice(n()) %>% 
-  ungroup()
-
-long_in_wide %>% 
-  count(cancer_v, both_outcomes)
-
-# id_a <- data_wide %>% filter(cancer_20 == 1) %>% pull(id)
-# 
-# id_b <- long_in_wide %>% filter(cancer_v == 1) %>% pull(id)
-# 
-# id_dif <- setdiff(id_b, id_a)
-
-# no_cancer <- data_wide %>% 
-#   filter(id %in% id_dif)
-# 
-# no_cancer %>% 
-#   select(id, year, time, end_dementia_death, cancer_date, dementia_date,
-#          end_fup_2015, cancer_v, outcome_plr, status) %>% 
-#   view()
-
 # Weights for death -------------------------------------------------------
 
 death_den <- glm(competing_plr ~ 
@@ -70,7 +47,7 @@ death_den <- glm(competing_plr ~
 
 summary(death_den)
 
-death_den %>% broom::tidy()
+death_den %>% broom::tidy() %>% View()
 
 death_num <- glm(competing_plr ~ 1, data = data_long, family = binomial)
 
@@ -98,7 +75,7 @@ data_long %>% ggplot(aes(x = as_factor(time), y = sw)) +
 # 1.1. Crude risks --------------------------------------------------------
 
 cancer_ever <-
-  survfit(Surv(t2dem_20, as.factor(dementia_20)) ~ cancer_20, data_wide)
+  survfit(Surv(t2dem, as.factor(outcome_plr)) ~ cancer_v, data_wide)
 
 survminer::ggcompetingrisks(cancer_ever) +
   ggthemes::scale_fill_tableau() +
@@ -306,3 +283,4 @@ plot_km(km_ipweighted, "Direct effect") +
   labs(subtitle = "With IPTW, conditional censoring on time-v")
 
 risks_km(km_ipweighted)
+
