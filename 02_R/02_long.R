@@ -11,7 +11,7 @@ data <- import(here::here("01_data", "clean_data", "wide_noltfu.RData"))
 # Create long, as many rows as t2death in years + 1
 
 data_long <- data %>% 
-  select(id, cohort, dementia, cancer, cancer_20, cancer_prev, cancer_date,
+  select(id, cohort, dementia, cancer, cancer, cancer_prev, cancer_date,
          dementia_date, death_2015, starts_with("t2"),
          end_fup_2015, e1,
          sex, age_0, education, apoe4, 
@@ -21,16 +21,13 @@ data_long <- data %>%
   mutate(t2death_y = round(t2death_y,0)) %>% 
   group_by(id) %>% 
   slice(rep(1:n(), each = t2death_y + 2)) %>% #repeat rows by #years until death
-  ungroup() %>%
-  # select(everything(), - matches("[1,2,3,4,5]$"), apoe4) %>% ## delete all covariates
-  group_by(id) %>%
   mutate(year = year(e1),
          year = year + (row_number() - 1)) %>% #an easy roll for years + 1
   ungroup()
 
 
-## Completes with rows for all missing years (everyone until 2014)
-data_long_2014 <- data_long %>% 
+## Completes with rows for all missing years (everyone until 2016 because I extended an extra row)
+data_long_2015 <- data_long %>% 
   complete(id, year)
 
 ### Make dataset with visit data, and transform to long
@@ -58,18 +55,18 @@ rep_cov <- data %>%
 
 ## join and fill missign values (fills gaps between 2 visits by carrying forward)
 
-data_long_2014 <- data_long_2014 %>%
+data_long_2015 %<>% 
   left_join(rep_cov, by = c("id", "year"))
 
-var_names <- colnames(data_long_2014)
+var_names <- colnames(data_long_2015)
 
-data_long_2014 <- data_long_2014 %>%
+data_long_2015 %<>% 
   group_by(id) %>%
   fill(var_names[-1]) %>% 
   ungroup()
 
 ### remove rows prior to study entry
-data_long_2014 %<>% 
+data_long_2015 %<>% 
   group_by(id) %>% 
   filter(year >= year(e1)) %>% 
   ungroup()
@@ -78,7 +75,7 @@ data_long_2014 %<>%
 # Make indicator of disease -----------------------------------------------
 library(zoo)
 
-data_long_2014 <- data_long_2014 %>% 
+data_long_2015 %<>% 
   group_by(id) %>% 
   mutate(v1_bin = 1,
          v2_bin = ifelse((visit == 2), 1, NA),
@@ -93,7 +90,7 @@ data_long_2014 <- data_long_2014 %>%
   ungroup()
 
 
-data_long_2014 <- data_long_2014 %>% 
+data_long_2015 %<>% 
   group_by(id) %>% 
   mutate(
     hd_v = ifelse(hd_prev == 1, 1, NA),
@@ -114,7 +111,7 @@ data_long_2014 <- data_long_2014 %>%
   )%>% 
   ungroup()
 
-data_long_2014 <- data_long_2014 %>% 
+data_long_2015 %<>% 
   group_by(id) %>% 
   mutate(
     cancer_v = ifelse(cancer_prev == 1, 1, NA),
@@ -129,31 +126,39 @@ data_long_2014 <- data_long_2014 %>%
     death_year = as.numeric(year(end_fup_2015)),
     death_v = ifelse(death_year == year & death_2015 == 1, 1, NA),
     death_v = na.locf(death_v, na.rm = FALSE),
-    death_v = ifelse(is.na(death_v),0, death_v))
+    death_v = ifelse(is.na(death_v),0, death_v)) %>% 
+  ungroup()
 
 
-data_long_2014 %>% 
+data_long_2015 %>% 
   select(id, cohort, year, e1, cancer, cancer_v, cancer_date, dementia, dem_v, dem_date, death_2015, death_v, death_year, t2death_y)%>% View() 
 
 #### Create a "status" variable
 
-data_long_2014 <- data_long_2014 %>% 
+data_long_2015 %<>% 
   mutate(status = case_when(
     cancer_v == 1 & dem_v == 0 ~ "Only cancer",
     cancer_v == 0 & dem_v == 1 ~ "Only dementia",
     cancer_v == 1 & dem_v == 1 ~ "Cancer and Dementia",
     TRUE ~ "Alive, free of cancer and dementia"
   ),
-  status = ifelse(death_v == 1, "Dead", status))
+  status = ifelse(death_v == 1 & dem_v == 0, "Dead", status))
+
+## Age scale
+
+data_long_2015 %<>%
+  group_by(id) %>% 
+  mutate(age_scale = round(age_0,0) + (row_number() - 1)) %>% 
+  ungroup()
 
 ## Export
 
-export(data_long_2014, here::here("01_data", "clean_data", "data_long_2014.RData")) 
+export(data_long_2015, here::here("01_data", "clean_data", "data_long_2015.RData")) 
 
 
 # Rows up to dementia diagnosis -------------------------------------------
 
-data_long_dem <- data_long_2014 %>%
+data_long_dem <- data_long_2015 %>%
   group_by(id) %>% 
   arrange(id, year) %>% 
   mutate(end_dementia_death = ifelse(!is.na(dementia_date), 
@@ -176,17 +181,17 @@ data_long_dem %<>%
 data_long_dem %>% 
   count(outcome_plr, competing_plr)
 
-data %>% count(dementia_20)
-
 ### There are some differences between the wide structure and the long,
+### There are 100 less cases of dementia because they had it after 20 yof
 ### but it is that a few had over 20 years of follow up
 
 dem_a <- data_long_dem %>% filter(outcome_plr == 1) %>% pull(id)
-dem_b <- data %>% filter(dementia_20 == 1) %>% pull(id)
+dem_b <- data %>% filter(dementia == 1) %>% pull(id)
 
 dif <- setdiff(dem_b, dem_a)
 
 data %>% filter(id %in% dif) %>% View()
+data %>% filter(id %in% dif) %>% count(t2dem_y >= 19)
 
 data_long_dem %>% 
   filter(id %in% dif) %>% 
@@ -194,3 +199,4 @@ data_long_dem %>%
   filter(n < 20)
 
 export(data_long_dem, here::here("01_data", "clean_data", "dementia_long.RData"))
+
