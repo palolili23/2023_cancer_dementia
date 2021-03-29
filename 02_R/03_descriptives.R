@@ -104,7 +104,7 @@ cancer_death_5y <- t2cancer_km %>%
   select(estimate, conf.low, conf.high, state) %>% 
   mutate_if(is.numeric, ~.*100) %>% 
   mutate_if(is.numeric, round, 1) %>%  
-  mutate(est_print = paste0(estimate, " (", conf.low, ", ", conf.high, ")")) %>% 
+  mutate(est_print = paste0(estimate, " (95%CI: ", conf.low, ", ", conf.high, ")")) %>% 
   select(est_print, state)
 
 death_5y <- cancer_death_5y %>% filter(state == 2) %>% pull(1)

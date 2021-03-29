@@ -3,10 +3,11 @@ title: "Dissecting the causal question underlying the association between cancer
 author: "L. Paloma Rojas-Saunero"
 date: ""
 output: [pdf_document]
-bibliography: cancer_dementia.bib
+
 ---
 ```{r, echo =  FALSE}
-knitr::opts_chunk$set(echo = FALSE, fig.align="center")
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, fig.align="center")
+source(here::here("02_R", "03_descriptives.R"))
 ```
 
 ### Motivation
@@ -17,9 +18,7 @@ In the lasts few years there has been an important attention to unveiling the im
 
 Overall, although observational studies have measured history of cancer and incident cancer as the key exposure, researchers refer to biological mechanisms which onset may be prior to cancer diagnosis and the effect of cancer treatment.
 
-Pin1 is an enzime deeply involved in the pathogenesis of cancer and ADRD. One of the roles of Pin1 is regulate mitosis process and apoptosis. Over-expression of Pin1 has been found in several tumors and it's inhibition causes tumor regression. In contrast, since adult neuronal cells do not divide, Pin1 over-expression in brain tissue is used to restore tau and amyloid precursor protein to a functional shape, thus preventing the buildup of the toxic tau and beta-amyloid species associated with AD.
-
-For this reason Pin1 regulation is proposed as one of the mechanisms that can explain the inverse association between cancer and AD found in observational studies.
+Pin1 is an enzime deeply involved in the pathogenesis of cancer and ADRD. One of the roles of Pin1 is regulate mitosis process and apoptosis. Over-expression of Pin1 has been found in several tumors and it's inhibition causes tumor regression. In contrast, since adult neuronal cells do not divide, Pin1 over-expression in brain tissue is used to restore tau and amyloid precursor protein to a functional shape, thus preventing the buildup of the toxic tau and beta-amyloid species associated with AD. For this reason Pin1 regulation is proposed as one of the mechanisms that can explain the inverse association between cancer and AD found in observational studies.
 
 Our aim is to outline one way to tie the etiological question of Pin1 with the questions that can be answered with observational data where Pin1 measurements are not available. We aim to draw the complexity of the research question by building progressively a directed acyclic graph (DAG) which help us connect the causal question to the observable data and the assumptions we rely on to identify the effect. We describe the challenges and illustrate the assumptions we have to fulfill to identify the effect.  
 
@@ -125,24 +124,18 @@ THe CDE represents the effect of Pin1 in ADRD in a setting where we could have p
 
 ## Motivating example with the RS data
 
-Descriptive statistics
+In this section we illustrate how previous DAGS may reflect on the analysis performed to unveil the effect of Pin1 in all cause-dementia. We use data collected in the Rotterdam Study, a population-based prospective cohort study among persons living in the Ommoord district in Rotterdam, the Netherlands. Recruitment and initial assessments were held between 1990 and 1993, participants had follow-up visits between 1993-1995, 1997-1999, 2002-2005, and 2008-2010. All participants had data on incident cancer diagnosis and incident dementia diagnosis through follow-up, collected from medical records of general practitioners (including hospital discharge letters) and through linkage with national registries. Date and cause of death was collected on a weekly basis via municipal population registries. Data on clinical outcomes was available until 2015. 
 
-In a population of x, free of cancer and dementia at baseline...
+To match the analysis to our initial question, we considered as inclusion criteria being between 60 and 70 years old at study entry, without history of cancer diagnosis, free of cognitive decline or with previous history of dementia. Out of 7983 persons who participated at baseline, `r total_n` were considered eligible. Time to cancer diagnosis, to dementia diagnosis and death status was measured for all participants. All participants were followed from study entry until dementia diagnosis, death or 20 years after their individual baseline date, whichever ocurred first.
 
-We first do counts:
+Participants had a mean age of `r mean_age`, and `r women_prop` were women. Further details on participants are presented in Table 1. Over follow up, `r yes_cancer` developed cancer and `r no_cancer` remain free of cancer diagnosis, the median age of cancer diagnosis was `r cancer_time`. From the total sample, `r dem_total` had dementia over follow-up and median time to dementia was `r dem_time`. Among participants with incident cancer, `r cancer_dem` had dementia diagnosis and `r cancer_death` died over follow-up, `r cancer_alive` remain alive at 20 years since study entry. In contrast, among participants free of cancer diagnosis over follow-up, `r no_cancer_dem` were diagnosed with dementia and `r no_cancer_death` died over follow-up, `r no_cancer_alive` were alive at the end of follow-up.
 
-Time to cancer on average
+We present the following analysis:
 
-We show 3 kinds, ever vs. never, time-varying cancer, and weighting by cancer dx.
+The difference in dementia risk treating cancer as ever vs. never (As if Pin1 and cancer dx. happened at the same time if looked retrospectively).
 
-We now show the risk if U, no U (Combined outcome, crude risk)
+The difference in dementia risk considering cancer as a time-varying exposure independent of death. For example. at five years from follow-up the risk of cancer was `r cancer_5y` and the risk of death was `r death_5y`, thus we assume that those who died would have the same risk of cancer had they not died, unconditionally. 
 
-We provide additional info on causes of death for both groups, and the extreme scenarios of bounds.
-
-## Discussion
-
-
-Through this example we describe how much do the direct effect of cancer changes if we measure and adjust for $C$ compared to not.
 
 
 
@@ -158,4 +151,12 @@ Efforts to prevent and treat cancer should converge with similar efforts to prev
 We need better means to 
 
 Youthful tissues
+
+## Somewhere
+
+Knowing the cause of death provides information about the direction of missclassification.
+In patients with cancer we observed a slight % that died with dementia as a primary cause. On the other hand, among individuals free of cancer, we observed % of individuals who died with cancer as a primary cause. 
+
+In cancer you are afraid of missing dementia
+in cancer free you are afraid of missing cancer dx 
 
