@@ -20,8 +20,6 @@ data_wide <-
   slice(n()) %>% 
   ungroup()
 
-## Use these numbers for chart
-
 data_long %<>% 
   group_by(id) %>% 
   mutate(
@@ -38,7 +36,25 @@ data_long %<>%
                      competing_plr == 1 ~2,
                      TRUE ~ 0))
 
-# Weights for death -------------------------------------------------------
+data_wide %<>%
+  mutate(dementia_efu =
+           case_when(outcome_plr == 1 ~ 1,
+                     competing_plr == 1 ~ 2,
+                     TRUE ~ 0))
+
+
+data_wide %<>%
+  mutate(dementia_efu =
+           case_when(outcome_plr == 1 ~ 1,
+                     competing_plr == 1 ~ 2,
+                     TRUE ~ 0))
+
+data_wide %<>%
+  mutate(t2dem_efu =
+           ifelse(t2dem >= 240, 240, t2dem))
+
+
+# 0. Weights for death as competing event of cancer -------------------------------------------------------
 
 death_den <- glm(competing_plr ~ 
                    cancer_v + bs(time,3) + bs(age_0,3) + sex + education + apoe4 + 
@@ -72,10 +88,10 @@ data_long %>% ggplot(aes(x = as_factor(time), y = sw)) +
 
 # 1. EVER VS. NEVER -------------------------------------------------------
 
-# 1.1. Crude risks --------------------------------------------------------
+# 1.1. Crude risks unadjusted for cancer conf --------------------------------------------------------
 
 cancer_ever <-
-  survfit(Surv(t2dem, as.factor(outcome_plr)) ~ cancer_v, data_wide)
+  survfit(Surv(t2dem_efu, as.factor(dementia_efu)) ~ cancer_v, data_wide)
 
 survminer::ggcompetingrisks(cancer_ever) +
   ggthemes::scale_fill_tableau() +
@@ -89,10 +105,10 @@ plot_cif(cancer_ever, "Crude risk")
 
 data_wide %<>% 
   mutate(t2dem_no_death = 
-           ifelse(dementia_20 == 2, 240, t2dem_20))
+           ifelse(dementia_efu == 2, 240, t2dem_efu))
 
 cancer_ever_subcox <-
-  coxph(Surv(t2dem_no_death, dementia_20 == 1) ~ cancer_20, data_wide)
+  coxph(Surv(t2dem_no_death, dementia_efu == 1) ~ cancer_v, data_wide)
 
 ## risks and hazards
 tidy(cancer_ever_subcox, exponentiate = TRUE)
@@ -104,13 +120,13 @@ risks_cif(cancer_ever)
 # 1.2.a. Independent censoring --------------------------------------------
 
 cancer_ever_km <-
-  survfit(Surv(t2dem_20, dementia_20 == 1) ~ cancer_20, data_wide)
+  survfit(Surv(t2dem_efu, dementia_efu == 1) ~ cancer_v, data_wide)
 
 plot_km(cancer_ever_km, "Net risks") +
   labs(subtitle = "Under unconditional independent censoring of death")
 
 cancer_ever_cox <-
-  coxph(Surv(t2dem_20, dementia_20 == 1) ~ cancer_20, data_wide)
+  coxph(Surv(t2dem_efu, dementia_efu == 1) ~ cancer_v, data_wide)
 
 tidy(cancer_ever_cox, exponentiate = TRUE)
 
@@ -121,7 +137,7 @@ risks_km(cancer_ever_km)
 
 cancer_ever_km_tv <-
   survfit(Surv(
-    tstart, time2 = fuptime, event = outcome_plr) ~ cancer_20,
+    tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
     data = data_long, cluster = id, weights = sw)
 
 plot_km(cancer_ever_km_tv, "Net risks") +
@@ -129,7 +145,7 @@ plot_km(cancer_ever_km_tv, "Net risks") +
 
 cancer_ever_cox_tv <-
   coxph(Surv(
-    tstart, time2 = fuptime, event = outcome_plr) ~ cancer_20,
+    tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
     data = data_long, cluster = id, weights = sw)
 
 tidy(cancer_ever_cox_tv, exponentiate = TRUE)
@@ -137,7 +153,7 @@ tidy(cancer_ever_cox_tv, exponentiate = TRUE)
 risks_km(cancer_ever_km_tv)
 
 
-# 2. PREVALENT AND INCIDENT CANCER -------------------------------------------
+# 2. INCIDENT CANCER -------------------------------------------
 
 # 2.1. Crude risk under time-varying cancer diagnosis ---------------------
 

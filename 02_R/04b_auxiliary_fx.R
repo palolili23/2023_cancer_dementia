@@ -1,4 +1,4 @@
-mytheme <- theme_minimal(base_family = "serif") +
+  mytheme <- theme_minimal(base_family = "serif") +
   theme(
     panel.grid.major.x = element_blank(),
     panel.grid.minor.x = element_blank(),
@@ -33,7 +33,7 @@ plot_cif <- function(model, title, ...){
     filter(state == "1") %>%
     select(time, strata, estimate, conf.high, conf.low) %>%
     rename(CIF = estimate) %>% 
-    mutate(strata = ifelse(strata == label_exp, "Free of cancer", "Ever cancer"))
+    mutate(strata = ifelse(strata == label_exp, "Free of cancer", "Incident cancer"))
   
   plot <- tidy %>% 
     ggplot(aes(time, CIF, group = strata)) +
@@ -65,7 +65,7 @@ plot_km <- function(model, title, ...){
     transmute(
       time = time, 
       strata = ifelse(strata == label_exp, 
-                               "Free of cancer", "Ever cancer"),
+                               "Free of cancer", "Incident cancer"),
       cif = 1 - estimate,
       conf.low2 = 1- conf.low,
       conf.high2 = 1 - conf.high) %>% 
