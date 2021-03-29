@@ -24,7 +24,7 @@ count_cancer_death <- data %>%
 
 count_cancer_death %>% 
   filter(category != "Alive") %>% 
-  mutate(cancer = ifelse(cancer == 0, "no history of cancer", "history or incident cancer"),
+  mutate(cancer = ifelse(cancer == 0, "No cancer", "Incident cancer"),
     category = as_factor(category),
          category = fct_reorder(category, prop),
          cancer = as_factor(cancer)) %>% 
