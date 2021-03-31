@@ -42,23 +42,16 @@ data_wide %<>%
                      competing_plr == 1 ~ 2,
                      TRUE ~ 0))
 
-
-data_wide %<>%
-  mutate(dementia_efu =
-           case_when(outcome_plr == 1 ~ 1,
-                     competing_plr == 1 ~ 2,
-                     TRUE ~ 0))
-
 data_wide %<>%
   mutate(t2dem_efu =
            ifelse(t2dem >= 240, 240, t2dem))
 
 
-# 0. Weights for death as competing event of cancer -------------------------------------------------------
+# 0. Weights for death as competing event of dementia -------------------------------------------------------
 
 death_den <- glm(competing_plr ~ 
                    cancer_v + bs(time,3) + bs(age_0,3) + sex + education + apoe4 + 
-                   bs(sbp,3) + bs(bmi,3 ) + hd_v + stroke_v + diab_v, 
+                   bs(sbp,3) + bs(bmi,3 ) = bs(oh,3 )+ hd_v + stroke_v + diab_v, 
                  data = data_long, family = quasibinomial)
 
 summary(death_den)
@@ -73,7 +66,7 @@ data_long$p_num = predict(death_num, data_long, type = "response")
 
 data_long %<>%
   group_by(id) %>%
-  mutate(sw = cumprod(1 - p_num) / cumprod(1 - p_denom),
+  mutate(w = cumprod(1 - p_num) / cumprod(1 - p_denom),
   ) %>% 
   ungroup()
 
@@ -108,12 +101,12 @@ data_wide %<>%
            ifelse(dementia_efu == 2, 240, t2dem_efu))
 
 cancer_ever_subcox <-
-  coxph(Surv(t2dem_no_death, dementia_efu == 1) ~ cancer_v, data_wide)
+  coxph(Surv(t2dem_no_death, dementia_efu == 1) ~ cancer_v + bs(age_0,3) + sex + education + apoe4, data_wide)
 
 ## risks and hazards
 tidy(cancer_ever_subcox, exponentiate = TRUE)
 
-risks_cif(cancer_ever)
+# risks_km(cancer_ever_subcox, strata =  "cancer_v")
 
 # 1.2. Net risks ----------------------------------------------------------
 
@@ -133,29 +126,47 @@ tidy(cancer_ever_cox, exponentiate = TRUE)
 risks_km(cancer_ever_km)
 
 
-# 1.2.b. Independent censoring conditional on tv covariates ---------------
+# 1.2.b. Independent censoring time-varying cancer ---------------
 
 cancer_ever_km_tv <-
   survfit(Surv(
     tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
-    data = data_long, cluster = id, weights = sw)
+    data = data_long, cluster = id)
 
 plot_km(cancer_ever_km_tv, "Net risks") +
-  labs(subtitle = "Independent censoring of death conditional on tv covs")
+  labs(subtitle = "Independent censoring of death, time-varying cancer")
 
 cancer_ever_cox_tv <-
   coxph(Surv(
     tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
-    data = data_long, cluster = id, weights = sw)
+    data = data_long, cluster = id)
 
 tidy(cancer_ever_cox_tv, exponentiate = TRUE)
 
 risks_km(cancer_ever_km_tv)
 
+# 1.2.b. Independent censoring time-varying cancer, conditional on covariates ---------------
+
+cancer_ever_km_tv_sw <-
+  survfit(Surv(
+    tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
+    data = data_long, cluster = id, weights = sw)
+
+plot_km(cancer_ever_km_tv_sw, "Net risks") +
+  labs(subtitle = "Independent censoring of death, time-varying cancer, weighted")
+
+cancer_ever_cox_tv_sw <-
+  coxph(Surv(
+    tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
+    data = data_long, cluster = id, weights = sw)
+
+tidy(cancer_ever_cox_tv_sw, exponentiate = TRUE)
+
+risks_km(cancer_ever_km_tv_sw)
 
 # 2. INCIDENT CANCER -------------------------------------------
 
-# 2.1. Crude risk under time-varying cancer diagnosis ---------------------
+# 2.1. Crude risk/multistate under time-varying cancer diagnosis ---------------------
 
 cancer_incident_cif <- survfit(Surv(tstart, time2 = fuptime, 
                     event = as_factor(both_outcomes)) ~ cancer_v,
@@ -226,7 +237,7 @@ data_long %<>%
 
 ## Fitting weights for cancer
 mod <- glm(cancer_v ~ bs(time, 3) + sex + age_0 +
-             cohort + education + smoke + bs(sbp, 3) +
+             education + smoke + bs(sbp, 3) +
             bmi + I(bmi^2) + stroke_v + diab_v + hd_v,
            family = quasibinomial(), data = subset(data_long , 
                                               pastcancer == 0))
@@ -287,11 +298,11 @@ tidy(cancer_incident_cox_ipw, exponentiate = TRUE)
 
 km_ipweighted <- survfit(Surv(
   tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
-  data = data_long, cluster = id, weights = both_weights)
+  data = data_long, cluster = id, weights = sw_cancer)
 
 cox_ipweighted <- coxph(Surv(
   tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
-  data = data_long, cluster = id, weights = both_weights)
+  data = data_long, cluster = id, weights = sw_cancer)
 
 tidy(cox_ipweighted, exponentiate = TRUE)
 
