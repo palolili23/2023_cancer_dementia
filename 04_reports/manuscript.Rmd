@@ -6,7 +6,10 @@ output: [pdf_document]
 
 ---
 ```{r, echo =  FALSE}
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, fig.align="center")
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.align="center")
+library(survival)
+library(tidyverse)
+library(tableone)
 source(here::here("02_R", "03_descriptives.R"))
 ```
 
@@ -171,4 +174,22 @@ In cancer you are afraid of missing dementia
 in cancer free you are afraid of missing cancer dx 
 
 Make a table of definition of weights based on cancer def. and 
+
+## Table 1
+
+```{r}
+tableone_exp <-
+  print(
+    tableone,
+    explain = TRUE,
+    test = FALSE,
+    quote = FALSE,
+    noSpaces = TRUE,
+    printToggle = FALSE
+  )
+
+kableExtra::kable(tableone_exp, booktabs = T) %>% 
+  kableExtra::kable_styling(latex_options = c("striped", "hold_position"))
+
+```
 

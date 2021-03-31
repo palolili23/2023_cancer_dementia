@@ -1,7 +1,3 @@
-library(survival)
-library(tidyverse)
-library(tableone)
-
 data_long <-
   rio::import(here::here("01_data", "clean_data", "dementia_long.RData"))
 
@@ -18,7 +14,7 @@ baseline <-
   select(id, contains("1"))
 
 data_wide <- data_wide %>% 
-  left_join(baseline)
+  left_join(baseline, by = c("id", "death_2015", "end_fup_2015", "e1"))
 
 rio::export(data_wide, here::here("01_data", "clean_data", "wide_after_truncation.RData"))
 
@@ -106,9 +102,7 @@ cat <- myvars[!myvars %in% num]
 
 tableone <- CreateTableOne(vars = myvars, data = data_wide, factorVars = cat, strata = "cancer_v")
 
-tableone
-
-summary(tableone)
+# summary(tableone)
 
 # survminer::ggcompetingrisks(t2cancer_km) +
 #   ggthemes::scale_fill_tableau() +
