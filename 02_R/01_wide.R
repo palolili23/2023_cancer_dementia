@@ -15,14 +15,13 @@ data <- data %>%
   filter(dementia_inc != 2) %>% 
   filter(dementia_at_risk == 1) %>% 
   filter(cancer_prev != 1) %>% # Based on the ideal trial
-  # filter(!is.na(education_three_levels)) %>% 
-  # filter(!is.na(smoke1)) %>% 
   filter(!is.na(bmi1)) %>%
   filter(!is.na(sbp1)) %>%
-  filter(!is.na(ht_drug1)) %>%
+  # filter(!is.na(oh1)) %>%
+  filter(!is.na(smoke1)) %>%
   filter(!is.na(censor_date)) %>% 
   filter(between(age_0, 60, 70)) %>% 
-  filter(cohort == 1)
+  filter(cohort != 3)
 
 #KIM: SELECT ONLY THOSE WITH IC BASED ON STROKE DATASET
 data <- subset(data,data$ic_ok_2016==1)
@@ -153,8 +152,11 @@ data %<>%
   mutate(
     education = ifelse(is.na(education), "Unknown", education),
     apoe4 = ifelse(is.na(apoe4),"Unknown" , apoe4),
+    smoke1 = ifelse(is.na(smoke1),3 , smoke1),
     ht_drug1 = ifelse(is.na(ht_drug1), 2, ht_drug1),
-    hd_prev = ifelse(is.na(hd_prev), 2, hd_prev),)
+    hd_prev = ifelse(is.na(hd_prev), 2, hd_prev),
+    diabetes_prev = ifelse(is.na(diabetes_prev), 2, diabetes_prev))
+
 
 # Wide truncated 20 years -------------------------------------------------
 
@@ -215,3 +217,4 @@ data %>%
   filter(t2dem <1) %>% 
   select(cancer_prev, cancer_inc,cancer, death_2015,
                               dementia, t2cancer, t2dem, t2death)
+

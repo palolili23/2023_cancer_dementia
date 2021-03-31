@@ -1,5 +1,6 @@
 library(survival)
 library(tidyverse)
+library(tableone)
 
 data_long <-
   rio::import(here::here("01_data", "clean_data", "dementia_long.RData"))
@@ -9,6 +10,17 @@ data_wide <-
   group_by(id) %>% 
   slice(max(row_number())) %>% 
   ungroup()
+
+# merge with baseline covariates ------------------------------------------
+
+baseline <-
+  rio::import(here::here("01_data", "clean_data", "wide_noltfu.RData")) %>% 
+  select(id, contains("1"))
+
+data_wide <- data_wide %>% 
+  left_join(baseline)
+
+rio::export(data_wide, here::here("01_data", "clean_data", "wide_after_truncation.RData"))
 
 ## Total n
 total_n <- dim(data_wide)[1]
@@ -82,7 +94,22 @@ women_prop <- data_wide %>%
   mutate(total = paste0(prop, "%", " (n = ", n, ")")) %>% 
   filter(sex == 1) %>% 
   pull(total)
-  
+
+## Tableone
+
+myvars <- c("sex", "age_0", "education", "apoe4", "smoke1", "bmi1", "oh1", "sbp1", 
+          "ht1","hd_prev", "hd_v", "diabetes_prev", "diab_v",
+          "stroke_prev", "stroke_v", "cancer_v") 
+num <- c("age_0","bmi1", "oh1", "sbp1" )
+
+cat <- myvars[!myvars %in% num]
+
+tableone <- CreateTableOne(vars = myvars, data = data_wide, factorVars = cat, strata = "cancer_v")
+
+tableone
+
+summary(tableone)
+
 # survminer::ggcompetingrisks(t2cancer_km) +
 #   ggthemes::scale_fill_tableau() +
 #   theme_minimal() +
