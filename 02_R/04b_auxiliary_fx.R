@@ -101,3 +101,8 @@ risks_km <- function(model){
            rr = .[[2]] / .[[1]]) %>% 
     mutate_at(c(1:3), ~.*100)} 
 
+tidy_hr <- function(model) {
+ model %>% 
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE) %>%
+    select(term, estimate, contains("conf"))
+}
