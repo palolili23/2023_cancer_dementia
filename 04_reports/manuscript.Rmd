@@ -5,7 +5,7 @@ date: ""
 output: [pdf_document]
 
 ---
-```{r, echo =  FALSE}
+```{r, echo =  FALSE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.align="center")
 library(survival)
 library(tidyverse)
@@ -13,49 +13,33 @@ library(tableone)
 source(here::here("02_R", "03_descriptives.R"))
 ```
 
-### Motivation
+## Introduction
 
-Several observational studies have found that individuals with history or incident cancer that survive over follow-up have a lower risk of Alzheimer´s disease or related dementias (ADRD) when compared to individuals with no history of cancer. Multiple mechanisms related to inflammatory response, immune response, etc etc are postulated to understand this phenomenon. However, the community has raised their concerned about the potential unmeasured confounding, selective survival and misclassification issues that could drive this results.
+There is significant interest in understanding the association between cancer and dementia1. Many observational studies have consistently determined that individuals with a history or incident cancer have a lower risk of developing of Alzheimer´s disease or related dementias (ADRD) when compared to individuals with no history of cancer. These findings have motivated the identification of molecular and genetic mechanisms that explain this association. Specific molecular mechanisms, such as Pin1 enzyme over-expression promotes tumorigenesis, while it’s down-regulation is attributed to mechanisms that contribute to Alzheimer’s Disease. These findings are suggest new opportunities to repurpose cancer chemotherapeutics for Alzheimer´s Disease.
 
-In the lasts few years there has been an important attention to unveiling the impact of death as a competing event, and the role of survival bias to explain this association. Previous studies alluded to choosing a particular summary measure or modeling approach to account for death (incidence rate ratios (ref), hazard ratios (ref), multistate models (ref)), though the underlying estimand remains unclear.
+Nevertheless, observational studies are susceptible to several bias, and researchers have raised concerns related to the competing event of death as well as unmeasured confounding and ascertainment error  that could drive these results. Though, to understand sources of bias the causal question should be explicitly  specified. This particular question has at least two core challenges. First, defining the underlying biological mechanism we would ideally intervene upon and defining cancer diagnosis as the proxy for that mechanism. For example, researchers refer to biological mechanisms which onset may be prior to cancer diagnosis and to the effect of cancer treatment, both relate to different causal questions and would be translated into different study design and analytic choices. Second, defining the causal question (or estimand) of interest when the competing event of death is interest. Previous studies alluded to choosing a particular summary measure or modeling approach to account for death (incidence rate ratios (ref), hazard ratios (ref), multistate models (ref)). However, when competing events are present, there is more than one causal question that can be framed and each question has different interpretations and relies on different assumptions. 
 
-Overall, although observational studies have measured history of cancer and incident cancer as the key exposure, researchers refer to biological mechanisms which onset may be prior to cancer diagnosis and the effect of cancer treatment.
-
-Pin1 is an enzime deeply involved in the pathogenesis of cancer and ADRD. One of the roles of Pin1 is regulate mitosis process and apoptosis. Over-expression of Pin1 has been found in several tumors and it's inhibition causes tumor regression. In contrast, since adult neuronal cells do not divide, Pin1 over-expression in brain tissue is used to restore tau and amyloid precursor protein to a functional shape, thus preventing the buildup of the toxic tau and beta-amyloid species associated with AD. For this reason Pin1 regulation is proposed as one of the mechanisms that can explain the inverse association between cancer and AD found in observational studies.
-
-Bias cannot be defined or assessed if the causal question is not explicitly specified. To define the underlying causal question there are two core challenges. First, specifying cancer diagnosis as the proxy for an underlying biological mechanism we would ideally intervene upon. 
-
-Second, to rely on the independent censoring assumption in regards to the competing event of death when the inrestes is on the direct effect of cancer in dementia risk.
-
-With these considerations in mind, and illustrated through directed acyclic graphs, we describe a case study using data from the Rotterdam Study, a population-based prospective cohort with over 20 years of follow up. Through this case study we describe how can we connect the causal question to the analytic decisions with real-world data and demonstrate how point estimates may vary substantially depending on the assumptions related to previous points. 
-
-How information on mortality and cause of death can provides insight about the direction of some sources of bias. 
-
-Our aim is to outline one way to tie the etiological question of Pin1 with the questions that can be answered with observational data where Pin1 measurements are not available. We aim to draw the complexity of the research question by building progressively a directed acyclic graph (DAG) which help us connect the causal question to the observable data and the assumptions we rely on to identify the effect. We describe the challenges and illustrate the assumptions we have to fulfill to identify the effect.  
-
+With these considerations in mind, we outline a case study focused on the question: _What is the direct effect of Pin1 over-expression at late-midlife in the risk of ADRD after 20 years of follow-up compared to having regulated expression of Pin1._ To identify this effect with real-world data, we illustrate the complexity of the research question by building progressively a directed acyclic graph (DAG) which help us connect the causal question to the observable data and the assumptions we rely on to identify the effect. We exemplify different scenarios with data collected from the Rotterdam Study, a population-based cohort study. We describe the challenges and how they translate into the analytic decisions. Last, we discuss how information on mortality and cause of death can provides insight about the direction of some sources of bias.
 
 ## Overview of the causal structure and assumptions related to cancer diagnosis as a proxy for Pin1
 
-Given the previous literature on the topic, we focus the interest in answering the following question: _What is the direct effect of Pin1 over-expression at age of 65 in the risk of ADRD by age 85 compared to regulated expression of Pin1 by age of 65._ To identify this effect with real-world data, we will illustrate the causal question through a directed acyclic graphs (DAGs), spelling out the data generating mechanisms and assumptions tied to the data. 
+We begin by illustrating a hypothetical scenario through the causal graph of Figure 1, that depicts a situation where Pin1, represented as $P$, was measured in all participants in late midlife (for example between age 50 and 60). Based on the measurement of Pin1, participant's exposure is classified as 1) Over-expressed Pin1 or 2) Regulated Pin1. Although Pin1 expression acts as a biomarker and is not a well-defined intervention, we can allude that sometime in the future people with over-expressed Pin1 could follow a specific treatment that lowers Pin1 under a specified threshold. Furthermore, through out the follow-up each participant followed a strict monitoring for ADRD onset, represented as $Y_{20}$, and no participant was lost to follow-up nor died during the study period (no competing events present). 
 
-The causal graph of Figure 1 illustrates a situation where Pin1, represented as $P$, was measured in all participants on their 65 birthday. Based on the measurement of Pin1, participant's exposure was classified as 1) Over-expressed Pin1 or 2) Regulated Pin1. Through out the follow-up each participant followed a strict monitoring for ADRD onset, represented as $Y_{85}$, and no participant was lost to follow-up nor died during the study period. 
-
-
-was not an exposure or intervention randomized at age 65, therefore we have to consider a set of measured covariates $L$ for which conditional exchangeability holds. Previous studies have described age, sex, educational level and race/ethnicity as the minimal adjusting set of covariates (Ospina). However, environmental and behavioral factors such as smoking, alcohol intake, or chronic diseases which are known to cause microenvironmental changes such as inflammation and changes in tissue remodelling, may translate into Pin1 over-expression and are also related to the development of ADRD. Therefore, had we measured all $L$ we could identify the direct of $P$ in $Y_{85}$ by conditioning on $L$.
+Since Pin1 expression was not a randomized intervention, we consider a set of measured covariates $L$ for which conditional exchangeability holds. Previous studies have described age, sex, educational level and race/ethnicity as the minimal adjusting set of covariates (Ospina). However, environmental and behavioral factors such as smoking, alcohol intake, or chronic diseases which are known to cause microenvironmental changes such as inflammation and changes in tissue remodelling, may translate into Pin1 over-expression and are also related to the development of ADRD. Therefore, had we measured all $L$ we could identify the effect of $P$ in $Y_{20}$ by conditioning on $L$.
 
 ```{tikz, fig.ext = 'png', echo = FALSE, fig.cap = "Direct effect of Pin1 in ADRD"}
 \usetikzlibrary{arrows}
 \begin{tikzpicture}[node distance=2cm, auto,>=latex, scale = 0.5]
 \node (p) {$P$};
 \node [below of = p, yshift = 1cm, xshift = -1cm](l) {$L$};
-\node [right of = p] (y) {$Y_{85}$};
+\node [right of = p] (y) {$Y_{20}$};
 \draw[->] (l) -- (p);
 \draw[->, violet] (p) -- (y);
 \draw[->] (l) -- (y);
 \end{tikzpicture}
 ```
 
-Unfortunately, Pin1 expression measurement is not available in real-world settings, thus we can only rely on a proxy of this exposure. Since Pin1 over-expression is present in tumors and tumors are only measured through screening and diagnosis, we considered cancer diagnosis as the proxy for Pin1 over-expression, as most observational studies have defined (all refs). We depict this feature in Figure 2, where $P^*$ represents _incident cancer diagnosis_, the measured proxy of $P$. In this DAG we colored the path $P^* \leftarrow P \rightarrow Y_{85}$ because although we are measuring the association between $P^*$ and $Y_85$ in the observed data, we are assuming that the effect is only through $P$.
+Unfortunately, Pin1 expression measurement is not available at the moment in real-world settings, we can only rely on a proxy of this exposure. Since Pin1 over-expression is present in tumors and tumors are only measured through screening and diagnosis, we considered cancer diagnosis as the proxy for Pin1 over-expression, as most observational studies have defined (all refs). We depict this feature in Figure 2, where $P^*$ represents _incident cancer diagnosis_, the measured proxy of $P$. In this DAG we colored the path $P^* \leftarrow P \rightarrow Y_{85}$ because although we are measuring the association between $P^*$ and $Y_{20}$ in the observed data, we are assuming that the captured effect is only through $P$.
 
 ```{tikz, fig.ext = 'png', echo = FALSE, fig.cap = "Direct effect of Pin1 in ADRD, with cancer diagnosis as proxy of Pin1"}
 \usetikzlibrary{arrows}
@@ -73,12 +57,10 @@ Unfortunately, Pin1 expression measurement is not available in real-world settin
 ```
 
 
-A major challenge related to assigning cancer diagnosis as the proxy of Pin1 is defining time zero. Not everyone who had Pin1 over-expression will be diagnosed with cancer by age 65. For this reason prospective cohort studies have considered cancer as a time-varying or time-dependent exposure. This means that a participant who had cancer diagnosis at age 70 contributes to the "regulated Pin1" from age 65 to 70, and from age 70 and onwards to the "Over-expressed Pin1" arm. Alternatively, studies that have included participants with cancer diagnosis at the time of the diagnosis (for example from cancer registries such as SEER) and matched participants by age. If age at cancer diagnosis is considered as the time zero, we should be careful of adjusting for post-baseline covariates of $P$ or mediators between $P$ and $P^*$. 
+A major challenge related to assigning cancer diagnosis as the proxy of Pin1 is defining time zero. Not everyone who had Pin1 over-expression will be diagnosed with cancer by late-midlife, but in late-life. For this reason prospective cohort studies have considered cancer diagnosis as a time-varying or time-dependent exposure. This means that a participant within a prospective cohort study contributes to the "regulated Pin1" since study entry up to the time of cancer diagnosis and later on to the "Over-expressed Pin1" arm. Other studies have included participants with cancer diagnosis at the time of the diagnosis (for example from cancer registries such as SEER) and matched participants by age. In both cases we must remember that the the main interest is on the unmeasured $P$ and we should only adjust for covariates prior to $P$, and be careful to adjust for post-baseline covariates of $P$ or mediators between $P$ and $P^*$. 
 
-Since the population is elderly, the risk of death at age 65 is not trivial and it increases over time. This means that some individuals may die prior to cancer diagnosis due to other leading causes of death at this age group, such as cardiovascular disease. As such, we can only measure $P^*$ in the subset of individuals who have survived long enough to have a cancer diagnosis. We zoom in the relationship of $P \rightarrow P^*$ in Figure 3. In this figure we include 
-$D = 0$ between $P$ and $P^*$, this illustrates that to observe $P^*$, we condition (box around $D = )$ on surviving long enough to have a cancer diagnosis. 
-
-Several risk factors that increase the risk of cancer might also be shared causes of death prior to cancer diagnosis, for example smoking may cause lung cancer and chronic obstructive pulmonary disease (a leading cause of death in this age group). Therefore, to isolate the effect of $P$ in $P^*$ (the violet arrow), we need to block all shared causes of Pin1 and death from other causes, and the shared causes of death from other causes and cancer diagnosis, both represented in Figure 3 as $C_1$ and $C_2$. In this way we assume a hypothetical scenario in which we could prevent death prior to cancer diagnosis, by conditioning on a rich set of covariates. This assumption must hold regardless of whether we use incident cancer as a time-varying exposure, or match cancer patients to participants free of cancer by age.
+One of the mediators between $P$ and $P^*$ is death prior to cancer diagnosis. Since individuals are at risk of dying from other causes (such as cardivascular death), we can only measure $P^*$ in the subset of individuals who have survived long enough to have a cancer diagnosis. We zoom in the relationship of $P \rightarrow P^*$ in Figure 3. In this DAG we include 
+$D = 0$ between $P$ and $P^*$, this illustrates that to observe $P^*$, we condition (box around $D = 0$) on surviving long enough to have a cancer diagnosis. Several risk factors that increase the risk of cancer might also cause death prior to cancer diagnosis, for example smoking may cause lung cancer and chronic obstructive pulmonary disease (a leading cause of death in this age group). Therefore, to isolate the effect of $P$ in $P^*$ (the violet arrow), we need to block all shared causes between $P$ and $D$ and between $D$ and $P*$ both represented in Figure 3 as $C_1$ and $C_2$. In this way we assume a hypothetical scenario in which we could prevent death prior to cancer diagnosis, by conditioning on a rich set of covariates. This assumption must hold regardless of whether we use incident cancer as a time-varying exposure, or match cancer patients to participants free of cancer by age.
 
 ```{tikz, fig.ext = 'png', echo = FALSE, fig.cap = "Zoom in the association between P and P star"}
 \usetikzlibrary{arrows}
@@ -102,13 +84,9 @@ Up to this point we have outlined the underlying assumptions of using incident c
 
 ## Overview of the causal question and assumptions related to death as a competing event of ADRD
 
-As illustrated in previous figures, we are interested in the direct effect of Pin1 in ADRD at 85 years, which means a length of follow-up of 20 years. However, mortality in elderly population between 65 and 85 is substancial, and a leading cause of death is cancer. This means that in order to measure ADRD by the age of 85, individuals have to had survive to cancer and to other causes. For this reason death is a competing event of ADRD because if a participant dies prior to ADRD diagnosis, death prevents from observing ADRD at future time-points. 
+As illustrated in previous figures, we are interested in the effect of Pin1 in late midlife in ADRD risk after 20 years of follow-up. Nevertheless, mortality is substantial and increases steeply in late life, and a leading cause of death is cancer. This means that in order to measure ADRD over follow-up individuals have to had survive to cancer and to other leading causes of death. For this reason death is a competing event of ADRD because if a participant dies prior to ADRD diagnosis, death prevents from observing ADRD at future time-points. We can visualize this data feature in the causal diagram in Figure 4. In this DAG we include $D_{15}$ as a representation of death at 15 years of follow-up, an arrow between $P$ and $D_{15}$ since $P$ may increase the mortality risk irrespective of cancer diagnosis. We also include an arrow between $P^*$ and $D_{15}$ since cancer diagnosis, and subsequent treatment (or lack of treatment) may have an effect on death. Last, the arrow from $D_{15}$ and $Y_{20}$ represents the key feature of a competing events data structure: an individual who dies at 15 years of follow-up cannot subsequently develop ADRD, and since $D_{15}$ and $Y_{20}$ are events related to aging, $C$ represent the shared causes of both events.
 
-We can visualize this data feature in the causal diagram in Figure 4. In this DAG we include $D_{80}$ as a representation of Death by age 80, an arrow between $P$ and $D_{80}$ since $P$ may increase the mortality risk irrespective of cancer diagnosis. We also include an arrow between $P^*$ and $D_{80}$ since cancer diagnosis, and subsequent treatment (or lack of treatment) may have an effect on death. Last, the arrow from $D_{80}$ and $Y_{85}$ represents the key feature of a competing events data structure: an individual who dies by age 80 cannot subsequently develop ADRD, and since $D_{80}$ and $Y_{85}$ are events related to aging, $C$ represent the shared causes of both events.
-
-In this DAG we observe that, had we measured and adjusted for $L$, we could estimate the total effect of $P$ in $Y_{85}$ without further assumptions. However the total effect includes all pathways between $P$ and $Y_{85}$. This means that if Pin1 has an effect on mortality through cancer or other mechanisms, we will observe a protective effect of Pin1 overexpression in ADRD, partially or fully mediated through death. 
-
-Alternatively, there are several ways to conceptualize the direct effect of $P$ in $Y_{85}$ as in Figure 4 (violet arrows) and several causal parameters (estimands) to represent it, such as: the controlled direct effect (CDE), the survivor average causal effect and the natural separable direct effect. Through this section we will discuss the causal question, assumptions related to death and interpretation of the CDE since this estimand connects to frequently used estimators.
+In this DAG we observe that, had we measured and adjusted for $L$, we could estimate the total effect of $P$ in $Y_{20}$ without further assumptions. However the total effect includes all pathways between $P$ and $Y_{20}$. This means that if Pin1 has an effect on mortality through cancer or other mechanisms, we will observe a protective effect of Pin1 over-expression in ADRD, partially or fully mediated through death. For this reason estimators that are used to approximate a total effect (JY2020), such as the Aalen-Johansen estimator (underlying estimator for multistate models) or subdistribution hazard models, may not be useful in this setting. Since the question of interest is focused on the direct effect of $P$ in $Y_{20}$ as in Figure 4 (violet arrows), there are several causal questions (estimands) to represent this direct effect, such as: the controlled direct effect (CDE), the survivor average causal effect (SACE) and the natural separable direct effect. In this section we discuss the controlled direct effect as the causal question of interest since it translates to frequently used estimators in this literature (such as Kaplan-Meier estimator and Cox-proportional hazard model).
 
 THe CDE represents the effect of Pin1 in ADRD in a setting where we could have prevented death over the study period. It relies on the assumption that we have measured all $C$ to block the pathway $Y85 \leftarrow C  \rightarrow D_{80} \rightarrow P \rightarrow P*$. This assumption is defined as the independent censoring assumption conditional on covariates. In this setting death is treated as a censoring event and it can be interpreted as those who died would have the same risk of developing dementia if prevented from dying than those who remained alive and free of dementia at a given time point, conditional on shared causes of dementia and death.
 
@@ -132,6 +110,8 @@ THe CDE represents the effect of Pin1 in ADRD in a setting where we could have p
 \draw[->, violet] (p) to [out=45,in=135, looseness=0.4] (y);
 \end{tikzpicture}
 ```
+
+Since the conditional independent censoring assumption is untestable, when there are no other mechanisms of censoring, we can explore the extreme scenarios and estimate the bounds.
 
 ## Motivating example with the RS data
 
@@ -165,8 +145,6 @@ We need better means to
 
 Youthful tissues
 
-## Somewhere
-
 Knowing the cause of death provides information about the direction of missclassification.
 In patients with cancer we observed a slight % that died with dementia as a primary cause. On the other hand, among individuals free of cancer, we observed % of individuals who died with cancer as a primary cause. 
 
@@ -174,6 +152,12 @@ In cancer you are afraid of missing dementia
 in cancer free you are afraid of missing cancer dx 
 
 Make a table of definition of weights based on cancer def. and 
+
+
+Explicitly outlining the estimands and the assumptions that connect the causal question to the observed data provide an opportunity to improve the design of observational studies and the interpretation of their findings, plus better insight of potential sources of bias. This is a crucial since these studies are providing insights that are guiding other fields of research in the area, from bench science to biostatistics and epidemiological methods15. 
+To guide future observational and methodologic studies, our aim is to outline the potential estimands of interest that represent the underlying causal questions behind the association between cancer and dementia 
+
+
 
 ## Table 1
 
