@@ -11,9 +11,11 @@ library(survival)
 library(tidyverse)
 library(tableone)
 source(here::here("02_R", "03_descriptives.R"))
+source(here::here("02_R", "05_plots.R"))
+source(here::here("02_R", "05b_plot_causes_death.R"))
 ```
 
-## Introduction
+## 1. Introduction
 
 There is significant interest in understanding the association between cancer and dementia1. Many observational studies have consistently determined that individuals with a history or incident cancer have a lower risk of developing of Alzheimer´s disease or related dementias (ADRD) when compared to individuals with no history of cancer. These findings have motivated the identification of molecular and genetic mechanisms that explain this association. Specific molecular mechanisms, such as Pin1 enzyme over-expression promotes tumorigenesis, while it’s down-regulation is attributed to mechanisms that contribute to Alzheimer’s Disease. These findings are suggest new opportunities to repurpose cancer chemotherapeutics for Alzheimer´s Disease.
 
@@ -21,7 +23,7 @@ Nevertheless, observational studies are susceptible to several bias, and researc
 
 With these considerations in mind, we outline a case study focused on the question: _What is the direct effect of Pin1 over-expression at late-midlife in the risk of ADRD after 20 years of follow-up compared to having regulated expression of Pin1._ To identify this effect with real-world data, we illustrate the complexity of the research question by building progressively a directed acyclic graph (DAG) which help us connect the causal question to the observable data and the assumptions we rely on to identify the effect. We exemplify different scenarios with data collected from the Rotterdam Study, a population-based cohort study. We describe the challenges and how they translate into the analytic decisions. Last, we discuss how information on mortality and cause of death can provides insight about the direction of some sources of bias.
 
-## Overview of the causal structure and assumptions related to cancer diagnosis as a proxy for Pin1
+## 2. Overview of the causal structure and assumptions related to cancer diagnosis as a proxy for Pin1
 
 We begin by illustrating a hypothetical scenario through the causal graph of Figure 1, that depicts a situation where Pin1, represented as $P$, was measured in all participants in late midlife (for example between age 50 and 60). Based on the measurement of Pin1, participant's exposure is classified as 1) Over-expressed Pin1 or 2) Regulated Pin1. Although Pin1 expression acts as a biomarker and is not a well-defined intervention, we can allude that sometime in the future people with over-expressed Pin1 could follow a specific treatment that lowers Pin1 under a specified threshold. Furthermore, through out the follow-up each participant followed a strict monitoring for ADRD onset, represented as $Y_{20}$, and no participant was lost to follow-up nor died during the study period (no competing events present). 
 
@@ -82,7 +84,7 @@ $D = 0$ between $P$ and $P^*$, this illustrates that to observe $P^*$, we condit
 
 Up to this point we have outlined the underlying assumptions of using incident cancer diagnosis as a proxy for Pin1 expression. We continue outlining the additional assumptions related to death as a competing event of ADRD. 
 
-## Overview of the causal question and assumptions related to death as a competing event of ADRD
+## 3. Overview of the causal question and assumptions related to death as a competing event of ADRD
 
 As illustrated in previous figures, we are interested in the effect of Pin1 in late midlife in ADRD risk after 20 years of follow-up. Nevertheless, mortality is substantial and increases steeply in late life, and a leading cause of death is cancer. This means that in order to measure ADRD over follow-up individuals have to had survive to cancer and to other leading causes of death. For this reason death is a competing event of ADRD because if a participant dies prior to ADRD diagnosis, death prevents from observing ADRD at future time-points. We can visualize this data feature in the causal diagram in Figure 4. In this DAG we include $D_{15}$ as a representation of death at 15 years of follow-up, an arrow between $P$ and $D_{15}$ since $P$ may increase the mortality risk irrespective of cancer diagnosis. We also include an arrow between $P^*$ and $D_{15}$ since cancer diagnosis, and subsequent treatment (or lack of treatment) may have an effect on death. Last, the arrow from $D_{15}$ and $Y_{20}$ represents the key feature of a competing events data structure: an individual who dies at 15 years of follow-up cannot subsequently develop ADRD, and since $D_{15}$ and $Y_{20}$ are events related to aging, $C$ represent the shared causes of both events.
 
@@ -113,27 +115,28 @@ THe CDE represents the effect of Pin1 in ADRD in a setting where we could have p
 
 Since the conditional independent censoring assumption is untestable, when there are no other mechanisms of censoring, we can explore the extreme scenarios and estimate the bounds.
 
-## Motivating example with the RS data
+## 4. Motivating example with the RS data
 
-In this section we illustrate how previous DAGS may reflect on the analysis performed to unveil the effect of Pin1 in all cause-dementia. We use data collected in the Rotterdam Study, a population-based prospective cohort study among persons living in the Ommoord district in Rotterdam, the Netherlands. Recruitment and initial assessments were held between 1990 and 1993, participants had follow-up visits between 1993-1995, 1997-1999, 2002-2005, and 2008-2010. All participants had data on incident cancer diagnosis and incident dementia diagnosis through follow-up, collected from medical records of general practitioners (including hospital discharge letters) and through linkage with national registries. Date and cause of death was collected on a weekly basis via municipal population registries. Data on clinical outcomes was available until 2015. 
+In this section we illustrate how previous DAGS may reflect on the analysis performed to unveil the effect of Pin1 in all cause-dementia. We use data collected in the Rotterdam Study, a population-based prospective cohort study among persons living in the Ommoord district in Rotterdam, the Netherlands. Recruitment and initial assessments were held between 1990 and 1993; it was later extended between 2000 and 2001 consisting of individuals who had reached the age of 55 years or who had moved into the study area. Participants from first subcohort had follow-up visits between 1993-1995, 1997-1999, 2002-2005, and 2008-2010, second subcohort had follow-up visits between 2004 and 2005, and between 2011 and 2012. All participants had data on incident cancer diagnosis and incident dementia diagnosis through follow-up, collected from medical records of general practitioners (including hospital discharge letters) and through linkage with national registries. Date and cause of death was collected on a weekly basis via municipal population registries. Data on clinical outcomes was available until 2015. 
 
-To match the analysis to our initial question, we considered as inclusion criteria being between 60 and 70 years old at study entry, without history of cancer diagnosis, free of cognitive decline or with previous history of dementia. Out of 7983 persons who participated at baseline, `r total_n` were considered eligible. Time to cancer diagnosis, to dementia diagnosis and death status was measured for all participants. All participants were followed from study entry until dementia diagnosis, death or 20 years after their individual baseline date, whichever occurred first.
+To match the analysis to our initial question, we considered as inclusion criteria being between 60 and 70 years old at study entry, without history of cancer diagnosis, free of cognitive decline or with previous history of dementia. Out of 10998 persons who participated at study entry, `r total_n` were considered eligible. Time to cancer diagnosis, time to dementia diagnosis and death status was measured for all participants. All participants were followed from study entry until dementia diagnosis, death or 20 years after their individual baseline date, whichever occurred first.
 
-Participants had a mean age of `r mean_age`, and `r women_prop` were women. Further details on participants are presented in Table 1. Over follow up, `r yes_cancer` developed cancer and `r no_cancer` remain free of cancer diagnosis, the median age of cancer diagnosis was `r cancer_time`. From the total sample, `r dem_total` had dementia over follow-up and median time to dementia was `r dem_time`. Among participants with incident cancer, `r cancer_dem` had dementia diagnosis and `r cancer_death` died over follow-up, `r cancer_alive` remain alive at 20 years since study entry. In contrast, among participants free of cancer diagnosis over follow-up, `r no_cancer_dem` were diagnosed with dementia and `r no_cancer_death` died over follow-up, `r no_cancer_alive` were alive at the end of follow-up.
+### 4.1. Methods
 
-We present the following analysis:
+First we illustrate the most simple scenario (as Figure 1), were Pin1 over-expression is defined as "cancer ever vs. never" as if Pin1 and cancer diagnosis happened at the same time if looked retrospectively. Second, we consider cancer as a time-varying exposure independent of death. This can be represented as follows, at five years from study entry the observed unadjusted risk of cancer was `r cancer_5y` and the risk of death was `r death_5y` for the entire cohort, thus we assume that those who died would have the same risk of cancer had they not died, unconditionally, over follow-up. Third, we consider time to cancer as the  
 
-The difference in dementia risk treating cancer as ever vs. never (As if Pin1 and cancer dx. happened at the same time if looked retrospectively).
+To address confounding we fit inverse probability treatment weights including age at study entry, sex, educational attainment, smoking status and cohort as covariates. 
 
-We begin illustrating the most simple scenario (as Figure 1), were Pin1 overexpression is defined as "ever vs. never" and we consider death as an independent censoring mechanism. We consider baseline covariates for adjustment such as age at study entry, sex, educational attainment, smoking status, alcohol intake status. 
+To identify the controlled direct effect we considered death as an independent censoring mechanism conditional on time-varying shared causes of death and dementia. 
 
 The difference in dementia risk considering cancer as a time-varying exposure independent of death. For example. at five years from follow-up the risk of cancer was `r cancer_5y` and the risk of death was `r death_5y`, thus we assume that those who died would have the same risk of cancer had they not died, unconditionally. 
 
+### 4.2. Results
 
 
+Participants had a mean age of `r mean_age`, and `r women_prop` were women. Further details on participants are presented in Table 1. Over follow up, `r yes_cancer` developed cancer and `r no_cancer` remain free of cancer diagnosis, the median age of cancer diagnosis was `r cancer_time`. From the total sample, `r dem_total` had dementia over follow-up and median time to dementia was `r dem_time`. Among participants with incident cancer, `r cancer_dem` had dementia diagnosis and `r cancer_death` died over follow-up, `r cancer_alive` remain alive at 20 years since study entry. In contrast, among participants free of cancer diagnosis over follow-up, `r no_cancer_dem` were diagnosed with dementia and `r no_cancer_death` died over follow-up, `r no_cancer_alive` were alive at the end of follow-up.
 
-
-## Discussion
+## 5. Discussion
 
 We need to figure out what the key aging-dependent changes are and how to modulate these factors safely
 
@@ -157,9 +160,11 @@ Make a table of definition of weights based on cancer def. and
 Explicitly outlining the estimands and the assumptions that connect the causal question to the observed data provide an opportunity to improve the design of observational studies and the interpretation of their findings, plus better insight of potential sources of bias. This is a crucial since these studies are providing insights that are guiding other fields of research in the area, from bench science to biostatistics and epidemiological methods15. 
 To guide future observational and methodologic studies, our aim is to outline the potential estimands of interest that represent the underlying causal questions behind the association between cancer and dementia 
 
+\newpage
 
+## Tables
 
-## Table 1
+### Table 1: Descriptive characteristics of individuals who had a cancer diagnosis and of those free of cancer diagnosis over follow up. 
 
 ```{r}
 tableone_exp <-
@@ -175,5 +180,25 @@ tableone_exp <-
 kableExtra::kable(tableone_exp, booktabs = T) %>% 
   kableExtra::kable_styling(latex_options = c("striped", "hold_position"))
 
+```
+
+\newpage
+
+### Table 2. Risk difference and risk ratio for the risk of dementia 
+
+\newpage
+
+## Figures
+
+### Figure 1: Distribution of participants under each health status, by age over follow-up
+
+```{r}
+plot_distribution
+```
+
+### Figure 2. Causes of death for participants with and without incident cancer 
+
+```{r}
+causes_death
 ```
 
