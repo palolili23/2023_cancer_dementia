@@ -130,9 +130,23 @@ data_long_2015 %<>%
   ungroup()
 
 
-data_long_2015 %>% 
-  select(id, cohort, year, e1, cancer, cancer_v, cancer_date, dementia, dem_v, dem_date, death_2015, death_v, death_year, t2death_y)%>% View() 
-
+data_long_2015 %>%
+  select(
+    id,
+    cohort,
+    year,
+    e1,
+    cancer,
+    cancer_v,
+    cancer_date,
+    dementia,
+    dem_v,
+    dem_date,
+    death_2015,
+    death_v,
+    death_year,
+    t2death_y
+  ) %>% View()
 #### Create a "status" variable
 
 data_long_2015 %<>% 

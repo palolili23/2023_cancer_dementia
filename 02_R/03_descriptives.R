@@ -18,6 +18,11 @@ data_wide <- data_wide %>%
 
 rio::export(data_wide, here::here("01_data", "clean_data", "wide_after_truncation.RData"))
 
+# ## merge with cancer data for type of cancer
+# 
+# cancer_data <-
+#   rio::import(here::here("01_data", "raw_data", "Oncodataset 19022020 R.RData"))
+
 ## Total n
 total_n <- dim(data_wide)[1]
 
@@ -96,11 +101,45 @@ women_prop <- data_wide %>%
 myvars <- c("sex", "age_0", "education", "apoe4", "smoke1", "bmi1", "oh1", "sbp1", 
           "ht1","hd_prev", "hd_v", "diabetes_prev", "diab_v",
           "stroke_prev", "stroke_v", "cancer_v") 
+
+data_tableone <- data_wide %>% 
+  select(myvars)
+
+data_tableone %<>% 
+  mutate(sex = ifelse(sex == 0, "Male", "Female"),
+         education = case_when(
+           education == 0 ~ "Lower",
+           education == 1 ~ "Intermediate",
+           education == 2 ~ "Higher",
+           TRUE ~ "Unknown"),
+         apoe4 = case_when(
+           apoe4 == 0 ~ "Not carrier",
+           apoe4 == 1 ~ "One allele carrier",
+           apoe4 == 2 ~ "Two allele carrier"),
+         smoke1 = case_when(
+           smoke1 == 0 ~ "Never",
+           smoke1 == 1 ~ "Former",
+           smoke1 == 2 ~ "Current"),
+         ht1 = ifelse(ht1 == 1, "History of hypertension", "No history of hypertension"),
+         hd_prev = case_when(hd_prev == 1 ~ "History of heart disease",
+                             hd_prev == 0 ~ "No history of heart disease"),
+         hd_v = case_when(hd_v == 1 ~ "Incident heart disease",
+                          hd_v == 0 ~ "No incident heart disease"),
+         diabetes_prev = case_when(diabetes_prev == 1 ~ "History of diabetes",
+                                   diabetes_prev == 0 ~ "No history of diabetes",
+                                   diabetes_prev == 2 ~ "Unknown"),
+         diab_v = ifelse(diab_v == 1, "Incident diabetes", "No incident diabetes"),
+         stroke_prev = ifelse(stroke_prev == 1, "History of stroke", "No history of stroke"),
+         stroke_v = ifelse(stroke_v == 1, "Incident stroke", "No incident stroke"),
+         cancer_v = ifelse(cancer_v == 1, "Incident cancer", "No incident cancer"))
+
+
+
 num <- c("age_0","bmi1", "oh1", "sbp1" )
 
 cat <- myvars[!myvars %in% num]
 
-tableone <- CreateTableOne(vars = myvars, data = data_wide, factorVars = cat, strata = "cancer_v")
+tableone <- CreateTableOne(vars = myvars, data = data_tableone, factorVars = cat, strata = "cancer_v")
 
 # summary(tableone)
 
