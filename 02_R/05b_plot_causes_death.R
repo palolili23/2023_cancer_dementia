@@ -3,7 +3,7 @@ library(tidyverse)
 
 ggthemes::scale_fill_colorblind()
 
-wide_data <- import(here::here("01_data", "clean_data", "wide_noltfu.RData"))
+wide_data <- import(here::here("01_data", "clean_data", "wide_after_truncation.RData"))
 
 cases_death <- import(here::here("01_data", "raw_data", "causes_death.RData"))
 
@@ -17,15 +17,15 @@ data <- wide_data %>%
 #   gt::gt()
 
 count_cancer_death <- data %>% 
-  filter(cohort == 1, dementia == 2) %>%
-  group_by(cancer) %>% 
+  filter(competing_plr == 1) %>% 
+  group_by(cancer_v) %>% 
   count(category) %>% 
   mutate(prop = 100*(n/sum(n))) 
 
 causes_death <- count_cancer_death %>% 
   filter(category != "Alive") %>% 
   mutate(category = str_to_title(category)) %>% 
-  mutate(cancer = ifelse(cancer == 0, "No cancer", "Incident cancer"),
+  mutate(cancer = ifelse(cancer_v == 0, "No cancer", "Incident cancer"),
     category = as_factor(category),
          category = fct_reorder(category, prop),
          cancer = as_factor(cancer)) %>% 
@@ -45,4 +45,33 @@ causes_death <- count_cancer_death %>%
     strip.background = element_rect(fill=NA),
     axis.text=element_text(size=10),
     axis.title=element_text(size=10))
-    
+
+count_dementia_death <- data %>% 
+  filter(competing_plr == 0) %>% 
+  group_by(outcome_plr) %>% 
+  count(category) %>% 
+  mutate(prop = 100*(n/sum(n))) 
+
+causes_death_dementia <- count_dementia_death %>% 
+  # filter(category != "Alive") %>% 
+  mutate(category = str_to_title(category)) %>% 
+  mutate(outcome_plr = ifelse(outcome_plr == 0, "Had no dementia diagnosis", "Had dementia diagnosis"),
+         category = as_factor(category),
+         category = fct_reorder(category, prop),
+         outcome_plr = as_factor(outcome_plr)) %>% 
+  ggplot(aes(outcome_plr, prop, fill = category)) +
+  geom_col() +
+  ggthemes::scale_fill_tableau() +
+  coord_flip() + 
+  theme_minimal() +
+  labs(y = "% of participants that died",
+       x = NULL,
+       fill = NULL) +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size=10)) +
+  theme(
+    strip.text.x = element_text(size = 10),
+    # strip.background = element_blank(),
+    strip.background = element_rect(fill=NA),
+    axis.text=element_text(size=10),
+    axis.title=element_text(size=10))

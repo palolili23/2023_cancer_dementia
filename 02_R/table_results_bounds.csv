@@ -1,0 +1,7 @@
+Proxy,model,cancer_v=0,cancer_v=1,rd,rr
+Time-varying cancer,Lower bound,15,9.4,-5.6,0.63
+Time-varying cancer,IPTW,18.3,23.1,4.9,1.27
+Time-varying cancer,Upper bound,42.2,90.6,48.4,2.15
+Time to cancer,Lower bound,16.9,5.7,-11.2,0.34
+Time to cancer,IPTW,19.5,18.5,-1,0.95
+Time to cancer,Upper bound,41.1,93.8,52.7,2.28

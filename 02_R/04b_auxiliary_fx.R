@@ -99,10 +99,15 @@ risks_km <- function(model){
     pivot_wider(names_from = strata, values_from = estimate) %>% 
     mutate(rd = .[[2]] - .[[1]],
            rr = .[[2]] / .[[1]]) %>% 
-    mutate_at(c(1:3), ~.*100)} 
+    mutate_at(c(1:3), ~.*100) %>% 
+    mutate_at(c(1:3), round, 1) %>% 
+    mutate(rr = round(rr, 2))} 
 
 tidy_hr <- function(model) {
  model %>% 
   broom::tidy(exponentiate = TRUE, conf.int = TRUE) %>%
-    select(term, estimate, contains("conf"))
+    select(term, estimate, contains("conf")) %>% 
+    mutate_at(c(2:4), round, 2) %>% 
+    select(-1, hr = estimate) %>% 
+    mutate(hr = paste0(hr, " (", conf.low, ", ", conf.high, ")"))
 }

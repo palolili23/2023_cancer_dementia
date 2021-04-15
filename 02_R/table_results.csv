@@ -1,0 +1,9 @@
+Proxy,model,cancer_v=0,cancer_v=1,rd,rr,hr
+Ever vs. Never,Unadjusted,20.3,14.4,-5.9,0.71,"0.55 (0.41, 0.73)"
+Ever vs. Never,IPTW,20.3,14.3,-6,0.7,"0.54 (0.4, 0.74)"
+Ever vs. Never,IPTW + IPCW,21.1,21.7,0.7,1.03,"0.92 (0.67, 1.25)"
+Time-varying cancer,Unadjusted,19.4,18.8,-0.6,0.97,"0.98 (0.73, 1.32)"
+Time-varying cancer,IPTW,18.3,23.1,4.9,1.27,"1.37 (0.91, 2.05)"
+Time-varying cancer,IPTW + IPCW,19,29.1,10.1,1.53,"1.6 (1.05, 2.43)"
+Time to cancer,IPTW,19.5,18.5,-1,0.95,"0.96 (0.7, 1.31)"
+Time to cancer,IPTW + IPCW,20.3,21.9,1.7,1.08,"1.07 (0.77, 1.49)"
