@@ -1,0 +1,4 @@
+cancer_definition,IPTW denominator,IPTW numerator,IPCW Denominator,IPCW Numerator,
+Cancer ever vs. never,"    cancer_v ~ bs(age_0, 3) + sex + education + as.factor(smoke1) + cohort,",1,"    competing_plr ~ bs(age_0, 3) + sex + education + apoe4 + as.factor(smoke1) + ht1 + bs(sbp1, 3) + bs(bmi1,3) + as.factor(diabetes_prev) +  cancer_v + cohort,",1,
+Time-varying cancer,"cancer_v ~ bs(age_0, 3) + sex + education + as.factor(smoke1) + cohort,",1,"cancer_v + bs(time, 3) + bs(age_0, 3) + sex + education + apoe4 + as.factor(smoke) + bs(sbp, 3) + bs(bmi, 3) + ht + ht_drug + hd_v + stroke_v + diab_v + cohort","competing_plr ~ cancer_v + bs(time, 3) + cohort",
+Time to cancer,"cancer_v ~ bs(age_0, 3) + sex + education + as.factor(smoke1) + cohort,","cancer_v ~ bs(time, 3),",same as previous,same as previous,

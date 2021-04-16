@@ -1,7 +1,5 @@
-library(ggplot2)
 library(tidyverse)
 library(rio)
-library(wesanderson)
 library(survival)
 library(survminer)
 library(broom)
@@ -155,9 +153,15 @@ cancer_ever_cox_crude <-
   coxph(Surv(t2dem_efu, dementia_efu == 1) ~ cancer_v, data_wide)
 
 hr_1a <- cancer_ever_cox_crude %>% 
-  tidy_hr()
+  tidy_hr() %>% 
+  mutate(
+    model = "Unadjusted"
+  )
 
-rd_1a <- risks_km(cancer_ever_km_crude)
+rd_1a <- risks_km(cancer_ever_km_crude) %>% 
+  mutate(
+    model = "Unadjusted"
+  )
 
 
 # 1.b. KM Independent censoring -----------------------------------------------
@@ -172,9 +176,14 @@ cancer_ever_cox <-
   coxph(Surv(t2dem_efu, dementia_efu == 1) ~ cancer_v, data_wide, weights = cancer_weight_t, cluster = id)
 
 hr_1b <- cancer_ever_cox %>% 
-  tidy_hr()
+  tidy_hr() %>% mutate(
+    model = "IPTW"
+  )
 
-rr_1b <- risks_km(cancer_ever_km)
+rd_1b <- risks_km(cancer_ever_km) %>% 
+  mutate(
+    model = "IPTW"
+  )
 
 # 1.c. KM. IPCW for censoring -----------------------------------------------
 
@@ -188,10 +197,19 @@ cancer_ever_cox_ipcw <-
   coxph(Surv(t2dem_efu, dementia_efu == 1) ~ cancer_v, data_wide, weights = baseline_wt, cluster = id)
 
 hr_1c <- cancer_ever_cox_ipcw %>% 
-  tidy_hr()
+  tidy_hr() %>% 
+  mutate(
+    model = "IPTW + IPCW"
+  )
 
-rr_1c <- risks_km(cancer_ever_km_ipcw)
+rd_1c <- risks_km(cancer_ever_km_ipcw) %>% 
+  mutate(
+    model = "IPTW + IPCW"
+  )
 
+bind_rows(hr_1a, hr_1b, hr_1c)
+
+bind_rows(rd_1a, rd_1b, rd_1c)
 
 # 2. Time-varying cancer -----------------------------------------------------
 
