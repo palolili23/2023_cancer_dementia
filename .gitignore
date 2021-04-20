@@ -42,3 +42,8 @@ vignettes/*.pdf
 01_data/
 *.rds
 *.jpeg
+
+## Slides
+
+06_presentations/210421_cqm/index_files/
+06_presentations/210421_cqm/libs/
