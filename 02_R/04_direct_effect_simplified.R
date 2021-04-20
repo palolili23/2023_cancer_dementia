@@ -652,7 +652,7 @@ bounds_tv_cancer <- bind_rows(rd_2b, rd_2d, rd_2e) %>%
   arrange(rd) %>% 
   mutate(Proxy = "Time-varying cancer")
 
-bounds_t2vcancer <- bind_rows(rd_3a, rd_3c, rd_3d) %>% 
+bounds_t2vcancer <- bind_rows(rd_3b, rd_3c, rd_3d) %>% 
   select(model, everything()) %>% 
   arrange(rd) %>% 
   mutate(Proxy = "Time to cancer")

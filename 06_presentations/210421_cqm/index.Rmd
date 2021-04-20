@@ -1,0 +1,398 @@
+---
+title: "‘Dissecting the causal question underlying the association between cancer and dementia"
+subtitle: ""  
+author: 
+  - "L. Paloma Rojas-Saunero"
+date: '`r Sys.Date()`'
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    seal: false
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      highlightLanguage: ["r", "css"]
+      countIncrementalSlides: FALSE
+      ratio: "16:9"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE, }
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(collapse = TRUE,
+                      fig.retina = 3,
+                      warning = FALSE,
+                      message = FALSE, cache = TRUE)
+library(WeightIt)
+library(cobalt)
+library(splines)
+
+source(here::here("02_R", "05_plots.R"))
+source(here::here("02_R", "05b_plot_causes_death.R"))
+table_results <- rio::import(here::here("02_R", "table_results.csv"))
+table_results_bounds <- rio::import(here::here("02_R", "table_results_bounds.csv"))
+
+```
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+style_mono_accent(
+  base_color = "#011A5E",
+  header_font_google = google_font("Fira Sans", "500"),
+  table_row_even_background_color = "#FFFFFF",
+  table_border_color = "#011A5E",
+  text_font_google   = google_font("Lato", "400", "400i"),
+  text_font_size = "25px"
+)
+```
+
+background-image: url(./figs/erasmus.png)
+background-position: 5% 95%
+background-size: 25%, 15%
+class: center, middle
+
+## Dissecting the causal question underlying the association between cancer and dementia
+
+
+
+<br> <br>
+
+.right[L. Paloma Rojas-Saunero, MD
+
+**Epidemiology department**
+
+**Causal inference and Neuroepi group**]
+
+---
+
+## Introduction
+
+.pull-left[
+
+Observational studies have found a protective effect of cancer diagnosis in the risk of Alzheimer´s disease or related dementias (ADRD).
+
+These studies lead to discussions of repurposing or augmenting current cancer chemotherapeutics for ADRD
+]
+
+--
+
+.pull-right[ 
+![](figs/forest_plot.PNG)
+]
+
+
+.footnote[Ospina-Romero M. JAMA Network Open. 2020]
+
+---
+
+## Cancer diagnosis as an exposure
+
+.pull-left[  
+
+- Molecular mechanisms
+
+- Cancer treatments
+
+- Shared factors
+
+- Unmeasured confounding, measurement error and survival bias may explain this association
+  
+]
+
+.pull-right[
+
+![](figs/causal_risks.PNG)
+]
+  
+
+.footnote[
+L. Frain et al. Alzheimer’s & Dementia. 2017.
+]
+
+---
+class: middle, center
+
+## How can we conclude on causal pathways if we haven't measured them?
+
+---
+
+## Back to basics
+
+.pull-left[
+![](figs/pin_knockout.PNG) 
+]
+
+.pull-right[
+
+Driver J. et al. Biochimica et Biophysica Acta. 2015.
+
+![](figs/tment_pin1.PNG)
+
+]
+
+---
+
+## Aims
+
+---
+
+### Overview of cancer diagnosis as a proxy for Pin1 enzime
+
+.pull-left[
+If there was a drug that targets Pin1 $(D)$ we would perform an RCT to assess the effect on dementia $(Y_{t})$.
+
+We can imagine a setting where middle-aged participants with signs of cognitive decline take this drug and are followed over time.
+]
+
+--
+
+<br><br>
+
+.pull-right[
+```{tikz, fig.ext = 'png', echo = FALSE}
+\usetikzlibrary{arrows}
+\begin{tikzpicture}[node distance=2cm, auto,>=latex, scale = 0.5]
+\node (p) {$D$};
+\node [right of = p] (y) {$Y_{t}$};
+\draw[->] (p) -- (y);
+\end{tikzpicture}
+```
+]
+
+---
+class: middle
+
+.pull-left[
+- The drug is not available yet, but we have better chances of having Pin1 expression as a biomarker in a closer future.
+
+- This biomarker could be measured in stored blood samples in a cohort study
+
+- We can set a threshold for _Pin1 over-expression_ = $P$
+
+- Since this is within an observational setting we will have to address confounding $(L)$
+
+]
+
+.pull-right[
+```{tikz, fig.ext = 'png', echo = FALSE}
+\usetikzlibrary{arrows}
+\begin{tikzpicture}[node distance=2cm, auto,>=latex, scale = 0.5]
+\node (p) {$P$};
+\node [below of = p, yshift = 1cm, xshift = -1cm](l) {$L$};
+\node [right of = p] (y) {$Y_{t}$};
+\draw[->] (l) -- (p);
+\draw[->, violet] (p) -- (y);
+\draw[->] (l) -- (y);
+\end{tikzpicture}
+```
+]
+
+---
+
+class: middle
+
+.pull-left[
+
+- Pin1 over-expression stimulates tumor growth
+
+- Tumor growth leads to cancer diagnosis
+
+- Cancer diagnosis $(P^*)$ represents a proxy for $P$
+
+- We are assuming that the captured effect of $P^*$ and $Y_{t}$ is only through $P$
+]
+
+.pull-right[
+```{tikz, fig.ext = 'png', echo = FALSE, fig.cap = ""}
+\usetikzlibrary{arrows}
+\begin{tikzpicture}[node distance=2cm, auto,>=latex, scale = 0.5]
+\node (p) {$P$};
+\node [below of = p, yshift = 1cm, xshift = -1cm](l) {$L$};
+\node [above of = p, yshift = -1cm](pstar) {$P^*$};
+\node [right of = p] (y) {$Y_{t}$};
+\draw[->, violet] (p) -- (pstar);
+\draw[->, violet] (p) -- (y);
+\draw[->] (l) -- (p);
+\draw[->] (l) -- (y);
+
+\end{tikzpicture}
+```
+]
+
+???
+
+Not everyone who had Pin1 over-expression will be diagnosed with cancer by late-midlife, but in late-life.
+
+---
+class:middle
+
+.pull-left[
+Some people will die before having a cancer diagnosis
+
+]
+
+.pull-right[
+```{tikz, fig.ext = 'png', echo = FALSE}
+\usetikzlibrary{arrows}
+\begin{tikzpicture}[node distance=2cm, auto,>=latex, scale = 0.5]
+\node (p) {$P_0$};
+\node [right of = p] (d) {$D_{k} = 0$};
+\node [right of = d] (pstar) {$P^*_{k+1}$};
+\node [below of = p, yshift = 1cm, xshift = -1cm](l) {$C_1$};
+\node [below of = d, yshift = 1cm, xshift = 1cm](c) {$C_2$};
+\draw[->] (p) -- (d);
+\draw[->, violet] (p) to [out=45,in=135, looseness=0.4] (pstar);
+\draw[->] (d) -- (pstar);
+\draw[->] (l) -- (p);
+\draw[->] (l) -- (d);
+\draw[->] (c) -- (pstar);
+\draw[->] (c) -- (d);
+\end{tikzpicture}
+```
+]
+
+---
+class: middle, center
+
+## Overview of the causal question and assumptions related to death as a competing event of ADRD
+
+---
+class: middle
+
+.pull-left[
+
+
+]
+
+.pull-right[
+```{tikz, fig.ext = 'png', echo = FALSE, fig.cap = ""}
+\usetikzlibrary{arrows}
+\begin{tikzpicture}[node distance=2cm, auto,>=latex, scale = 0.5]
+\node (p) {$P$};
+\node [below of = p, yshift = 1cm, xshift = -1cm](l) {$L$};
+\node [above of = p, yshift = -1cm](pstar) {$P^*$};
+\node [right of = p] (d) {$D_{t}$};
+\node [right of = d] (y) {$Y_{t+1}$};
+\draw[->, violet] (p) -- (pstar);
+\draw[->] (p) -- (d);
+\draw[->] (d) -- (y);
+\draw[->] (l) -- (p);
+\draw[->] (l) -- (y);
+\draw[->, violet] (p) to [out=45,in=135, looseness=0.4] (y);
+\end{tikzpicture}
+```
+]
+
+
+---
+class: middle
+
+.pull-left[]
+
+.pull-right[
+```{tikz, fig.ext = 'png', echo = FALSE, fig.cap = ""}
+\usetikzlibrary{arrows}
+\begin{tikzpicture}[node distance=2cm, auto,>=latex, scale = 0.5]
+\node (p) {$P$};
+\node [below of = p, yshift = 1cm, xshift = -1cm](l) {$L$};
+\node [above of = p, yshift = -1cm](pstar) {$P^*$};
+\node [right of = p] (d) {$D_{t}$};
+\node [right of = d] (y) {$Y_{t+1}$};
+\node [below of = d, yshift = 1cm, xshift = +1cm](c) {$C$};
+\draw[->, violet] (p) -- (pstar);
+\draw[->] (pstar) -- (d);
+\draw[->] (p) -- (d);
+\draw[->] (d) -- (y);
+\draw[->] (l) -- (p);
+\draw[->] (l) -- (y);
+\draw[->] (c) -- (d);
+\draw[->] (c) -- (y);
+\draw[->, violet] (p) to [out=45,in=135, looseness=0.4] (y);
+\end{tikzpicture}
+```
+
+]
+
+---
+
+## Application to the Rotterdam Study
+
+.pull-left[
+
+- Participants between 60 and 70 years old at study entry
+- Without history of cancer diagnosis and dementia
+- Data on cancer diagnosis and dementia diagnosis is measured through follow-up and linkage with national registries.
+- Date and cause of death was collected on a weekly basis via municipal population registries
+
+]
+
+.pull-right[
+```{r, echo = FALSE}
+plot_distribution +
+    theme_xaringan()
+```
+]
+
+---
+
+### Methods
+
+
+---
+
+### Results
+
+```{r, echo = FALSE}
+kableExtra::kable(table_results, booktabs = T) %>%
+  kableExtra::kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+---
+
+### Extreme scenarios of independency
+
+
+```{r, echo = FALSE, fig.showtext=TRUE, fig.align='center', fig.width = 14}
+table_results_bounds %>% 
+  select(-5, -6) %>%
+  pivot_longer(cols = 3:4,
+               names_to = "cancer",
+               values_to = "risk") %>%
+  pivot_wider(names_from = c(model),
+              values_from = risk) %>%
+  ggplot(aes(
+    y = Proxy,
+    x = IPTW,
+    xmin = `Lower bound`,
+    xmax = `Upper bound`
+  )) +
+  geom_vline(xintercept = 1,
+             color = "#E69F00",
+             size = 1.2) +
+  geom_pointrange(shape = 15,
+                  color = "#0072B2") +
+  geom_errorbar(width = 0.2, color = "#0072B2") + facet_wrap(. ~ cancer) +
+  theme_xaringan()
+```
+
+---
+
+```{r, echo = FALSE}
+kableExtra::kable(table_results_bounds, booktabs = T) %>%
+  kableExtra::kable_styling(latex_options = c("striped", "hold_position")) 
+```
+
+---
+
+### Causes of death
+
+```{r, echo = FALSE, fig.align='center', fig.width = 14}
+causes_death + 
+      theme_xaringan(text_font_size = 20,
+                       title_font_size = 20) +
+     theme(legend.position = "right")
+
+```
+

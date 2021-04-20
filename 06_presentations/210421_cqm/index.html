@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>‘Dissecting the causal question underlying the association between cancer and dementia</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="L. Paloma Rojas-Saunero" />
+    <meta name="date" content="2021-04-21" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <script src="libs/kePrint/kePrint.js"></script>
+    <link href="libs/lightable/lightable.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+background-image: url(./figs/erasmus.png)
+background-position: 5% 95%
+background-size: 25%, 15%
+class: center, middle
+
+## Dissecting the causal question underlying the association between cancer and dementia
+
+
+
+&lt;br&gt; &lt;br&gt;
+
+.right[L. Paloma Rojas-Saunero, MD
+
+**Epidemiology department**
+
+**Causal inference and Neuroepi group**]
+
+---
+
+## Introduction
+
+.pull-left[
+
+Observational studies have found a protective effect of cancer diagnosis in the risk of Alzheimer´s disease or related dementias (ADRD).
+
+These studies lead to discussions of repurposing or augmenting current cancer chemotherapeutics for ADRD
+]
+
+--
+
+.pull-right[ 
+![](figs/forest_plot.PNG)
+]
+
+
+.footnote[Ospina-Romero M. JAMA Network Open. 2020]
+
+---
+
+## Cancer diagnosis as an exposure
+
+.pull-left[  
+
+- Molecular mechanisms
+
+- Cancer treatments
+
+- Shared factors
+
+- Unmeasured confounding, measurement error and survival bias may explain this association
+  
+]
+
+.pull-right[
+
+![](figs/causal_risks.PNG)
+]
+  
+
+.footnote[
+L. Frain et al. Alzheimer’s &amp; Dementia. 2017.
+]
+
+---
+class: middle, center
+
+## How can we conclude on causal pathways if we haven't measured them?
+
+---
+
+## Back to basics
+
+.pull-left[
+![](figs/pin_knockout.PNG) 
+]
+
+.pull-right[
+
+Driver J. et al. Biochimica et Biophysica Acta. 2015.
+
+![](figs/tment_pin1.PNG)
+
+]
+
+---
+
+## Aims
+
+---
+
+### Overview of cancer diagnosis as a proxy for Pin1 enzime
+
+.pull-left[
+If there was a drug that targets Pin1 `\((D)\)` we would perform an RCT to assess the effect on dementia `\((Y_{t})\)`.
+
+We can imagine a setting where middle-aged participants with signs of cognitive decline take this drug and are followed over time.
+]
+
+--
+
+&lt;br&gt;&lt;br&gt;
+
+.pull-right[
+&lt;img src="index_files/figure-html/unnamed-chunk-1-1.png" width="504" /&gt;
+]
+
+---
+class: middle
+
+.pull-left[
+- The drug is not available yet, but we have better chances of having Pin1 expression as a biomarker in a closer future.
+
+- This biomarker could be measured in stored blood samples in a cohort study
+
+- We can set a threshold for _Pin1 over-expression_ = `\(P\)`
+
+- Since this is within an observational setting we will have to address confounding `\((L)\)`
+
+]
+
+.pull-right[
+&lt;img src="index_files/figure-html/unnamed-chunk-2-1.png" width="504" /&gt;
+]
+
+---
+
+class: middle
+
+.pull-left[
+
+- Pin1 over-expression stimulates tumor growth
+
+- Tumor growth leads to cancer diagnosis
+
+- Cancer diagnosis `\((P^*)\)` represents a proxy for `\(P\)`
+
+- We are assuming that the captured effect of `\(P^*\)` and `\(Y_{t}\)` is only through `\(P\)`
+]
+
+.pull-right[
+&lt;img src="index_files/figure-html/unnamed-chunk-3-1.png" width="504" /&gt;
+]
+
+???
+
+Not everyone who had Pin1 over-expression will be diagnosed with cancer by late-midlife, but in late-life.
+
+---
+class:middle
+
+.pull-left[
+Some people will die before having a cancer diagnosis
+
+]
+
+.pull-right[
+&lt;img src="index_files/figure-html/unnamed-chunk-4-1.png" width="504" /&gt;
+]
+
+---
+class: middle, center
+
+## Overview of the causal question and assumptions related to death as a competing event of ADRD
+
+---
+class: middle
+
+.pull-left[
+
+
+]
+
+.pull-right[
+&lt;img src="index_files/figure-html/unnamed-chunk-5-1.png" width="504" /&gt;
+]
+
+
+---
+class: middle
+
+.pull-left[]
+
+.pull-right[
+&lt;img src="index_files/figure-html/unnamed-chunk-6-1.png" width="504" /&gt;
+
+]
+
+---
+
+## Application to the Rotterdam Study
+
+.pull-left[
+
+- Participants between 60 and 70 years old at study entry
+- Without history of cancer diagnosis and dementia
+- Data on cancer diagnosis and dementia diagnosis is measured through follow-up and linkage with national registries.
+- Date and cause of death was collected on a weekly basis via municipal population registries
+
+]
+
+.pull-right[
+&lt;img src="index_files/figure-html/unnamed-chunk-7-1.png" width="504" /&gt;
+]
+
+---
+
+### Methods
+
+
+---
+
+### Results
+
+&lt;table class="table" style="margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Proxy &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; model &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; cancer_v=0 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; cancer_v=1 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; rd &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; rr &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; hr &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Ever vs. Never &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Unadjusted &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20.3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14.4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -5.9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.71 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.55 (0.41, 0.73) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Ever vs. Never &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; IPTW &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20.3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14.3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -6.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.70 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.54 (0.4, 0.74) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Ever vs. Never &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; IPTW + IPCW &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 21.1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 21.7 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.7 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.03 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.92 (0.67, 1.25) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Time-varying cancer &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Unadjusted &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19.4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18.8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.97 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.98 (0.73, 1.32) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Time-varying cancer &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; IPTW &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18.3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 23.1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4.9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.27 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.37 (0.91, 2.05) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Time-varying cancer &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; IPTW + IPCW &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 29.1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.53 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.6 (1.05, 2.43) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Time to cancer &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; IPTW &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19.5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18.5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -1.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.96 (0.7, 1.31) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Time to cancer &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; IPTW + IPCW &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20.3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 21.9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.7 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.08 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.07 (0.77, 1.49) &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+### Extreme scenarios of independency
+
+
+&lt;img src="index_files/figure-html/unnamed-chunk-9-1.png" width="1008" style="display: block; margin: auto;" /&gt;
+
+---
+
+&lt;table class="table" style="margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Proxy &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; model &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; cancer_v=0 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; cancer_v=1 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; rd &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; rr &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Time-varying cancer &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Lower bound &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9.4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -5.6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.63 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Time-varying cancer &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; IPTW &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18.3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 23.1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4.9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.27 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Time-varying cancer &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Upper bound &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 42.2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 90.6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48.4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2.15 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Time to cancer &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Lower bound &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16.9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5.7 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -11.2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.34 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Time to cancer &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; IPTW + IPCW &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20.3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 21.9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.7 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.08 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Time to cancer &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Upper bound &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 41.1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 93.8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 52.7 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2.28 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+### Causes of death
+
+&lt;img src="index_files/figure-html/unnamed-chunk-11-1.png" width="1008" style="display: block; margin: auto;" /&gt;
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightLanguage": ["r", "css"],
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -57,7 +57,7 @@ causes_death_dementia <- count_dementia_death %>%
   mutate(category = str_to_title(category)) %>% 
   mutate(outcome_plr = ifelse(outcome_plr == 0, "Had no dementia diagnosis", "Had dementia diagnosis"),
          category = as_factor(category),
-         category = fct_reorder(category, prop),
+         # category = fct_reorder(category, prop),
          outcome_plr = as_factor(outcome_plr)) %>% 
   ggplot(aes(outcome_plr, prop, fill = category)) +
   geom_col() +
