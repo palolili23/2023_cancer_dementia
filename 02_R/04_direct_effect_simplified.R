@@ -185,7 +185,7 @@ cancer_ever_km <-
     cluster = id
   )
 
-plot_km(cancer_ever_km, "Risk of dementia, ever vs. never") +
+plot_1b <- plot_km(cancer_ever_km, "Risk of dementia, ever vs. never") +
   labs(subtitle = "IPTW")
 
 cancer_ever_cox <-
@@ -212,8 +212,8 @@ cancer_ever_km_ipcw <-
     cluster = id
   )
 
-plot_km(cancer_ever_km_ipcw, "Direct effect") +
-  labs(subtitle = "With IPCW for death")
+plot_1c <- plot_km(cancer_ever_km_ipcw, "Risk of dementia, ever vs. never") +
+  labs(subtitle = "IPTW + IPCW")
 
 cancer_ever_cox_ipcw <-
   coxph(
@@ -375,7 +375,7 @@ km_tv_iptw <- survfit(Surv(
 
 # plot(km_iptw)
 
-plot_km(km_tv_iptw, "Risk of dementia, Time-varying cancer") + 
+plot_2b <- plot_km(km_tv_iptw, "Risk of dementia, Time-varying cancer") + 
   labs(subtitle = "IPTW")
 
 cox_tv_iptw <- coxph(Surv(
@@ -398,8 +398,8 @@ km_tv_ipcw <- survfit(Surv(
 
 # plot(km_ipcw)
 
-plot_km(km_tv_ipcw, "Risk of dementia, time-varying cancer") + 
-  labs(subtitle = "With IPTW, conditional censoring on time-v")
+plot_2c <- plot_km(km_tv_ipcw, "Risk of dementia, time-varying cancer") + 
+  labs(subtitle = "IPTW + IPCW")
 
 cox_tv_ipcw <- coxph(Surv(
   tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
@@ -548,8 +548,8 @@ km_t2cancer_iptw <- survfit(Surv(
   tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
   data = data_long, cluster = id, weights = sw_t2cancer_t)
 
-plot_km(km_t2cancer_iptw, "Risk of dementia") + 
-  labs(subtitle = "IPTW for time to cancer")
+plot_3a <- plot_km(km_t2cancer_iptw, "Risk of dementia, time to cancer") + 
+  labs(subtitle = "IPTW")
 
 
 cox_t2cancer_iptw <- coxph(Surv(
@@ -573,8 +573,8 @@ cox_t2cancer_ipcw <- coxph(Surv(
   tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
   data = data_long, cluster = id, weights = sw_both2)
 
-plot_km(km_t2cancer_ipcw, "Direct effect") + 
-  labs(subtitle = "With IPTW, conditional censoring on time-v")
+plot_3b <- plot_km(km_t2cancer_ipcw, "Risk of dementia, time to cancer") + 
+  labs(subtitle = "IPTW + IPCW")
 
 hr_3b <- cox_t2cancer_ipcw %>% 
   tidy_hr() %>% 
@@ -647,7 +647,7 @@ export(table_results, here::here("02_R", "table_results.csv"))
 
 ## Bounds
 
-bounds_tv_cancer <- bind_rows(rd_2b, rd_2d, rd_2e) %>% 
+bounds_tv_cancer <- bind_rows(rd_2c, rd_2d, rd_2e) %>% 
   select(model, everything()) %>% 
   arrange(rd) %>% 
   mutate(Proxy = "Time-varying cancer")
