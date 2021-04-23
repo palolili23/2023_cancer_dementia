@@ -1,0 +1,24 @@
+\documentclass[tikz]{standalone}
+\usepackage{amsmath}
+\usetikzlibrary{matrix}
+%% EXTRA_TIKZ_PREAMBLE_CODE %%
+\begin{document}
+%% TIKZ_CODE %%
+\usetikzlibrary{arrows}
+\begin{tikzpicture}[node distance=2cm, auto,>=latex, scale = 0.5]
+\node (p) {$P$};
+\node [below of = p, yshift = 1cm, xshift = -1cm](l) {$L$};
+\node [above of = p, yshift = -1cm](pstar) {$P^*$};
+\node [right of = p] (d) {$D_{t}$};
+\node [right of = d] (y) {$Y_{t+1}$};
+\node [below of = d, yshift = 1cm, xshift = +1cm](c) {$C$};
+\draw[->, violet] (p) -- (pstar);
+\draw[->] (p) -- (d);
+\draw[bold, ->] (d) -- (y);
+\draw[->] (l) -- (p);
+\draw[->] (l) -- (y);
+\draw[->] (c) -- (d);
+\draw[->] (c) -- (y);
+\draw[->, violet] (p) to [out=45,in=135, looseness=0.4] (y);
+\end{tikzpicture}
+\end{document}

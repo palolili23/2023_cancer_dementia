@@ -1,0 +1,586 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.4.12)  23 APR 2021 11:38
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**tikz16c45484f02.tex
+(./tikz16c45484f02.tex
+LaTeX2e <2020-10-01> patch level 4
+L3 programming layer <2021-02-18>
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/standalone/standa
+lone.cls
+Document Class: standalone 2018/03/26 v1.3a Class to compile TeX sub-files stan
+dalone
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/shellesc.st
+y
+Package: shellesc 2019/11/08 v1.0c unified shell escape interface for LaTeX
+Package shellesc Info: Restricted shell escape enabled on input line 77.
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/iftex/ifluatex.
+sty
+Package: ifluatex 2019/10/25 v1.5 ifluatex legacy package. Use iftex instead.
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/iftex/iftex.sty
+Package: iftex 2020/03/06 v1.0d TeX engine tests
+))
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/xkeyval/xkeyval.s
+ty
+Package: xkeyval 2020/11/20 v2.8 package option processing (HA)
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/xkeyval/xkeyval
+.tex
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/xkeyval/xkvutil
+s.tex
+\XKV@toks=\toks15
+\XKV@tempa@toks=\toks16
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/xkeyval/keyval.
+tex))
+\XKV@depth=\count179
+File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
+))
+\sa@internal=\count180
+\c@sapage=\count181
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/standalone/standa
+lone.cfg
+File: standalone.cfg 2018/03/26 v1.3a Default configuration file for 'standalon
+e' class
+) (c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/article.cl
+s
+Document Class: article 2020/04/10 v1.4m Standard LaTeX document class
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2020/04/10 v1.4m Standard LaTeX file (size option)
+)
+\c@part=\count182
+\c@section=\count183
+\c@subsection=\count184
+\c@subsubsection=\count185
+\c@paragraph=\count186
+\c@subparagraph=\count187
+\c@figure=\count188
+\c@table=\count189
+\abovecaptionskip=\skip47
+\belowcaptionskip=\skip48
+\bibindent=\dimen138
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/pgf/frontendlayer
+/tikz.sty
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/pgf/basiclayer/pg
+f.sty
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/pgf/utilities/pgf
+rcs.sty
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/utilities/p
+gfutil-common.tex
+\pgfutil@everybye=\toks17
+\pgfutil@tempdima=\dimen139
+\pgfutil@tempdimb=\dimen140
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/utilities/p
+gfutil-common-lists.tex))
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/utilities/p
+gfutil-latex.def
+\pgfutil@abb=\box47
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/utilities/p
+gfrcs.code.tex
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/pgf.revisio
+n.tex)
+Package: pgfrcs 2020/12/27 v3.1.8b (3.1.8b)
+))
+Package: pgf 2020/12/27 v3.1.8b (3.1.8b)
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/pgf/basiclayer/pg
+fcore.sty
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/graphicx
+.sty
+Package: graphicx 2020/09/09 v1.2b Enhanced LaTeX Graphics (DPC,SPQR)
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/graphics
+.sty
+Package: graphics 2020/08/30 v1.4c Standard LaTeX Graphics (DPC,SPQR)
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-cfg/grap
+hics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 105.
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-def/pdft
+ex.def
+File: pdftex.def 2020/10/05 v1.2a Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen141
+\Gin@req@width=\dimen142
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/pgf/systemlayer/p
+gfsys.sty
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/systemlayer
+/pgfsys.code.tex
+Package: pgfsys 2020/12/27 v3.1.8b (3.1.8b)
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/utilities/p
+gfkeys.code.tex
+\pgfkeys@pathtoks=\toks18
+\pgfkeys@temptoks=\toks19
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/utilities/p
+gfkeysfiltered.code.tex
+\pgfkeys@tmptoks=\toks20
+))
+\pgf@x=\dimen143
+\pgf@y=\dimen144
+\pgf@xa=\dimen145
+\pgf@ya=\dimen146
+\pgf@xb=\dimen147
+\pgf@yb=\dimen148
+\pgf@xc=\dimen149
+\pgf@yc=\dimen150
+\pgf@xd=\dimen151
+\pgf@yd=\dimen152
+\w@pgf@writea=\write3
+\r@pgf@reada=\read2
+\c@pgf@counta=\count190
+\c@pgf@countb=\count191
+\c@pgf@countc=\count192
+\c@pgf@countd=\count193
+\t@pgf@toka=\toks21
+\t@pgf@tokb=\toks22
+\t@pgf@tokc=\toks23
+\pgf@sys@id@count=\count194
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/systemlayer
+/pgf.cfg
+File: pgf.cfg 2020/12/27 v3.1.8b (3.1.8b)
+)
+Driver file for pgf: pgfsys-pdftex.def
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/systemlayer
+/pgfsys-pdftex.def
+File: pgfsys-pdftex.def 2020/12/27 v3.1.8b (3.1.8b)
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/systemlayer
+/pgfsys-common-pdf.def
+File: pgfsys-common-pdf.def 2020/12/27 v3.1.8b (3.1.8b)
+)))
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/systemlayer
+/pgfsyssoftpath.code.tex
+File: pgfsyssoftpath.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+\pgfsyssoftpath@smallbuffer@items=\count195
+\pgfsyssoftpath@bigbuffer@items=\count196
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/systemlayer
+/pgfsysprotocol.code.tex
+File: pgfsysprotocol.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+))
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-cfg/colo
+r.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
+Package xcolor Info: Model `RGB' extended on input line 1364.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/
+pgfcore.code.tex
+Package: pgfcore 2020/12/27 v3.1.8b (3.1.8b)
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmat
+h.code.tex
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmat
+hcalc.code.tex
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmat
+hutil.code.tex)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmat
+hparser.code.tex
+\pgfmath@dimen=\dimen153
+\pgfmath@count=\count197
+\pgfmath@box=\box48
+\pgfmath@toks=\toks24
+\pgfmath@stack@operand=\toks25
+\pgfmath@stack@operation=\toks26
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmat
+hfunctions.code.tex
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmat
+hfunctions.basic.code.tex)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmat
+hfunctions.trigonometric.code.tex)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmat
+hfunctions.random.code.tex)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmat
+hfunctions.comparison.code.tex)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmat
+hfunctions.base.code.tex)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmat
+hfunctions.round.code.tex)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmat
+hfunctions.misc.code.tex)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmat
+hfunctions.integerarithmetics.code.tex)))
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmat
+hfloat.code.tex
+\c@pgfmathroundto@lastzeros=\count198
+))
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfint
+.code.tex)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/
+pgfcorepoints.code.tex
+File: pgfcorepoints.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+\pgf@picminx=\dimen154
+\pgf@picmaxx=\dimen155
+\pgf@picminy=\dimen156
+\pgf@picmaxy=\dimen157
+\pgf@pathminx=\dimen158
+\pgf@pathmaxx=\dimen159
+\pgf@pathminy=\dimen160
+\pgf@pathmaxy=\dimen161
+\pgf@xx=\dimen162
+\pgf@xy=\dimen163
+\pgf@yx=\dimen164
+\pgf@yy=\dimen165
+\pgf@zx=\dimen166
+\pgf@zy=\dimen167
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/
+pgfcorepathconstruct.code.tex
+File: pgfcorepathconstruct.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+\pgf@path@lastx=\dimen168
+\pgf@path@lasty=\dimen169
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/
+pgfcorepathusage.code.tex
+File: pgfcorepathusage.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+\pgf@shorten@end@additional=\dimen170
+\pgf@shorten@start@additional=\dimen171
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/
+pgfcorescopes.code.tex
+File: pgfcorescopes.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+\pgfpic=\box49
+\pgf@hbox=\box50
+\pgf@layerbox@main=\box51
+\pgf@picture@serial@count=\count199
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/
+pgfcoregraphicstate.code.tex
+File: pgfcoregraphicstate.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+\pgflinewidth=\dimen172
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/
+pgfcoretransformations.code.tex
+File: pgfcoretransformations.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+\pgf@pt@x=\dimen173
+\pgf@pt@y=\dimen174
+\pgf@pt@temp=\dimen175
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/
+pgfcorequick.code.tex
+File: pgfcorequick.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/
+pgfcoreobjects.code.tex
+File: pgfcoreobjects.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/
+pgfcorepathprocessing.code.tex
+File: pgfcorepathprocessing.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/
+pgfcorearrows.code.tex
+File: pgfcorearrows.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+\pgfarrowsep=\dimen176
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/
+pgfcoreshade.code.tex
+File: pgfcoreshade.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+\pgf@max=\dimen177
+\pgf@sys@shading@range@num=\count266
+\pgf@shadingcount=\count267
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/
+pgfcoreimage.code.tex
+File: pgfcoreimage.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/
+pgfcoreexternal.code.tex
+File: pgfcoreexternal.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+\pgfexternal@startupbox=\box52
+))
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/
+pgfcorelayers.code.tex
+File: pgfcorelayers.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/
+pgfcoretransparency.code.tex
+File: pgfcoretransparency.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/
+pgfcorepatterns.code.tex
+File: pgfcorepatterns.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/
+pgfcorerdf.code.tex
+File: pgfcorerdf.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+)))
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/modules/pgf
+moduleshapes.code.tex
+File: pgfmoduleshapes.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+\pgfnodeparttextbox=\box53
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/modules/pgf
+moduleplot.code.tex
+File: pgfmoduleplot.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/pgf/compatibility
+/pgfcomp-version-0-65.sty
+Package: pgfcomp-version-0-65 2020/12/27 v3.1.8b (3.1.8b)
+\pgf@nodesepstart=\dimen178
+\pgf@nodesepend=\dimen179
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/pgf/compatibility
+/pgfcomp-version-1-18.sty
+Package: pgfcomp-version-1-18 2020/12/27 v3.1.8b (3.1.8b)
+))
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/pgf/utilities/pgf
+for.sty
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/pgf/utilities/pgf
+keys.sty
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/utilities/p
+gfkeys.code.tex))
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/pgf/math/pgfmath.
+sty
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmat
+h.code.tex))
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/utilities/p
+gffor.code.tex
+Package: pgffor 2020/12/27 v3.1.8b (3.1.8b)
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmat
+h.code.tex)
+\pgffor@iter=\dimen180
+\pgffor@skip=\dimen181
+\pgffor@stack=\toks27
+\pgffor@toks=\toks28
+))
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/frontendlay
+er/tikz/tikz.code.tex
+Package: tikz 2020/12/27 v3.1.8b (3.1.8b)
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/libraries/p
+gflibraryplothandlers.code.tex
+File: pgflibraryplothandlers.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+\pgf@plot@mark@count=\count268
+\pgfplotmarksize=\dimen182
+)
+\tikz@lastx=\dimen183
+\tikz@lasty=\dimen184
+\tikz@lastxsaved=\dimen185
+\tikz@lastysaved=\dimen186
+\tikz@lastmovetox=\dimen187
+\tikz@lastmovetoy=\dimen188
+\tikzleveldistance=\dimen189
+\tikzsiblingdistance=\dimen190
+\tikz@figbox=\box54
+\tikz@figbox@bg=\box55
+\tikz@tempbox=\box56
+\tikz@tempbox@bg=\box57
+\tikztreelevel=\count269
+\tikznumberofchildren=\count270
+\tikznumberofcurrentchild=\count271
+\tikz@fig@count=\count272
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/modules/pgf
+modulematrix.code.tex
+File: pgfmodulematrix.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+\pgfmatrixcurrentrow=\count273
+\pgfmatrixcurrentcolumn=\count274
+\pgf@matrix@numberofcolumns=\count275
+)
+\tikz@expandcount=\count276
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/frontendlay
+er/tikz/libraries/tikzlibrarytopaths.code.tex
+File: tikzlibrarytopaths.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+)))
+\sa@box=\box58
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsmath.s
+ty
+Package: amsmath 2020/09/23 v2.17i AMS math features
+\@mathmargin=\skip49
+For additional information on amsmath, use the `?' option.
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amstext.s
+ty
+Package: amstext 2000/06/29 v2.01 AMS text
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsgen.st
+y
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks29
+\ex@=\dimen191
+))
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsbsy.st
+y
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen192
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsopn.st
+y
+Package: amsopn 2016/03/08 v2.02 operator names
+)
+\inf@bad=\count277
+LaTeX Info: Redefining \frac on input line 234.
+\uproot@=\count278
+\leftroot@=\count279
+LaTeX Info: Redefining \overline on input line 399.
+\classnum@=\count280
+\DOTSCASE@=\count281
+LaTeX Info: Redefining \ldots on input line 496.
+LaTeX Info: Redefining \dots on input line 499.
+LaTeX Info: Redefining \cdots on input line 620.
+\Mathstrutbox@=\box59
+\strutbox@=\box60
+\big@size=\dimen193
+LaTeX Font Info:    Redeclaring font encoding OML on input line 743.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
+\macc@depth=\count282
+\c@MaxMatrixCols=\count283
+\dotsspace@=\muskip16
+\c@parentequation=\count284
+\dspbrk@lvl=\count285
+\tag@help=\toks30
+\row@=\count286
+\column@=\count287
+\maxfields@=\count288
+\andhelp@=\toks31
+\eqnshift@=\dimen194
+\alignsep@=\dimen195
+\tagshift@=\dimen196
+\tagwidth@=\dimen197
+\totwidth@=\dimen198
+\lineht@=\dimen199
+\@envbody=\toks32
+\multlinegap=\skip50
+\multlinetaggap=\skip51
+\mathdisplay@stack=\toks33
+LaTeX Info: Redefining \[ on input line 2923.
+LaTeX Info: Redefining \] on input line 2924.
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/frontendlay
+er/tikz/libraries/tikzlibrarymatrix.code.tex
+File: tikzlibrarymatrix.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3backend/l3backe
+nd-pdftex.def
+File: l3backend-pdftex.def 2021-03-18 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count289
+\l__pdf_internal_box=\box61
+)
+No file tikz16c45484f02.aux.
+\openout1 = `tikz16c45484f02.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 5.
+LaTeX Font Info:    ... okay on input line 5.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 5.
+LaTeX Font Info:    ... okay on input line 5.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 5.
+LaTeX Font Info:    ... okay on input line 5.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 5.
+LaTeX Font Info:    ... okay on input line 5.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 5.
+LaTeX Font Info:    ... okay on input line 5.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 5.
+LaTeX Font Info:    ... okay on input line 5.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 5.
+LaTeX Font Info:    ... okay on input line 5.
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/epstopdf-pkg/epst
+opdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/infwarerr/infwa
+rerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/grfext/grfext.sty
+Package: grfext 2019/12/03 v1.3 Manage graphics extensions (HO)
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/kvdefinekeys/kv
+definekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+))
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/kvoptions/kvoptio
+ns.sty
+Package: kvoptions 2020-10-07 v3.14 Key value format for package options (HO)
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/ltxcmds/ltxcmds
+.sty
+Package: ltxcmds 2020-05-10 v1.25 LaTeX kernel commands for general use (HO)
+)
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/kvsetkeys/kvset
+keys.sty
+Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
+))
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pdftexcmds/pdft
+excmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+Package grfext Info: Graphics extension search list:
+(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 504.
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/latexconfig/epsto
+pdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/frontendlay
+er/tikz/libraries/tikzlibraryarrows.code.tex
+File: tikzlibraryarrows.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+
+(c:/Users/040609/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pgf/libraries/p
+gflibraryarrows.code.tex
+File: pgflibraryarrows.code.tex 2020/12/27 v3.1.8b (3.1.8b)
+\arrowsize=\dimen256
+))
+
+! Package pgf Error: No shape named `pstar' is known.
+
+See the pgf package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.13 \draw[->, violet] (p) -- (pstar)
+                                     ; 
+Here is how much of TeX's memory you used:
+ 13366 strings out of 480954
+ 279726 string characters out of 5905582
+ 520498 words of memory out of 5000000
+ 30358 multiletter control sequences out of 15000+600000
+ 403884 words of font info for 29 fonts, out of 8000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 128i,7n,130p,420b,609s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+!  ==> Fatal error occurred, no output PDF file produced!
