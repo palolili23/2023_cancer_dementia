@@ -108,8 +108,7 @@ tidy_hr <- function(model) {
   broom::tidy(exponentiate = TRUE, conf.int = TRUE) %>%
     select(term, estimate, contains("conf")) %>% 
     mutate_at(c(2:4), round, 2) %>% 
-    select(-1, hr = estimate) %>% 
-    mutate(hr = paste0(hr, " (", conf.low, ", ", conf.high, ")"))
+    select(-1, point = estimate)
 }
 
 
