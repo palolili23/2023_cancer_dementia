@@ -177,11 +177,13 @@ risks_boot_long <- function(data_long, n, seed, crude = TRUE, ipcw = FALSE){
 # Results -----------------------------------------------------------------
 
 point_km_crude <- km_tv(data_long, crude = TRUE)
+point_km_crude$conf <- "point"
 
 point_km_iptw <- km_tv(data_long, crude = FALSE, ipcw = FALSE)
+point_km_iptw$conf <- "point"
 
 point_km_ipcw <- km_tv(data_long, crude = FALSE, ipcw = TRUE)
-
+point_km_ipcw$conf <- "point"
 
 boots_km_crude <- risks_boot_long(data_long, seed = 123, n = 100, crude = TRUE, ipcw = FALSE)
 
@@ -197,3 +199,9 @@ boots_km_ipcw <- risks_boot_long(data_long, seed = 123, n = 100, crude = FALSE, 
 boots_km_ipcw$conf <- c("conf.low", "conf.higher")
 boots_km_ipcw$model <- "IPTW + IPCW"
 
+
+rd_results_tv <- bind_rows(point_km_crude, point_km_iptw, point_km_ipcw) %>%
+  bind_rows(boots_km_crude, boots_km_iptw, boots_km_ipcw) %>%
+  mutate(Proxy = "Time-varing")
+
+export(rd_results_tv, here::here("02_R", "rd_results_tv.csv"))

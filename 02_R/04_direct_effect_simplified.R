@@ -234,10 +234,8 @@ hr_1c <- cancer_ever_cox_ipcw %>%
 rd_1c <- risks_km(cancer_ever_km_ipcw) %>%
   mutate(model = "IPTW + IPCW")
 
-results_ever_never <- bind_rows(hr_1a, hr_1b, hr_1c) %>% 
-  left_join(bind_rows(rd_1a, rd_1b, rd_1c)) %>% 
-  mutate(Proxy = "Ever vs. Never") %>% 
-  select(Proxy, model, starts_with("cancer"), rd, rr, hr) 
+hr_ever_never <- bind_rows(hr_1a, hr_1b, hr_1c) %>% 
+  mutate(Proxy = "Ever vs. Never") 
 
 
 # 1.d. Lower bound --------------------------------------------------------
@@ -444,10 +442,8 @@ hr_2c <- cox_tv_ipcw %>%
 rd_2c <- risks_km(km_tv_ipcw) %>% 
     mutate(model = "IPTW + IPCW")
 
-results_tv_cancer <- bind_rows(hr_2a, hr_2b, hr_2c) %>% 
-  left_join(bind_rows(rd_2a, rd_2b, rd_2c)) %>% 
-  mutate(Proxy = "Time-varying cancer") %>% 
-  select(Proxy, model, starts_with("cancer"), rd, rr, hr)
+hr_timevar <- bind_rows(hr_2a, hr_2b, hr_2c) %>% 
+  mutate(Proxy = "Time-varying cancer")
 
 #  2.d. Lower bound ------------------------------------------------------------
 
@@ -603,10 +599,9 @@ hr_3b <- cox_t2cancer_ipcw %>%
 rd_3b <- risks_km(km_t2cancer_ipcw) %>% 
   mutate(model = "IPTW + IPCW")
 
-results_t2cancer <- bind_rows(hr_3a, hr_3b) %>% 
-  left_join(bind_rows(rd_3a, rd_3b)) %>% 
-  mutate(Proxy = "Time to cancer") %>% 
-  select(Proxy, model, starts_with("cancer"), rd, rr, hr)
+hr_t2cancer <- bind_rows(hr_3a, hr_3b) %>% 
+  mutate(Proxy = "Time to cancer") 
+
 
 # 3.c. Lower bound ------------------------------------------------------------------
 
@@ -647,9 +642,9 @@ rd_3d  <- km_t2cancer_ipcw_up_bound %>%
 
 # 4. All results ----------------------------------------------------------
 
-table_results <- bind_rows(results_ever_never, results_tv_cancer, results_t2cancer)
+hr_results <- bind_rows(hr_ever_never, hr_timevar, hr_t2cancer)
 
-export(table_results, here::here("02_R", "table_results.csv"))
+export(hr_results, here::here("02_R", "hr_results.csv"))
 
 
 ## Bounds
@@ -673,3 +668,8 @@ table_results_bounds <- bind_rows(bounds_ever_cancer, bounds_tv_cancer, bounds_t
   select(Proxy, everything())
 
 export(table_results_bounds, here::here("02_R", "table_results_bounds.csv"))
+
+plots <- list(
+  plot_1b, plot_1c, plot_2b, plot_2c, plot_3a, plot_3b)
+
+save(plots, file = here::here("03_figs", "plots.RData"))

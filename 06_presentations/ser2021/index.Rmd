@@ -27,12 +27,33 @@ library(splines)
 library(knitr)
 library(kableExtra)
 
-source(here::here("02_R", "04_direct_effect_simplified.R"))
+load(here::here("03_figs", "plots.RData"))
 source(here::here("02_R", "05_plots.R"))
-source(here::here("02_R", "05b_plot_causes_death.R"))
-table_results <- rio::import(here::here("02_R", "table_results.csv"))
-table_results_bounds <- rio::import(here::here("02_R", "table_results_bounds.csv"))
+hr_results <- rio::import(here::here("02_R", "hr_results.csv"))
+rd_results_ever <- rio::import(here::here("02_R", "rd_results_ever.csv"))
+rd_results_tv <- rio::import(here::here("02_R", "rd_results_tv.csv"))
+table_results_bounds <- rio::import(here::here("02_R", "table_results_bounds.csv")) %>% 
+  select(1,2,rr) %>% 
+  filter(Proxy != "Time to cancer",
+         model != "IPTW + IPCW") %>% 
+  pivot_wider(names_from = model, values_from = rr)
 
+rr <- rd_results_ever %>%
+  bind_rows(rd_results_tv) %>% 
+  select(Proxy, model, rr, conf) %>% 
+  pivot_wider(names_from = conf,
+              values_from = rr) %>% 
+  mutate(contrast = "Risk Ratio") %>% 
+  rename(conf.high = conf.higher) %>% 
+  mutate(Proxy = str_replace(Proxy, "Time-varing", "Time-varying"))
+
+results <- hr_results %>% 
+  mutate(contrast = "Hazard Ratio") %>%
+  filter(Proxy != "Time to cancer") %>%
+  mutate(Proxy = ifelse(
+    Proxy == "Ever vs. Never", "Ever vs. never", "Time-varying")) %>% 
+  bind_rows(rr) %>% 
+  mutate(Proxy = str_to_sentence(Proxy))
 ```
 
 ```{r xaringan-themer, include=FALSE}
@@ -63,23 +84,23 @@ class: center, middle
 **Epidemiology department**]
 
 ---
-## Introduction
+### Introduction
 
 <br><br>
 
-- Observational studies have found an inverse association between cancer and the risk of Alzheimer´s disease or related dementias (ADRD).
+- Observational studies have found an inverse association between cancer and dementia risk.
 
 --
 
-- To understand the potential sources of bias we first need to define the causal question.
+- Several genetic and molecular mechanisms have been proposed.
 
 --
 
-- Refining the underlying question behind cancer diagnosis as the exposure unveils some of these concerns.
+- Researchers have raised concerns related to measurement error, unmeasured confounding and selection bias.
 
 ---
 
-### Pin1-targeting drug
+### Introduction
 
 ```{tikz, echo = FALSE}
 \usetikzlibrary{arrows}
@@ -108,10 +129,7 @@ class: center, middle
 \end{tikzpicture}
 ```
 
-$P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis
-
-???
-In hypothetical setting, if Pin1-targeting drug was developed, the best way to understand its effect on dementia risk would be to do a randomized trial in which we randomize eligible participants in late midlife to receive this drug or not, and closely monitor ADRD over follow-up.
+$P_0$ = Pin1 targeted-drug; $Y_{t+1}$ = Dementia diagnosis
 
 ---
 ### Pin1 expression as biomarker (Problem 1: _Confounding_)
@@ -151,7 +169,7 @@ We might be closer to developing biomarker for Pin1 expression in the future. So
 Since this would be a observational setting, Pin1 expression and ADRD at time may share causes such as smoking, and that assessing the causal relationship requires adjusting for these confounders.
 
 ---
-### Cancer diagnosis as the proxy of Pin1 biomarker (Problem 2: _Time zero_)
+### Cancer diagnosis as the proxy of Pin1 (Problem 2: _Time zero_)
 
 ```{tikz, echo = FALSE}
 \usetikzlibrary{arrows}
@@ -324,11 +342,15 @@ $P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $D_{t+1}$ = Death 
 
 --
 
-- Data on cancer diagnosis, dementia diagnosis and death was collected from national registries and electronical clinical records.
+- Data on cancer diagnosis, dementia diagnosis and death was collected from national registries and clinical records.
 
 --
 
-- Cancer as _"time-fixed ever vs. never"_ vs. cancer as a _time-varying proxy_ 
+- Cancer:
+
+  + _Time-fixed ever vs. never_
+  
+  + _Time-varying_
 
 ---
 ## Application to the Rotterdam Study
@@ -346,13 +368,19 @@ $P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $D_{t+1}$ = Death 
 
 --
 
-- Risk of dementia is estimated with a weighted Kaplan-Meier estimator.
+- Risk of dementia and risk ratios are estimated with a weighted Kaplan-Meier estimator.
+
+--
+
+- Hazard ratios are estimated with a weighted Cox Proportional-Hazards Model for comparative purposes.
 
 ---
-### Peterson upper and lower bounds
+### Bounds 
 
+<br><br>
 
 - **1) Lower Bound**: Total independence, that refers to an scenario were those who died would never develop dementia (Death as competing event)
+
 --
 
 - **2) Upper Bound**: Complete dependency, that refers to an scenario where those who died would have dementia prior to death (Composite outcome, death + dementia)
@@ -361,127 +389,155 @@ $P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $D_{t+1}$ = Death 
 ### Results
 
 .center[
-```{r, echo = FALSE, fig.retina = 3}
+```{r, echo = FALSE, fig.width= 14, fig.retina=3}
 plot_distribution +
-    theme_xaringan()
+  theme(legend.position = "right",
+        title = element_text(face = "bold", size = rel(1.5), color = "#011A5E"),
+        axis.title.x = element_text(face = "bold", size = rel(1.5), color = "#011A5E")) +
+  labs(title = "Proportion of participants in each status")
 ```
-
-In the cancer arm 6% had dementia and 63% died, in the free of cancer arm 14% had dementia and 23% died.
-
-]
-
----
-### Cancer as time-fixed ever vs. never proxy
-
-.pull-left[
-```{r}
-plot_1b
-```
-
-]
-
---
-
-.pull-right[
-```{r}
-plot_1c
-```
-
 ]
 
 ---
 
-### Cancer diagnosis as time-varying proxy
-
-.pull-left[
-```{r}
-plot_2b
-```
-
-]
-
---
-
-.pull-right[
-```{r}
-plot_2c
-```
-
-]
----
 ### Results
 
-<br>
-
-.center[
-```{r, echo = FALSE}
-tb <- table_results %>%
-  filter(model != "Unadjusted") %>%
-  select(-c(3, 4, 5)) %>%
-  rename(RR = rr, `HR (95%CI)` = hr) %>% 
-  filter(Proxy != "Time to cancer")
-
-tb %>% kbl() %>%
-kable_styling(bootstrap_options = c("striped", "hover"))
-```
-]
----
-
-### Extreme scenarios of independency between death and dementia
-
 .pull-left[
-```{r, echo = FALSE}
-table_results_bounds %>%
-  select(-3, -4, - 6) %>%
-    pivot_wider(names_from = c(model),
-              values_from = rd) %>%
-  ggplot(aes(
-    y = Proxy,
-    x = `IPTW + IPCW`,
-    xmin = `Lower bound`,
-    xmax = `Upper bound`
-  )) +
-  geom_vline(xintercept = 0,
-             color = "#E69F00",
-             size = 1.2) +
-  geom_pointrange(shape = 15,
-                  color = "#0072B2") +
-  geom_errorbar(width = 0.2, color = "#0072B2") +
-  labs(x = "Risk difference",
-       y = NULL) +
-  theme_xaringan()
-```
-]
+```{r, echo = FALSE, fig.retina = 3}
+temp <-
+  table_results_bounds %>% slice(1) %>% mutate(model = "IPTW + IPCW", contrast = "Risk Ratio") %>% 
+  rename(conf.low = `Lower bound`, conf.high = `Upper bound`)
 
---
-
-.pull-right[
-```{r, echo = FALSE}
-table_results_bounds %>%
-  select(-3, -4, - 5) %>%
-    pivot_wider(names_from = c(model),
-              values_from = rr) %>%
+results %>%
+  filter(Proxy == "Ever vs. never") %>%
+  mutate(model = fct_relevel(model, c("Unadjusted", "IPTW", "IPTW + IPCW"))) %>%
   ggplot(aes(
-    y = Proxy,
-    x = `IPTW + IPCW`,
-    xmin = `Lower bound`,
-    xmax = `Upper bound`
+    y = contrast,
+    x = point,
+    xmin = conf.low,
+    xmax = conf.high
   )) +
   geom_vline(xintercept = 1,
              color = "#E69F00",
              size = 1.2) +
-  geom_pointrange(shape = 15,
-                  color = "#0072B2") +
-  geom_errorbar(width = 0.2, color = "#0072B2") +
-  labs(x = "Risk Ratio",
-       y = NULL) +
-   scale_x_continuous(
-    trans = "log10",
-    # breaks = seq(0.7, 1.2, by = 0.1)
+  geom_pointrange(aes(shape = contrast), color = "#0072B2") +
+  geom_errorbar(aes(group = contrast),
+                width = 0.2,
+                color = "#0072B2") +
+  geom_point(
+    data = temp,
+    aes(x = conf.low),
+    shape = 18,
+    color = "#011A5E",
+    size = 3
   ) +
-  theme_xaringan()
+  geom_point(
+    data = temp,
+    aes(x = conf.high),
+    shape = 18,
+    color = "#011A5E",
+    size = 3
+  ) +
+  facet_grid(factor(model, levels = c("Unadjusted", "IPTW", "IPTW + IPCW")) ~
+                 ., switch = "y") +
+  # facet_grid(model ~., switch = "y", margins = FALSE) +
+  scale_x_continuous(trans = "log10") +
+  labs(
+    x = NULL,
+    y = NULL,
+    group = NULL,
+    shape = NULL,
+    title = "Cancer as ever vs. never",
+    subtitle = "Risk ratios \U25B2, Hazard ratios \U25CF, Bounds \U25C6" ) +
+  theme(
+    panel.spacing = unit(0, "lines"),
+    panel.background = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    strip.text.y = element_text(
+      face = "bold",
+      size = rel(1.5),
+      color = "#011A5E"
+    ),
+    axis.line.x = element_line(color = "#011A5E"),
+    axis.text.x = element_text(size = rel(1.5), color = "#011A5E"),
+    strip.background = element_blank(),
+    plot.title = element_text(face = "bold", size = rel(2), color = "#011A5E"),
+    plot.subtitle = element_text(face = "bold", size = rel(1.5), color = "#011A5E", hjust = 0.05),
+    legend.position = "none")
+
 ```
+
 ]
+
+--
+
+.pull-right[
+```{r, echo = FALSE, fig.retina = 3}
+temp <-
+  table_results_bounds %>% slice(2) %>% mutate(model = "IPTW + IPCW", contrast = "Risk Ratio") %>% 
+  rename(conf.low = `Lower bound`, conf.high = `Upper bound`)
+
+results %>%
+  filter(Proxy == "Time-varying") %>%
+  mutate(model = fct_relevel(model, c("Unadjusted", "IPTW", "IPTW + IPCW"))) %>%
+  ggplot(aes(
+    y = contrast,
+    x = point,
+    xmin = conf.low,
+    xmax = conf.high
+  )) +
+  geom_vline(xintercept = 1,
+             color = "#E69F00",
+             size = 1.2) +
+  geom_pointrange(aes(shape = contrast), color = "#0072B2") +
+  geom_errorbar(aes(group = contrast),
+                width = 0.2,
+                color = "#0072B2") +
+  geom_point(
+    data = temp,
+    aes(x = conf.low),
+    shape = 18,
+    color = "#011A5E",
+    size = 3
+  ) +
+  geom_point(
+    data = temp,
+    aes(x = conf.high),
+    shape = 18,
+    color = "#011A5E",
+    size = 3
+  ) +
+  facet_grid(factor(model, levels = c("Unadjusted", "IPTW", "IPTW + IPCW")) ~
+                 ., switch = "y") +
+  scale_x_continuous(trans = "log10") +
+  labs(
+    x = NULL,
+    y = NULL,
+    group = NULL,
+    shape = NULL,
+    title = "Time-varying cancer",
+    subtitle = "Risk ratios \U25B2, Hazard ratios \U25CF, Bounds \U25C6" ) +
+  theme(
+    panel.spacing = unit(0, "lines"),
+    panel.background = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    strip.text.y = element_text(
+      face = "bold",
+      size = rel(1.5),
+      color = "#011A5E"
+    ),
+    axis.text.x = element_text(size = rel(1.5), color = "#011A5E"),
+    axis.line.x = element_line(color = "#011A5E"),
+    strip.background = element_blank(),
+    plot.title = element_text(face = "bold", size = rel(2), color = "#011A5E"),
+    plot.subtitle = element_text(face = "bold", size = rel(1.5), color = "#011A5E", hjust = 0.05),
+    legend.position = "none")
+```
+
+]
+
 
 ---
 ### Conclusions
