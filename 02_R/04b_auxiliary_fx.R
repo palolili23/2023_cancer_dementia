@@ -111,3 +111,20 @@ tidy_hr <- function(model) {
     select(-1, hr = estimate) %>% 
     mutate(hr = paste0(hr, " (", conf.low, ", ", conf.high, ")"))
 }
+
+
+lower_bound <- function(data){
+  data  %>% 
+    broom::tidy() %>% 
+    filter(state == "1") %>%
+    group_by(strata) %>% 
+    slice(n()) %>% 
+    select(estimate, strata) %>% 
+    pivot_wider(names_from = strata, values_from = estimate) %>% 
+    mutate(rd = .[[2]] - .[[1]],
+           rr = .[[2]] / .[[1]]) %>% 
+    mutate_at(c(1:3), ~.*100) %>% 
+    mutate_at(c(1:3), round, 1) %>% 
+    mutate(rr = round(rr, 2)) %>% 
+    mutate(model = "Lower bound")
+}

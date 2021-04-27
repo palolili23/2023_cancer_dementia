@@ -49,6 +49,9 @@ data_wide %<>%
   mutate(t2dem_efu =
            ifelse(t2dem >= 240, 240, t2dem))
 
+data_wide %<>%
+  mutate(combined_outcome_efu = ifelse(dementia_efu != 0, 1, 0))
+
 ## If competing_plr = 1, then outcome_plr = NA
 
 data_long %<>% 
@@ -59,6 +62,7 @@ data_long %<>%
 
 # 1.1. IPTW (cancer ever vs. never) ------------------------------------------
 
+# By hand
 # cancer_den <-
 #   glm(
 #     cancer_v ~ bs(age_0) + sex + education + apoe4 + as.factor(smoke1),
@@ -79,7 +83,7 @@ data_long %<>%
 #     w_cancer = ifelse(cancer_v == 1, p_num/p_denom, (1 - p_num)/(1- p_denom)))
 
 
-## Check standardized mean
+## Weightit package, makes nice loveplots
 
 w.out1 <-
   weightit(
@@ -234,6 +238,34 @@ results_ever_never <- bind_rows(hr_1a, hr_1b, hr_1c) %>%
   left_join(bind_rows(rd_1a, rd_1b, rd_1c)) %>% 
   mutate(Proxy = "Ever vs. Never") %>% 
   select(Proxy, model, starts_with("cancer"), rd, rr, hr) 
+
+
+# 1.d. Lower bound --------------------------------------------------------
+
+km_ever_ipcw_low_bound <- survfit(
+  Surv(
+    t2dem_efu,
+    event = as.factor(dementia_efu),
+    type = 'mstate'
+  ) ~ cancer_v,
+  data = data_wide,
+  weights = baseline_wt)
+
+rd_1d <- lower_bound(km_ever_ipcw_low_bound)
+
+# 1.e. Upper bound -------------------------------------------------------------
+
+km_ever_ipcw_up_bound <- survfit(
+  Surv(
+    t2dem_efu,
+    event = combined_outcome_efu,
+  ) ~ cancer_v,
+  data = data_wide,
+  weights = baseline_wt)
+
+rd_1e  <- km_ever_ipcw_up_bound %>% 
+  risks_km()  %>% 
+  mutate(model = "Upper bound")
 
 
 # 2. Time-varying cancer -----------------------------------------------------
@@ -432,19 +464,7 @@ km_tv_ipcw_low_bound <- survfit(
   weights = sw_cancer_t
 )
 
-rd_2d <- km_tv_ipcw_low_bound %>% 
-  broom::tidy() %>% 
-    filter(state == "1") %>%
-    group_by(strata) %>% 
-    slice(n()) %>% 
-    select(estimate, strata) %>% 
-    pivot_wider(names_from = strata, values_from = estimate) %>% 
-    mutate(rd = .[[2]] - .[[1]],
-           rr = .[[2]] / .[[1]]) %>% 
-    mutate_at(c(1:3), ~.*100) %>% 
-  mutate_at(c(1:3), round, 1) %>% 
-  mutate(rr = round(rr, 2)) %>% 
-  mutate(model = "Lower bound")
+rd_2d <- lower_bound(km_tv_ipcw_low_bound)
 
 # 2.e. Upper bound -------------------------------------------------------------
 
@@ -603,19 +623,7 @@ km_t2c_ipcw_low_bound <- survfit(
   weights = sw_t2cancer_t
 )
 
-rd_3c  <- km_t2c_ipcw_low_bound  %>% 
-  broom::tidy() %>% 
-  filter(state == "1") %>%
-  group_by(strata) %>% 
-  slice(n()) %>% 
-  select(estimate, strata) %>% 
-  pivot_wider(names_from = strata, values_from = estimate) %>% 
-  mutate(rd = .[[2]] - .[[1]],
-         rr = .[[2]] / .[[1]]) %>% 
-  mutate_at(c(1:3), ~.*100) %>% 
-  mutate_at(c(1:3), round, 1) %>% 
-  mutate(rr = round(rr, 2)) %>% 
-  mutate(model = "Lower bound")
+rd_3c  <- lower_bound(km_t2c_ipcw_low_bound)
 
 # 3.d. Upper bound -------------------------------------------------------------
 
@@ -636,9 +644,8 @@ rd_3d  <- km_t2cancer_ipcw_up_bound %>%
   mutate(model = "Upper bound")
 
 
-## All Results
 
-## ALL RESULTS
+# 4. All results ----------------------------------------------------------
 
 table_results <- bind_rows(results_ever_never, results_tv_cancer, results_t2cancer)
 
@@ -646,6 +653,11 @@ export(table_results, here::here("02_R", "table_results.csv"))
 
 
 ## Bounds
+
+bounds_ever_cancer <- bind_rows(rd_1c, rd_1d, rd_1e) %>% 
+  select(model, everything()) %>% 
+  arrange(rd) %>% 
+  mutate(Proxy = "Ever vs. never")
 
 bounds_tv_cancer <- bind_rows(rd_2c, rd_2d, rd_2e) %>% 
   select(model, everything()) %>% 
@@ -657,7 +669,7 @@ bounds_t2vcancer <- bind_rows(rd_3b, rd_3c, rd_3d) %>%
   arrange(rd) %>% 
   mutate(Proxy = "Time to cancer")
 
-table_results_bounds <- bind_rows(bounds_tv_cancer, bounds_t2vcancer) %>% 
+table_results_bounds <- bind_rows(bounds_ever_cancer, bounds_tv_cancer, bounds_t2vcancer) %>% 
   select(Proxy, everything())
 
 export(table_results_bounds, here::here("02_R", "table_results_bounds.csv"))
