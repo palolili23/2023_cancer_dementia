@@ -19,12 +19,10 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r setup, include=FALSE, }
+```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
-knitr::opts_chunk$set(collapse = TRUE, fig.retina = 3, warning = FALSE,
-                      message = FALSE, echo = FALSE, fig.showtext = TRUE, cache = TRUE)
-library(WeightIt)
-library(cobalt)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, echo = FALSE, fig.showtext = TRUE, cache = TRUE)
+
 library(splines)
 library(knitr)
 library(kableExtra)
@@ -81,280 +79,299 @@ class: center, middle
 
 ---
 
-## Aims 
-
-To conceptualize and progressively build a causal directed acyclic graph to connect this particular causal question to the observable data and the assumptions we rely on to identify the effect. 
-
----
 ### Pin1-targeting drug
 
-<br><br>
-
-.center[
-```{tikz, fig.ext = 'png', echo = FALSE}
+```{tikz, echo = FALSE}
 \usetikzlibrary{arrows}
-\begin{tikzpicture}[node distance=2cm, auto,>=latex, scale = 0.5]
-\node (p) {$D$};
-\node [right of = p] (y) {$Y_{t}$};
-\draw[->] (p) -- (y);
+\begin{tikzpicture}[node distance=2cm]
+\node (p) {$P_0$};
+\node [above of = p, yshift = -1cm, xshift = 1cm, gray!30](l) {$L$};
+\node [right of = p, gray!30] (dp) {$D_t$};
+\node [right of = dp, gray!30] (pstar) {$P^*_t$};
+\node [right of = pstar, gray!30] (d) {$D_{t+1}$};
+\node [right of = d] (y) {$Y_{t+1}$};
+\node [below of = dp, yshift = 1cm, xshift = 1cm, gray!30](c) {$C_1$};
+\node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C_2$};
+\draw[->, gray!30] (p) -- (dp);
+\draw[->, gray!30] (l) -- (p);
+\draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (y);
+\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
+\draw[->, gray!30] (dp) -- (pstar);
+\draw[->, gray!30] (p) to [out=+45,in=+135, looseness=0.3] (pstar);
+\draw[->, gray!30] (pstar) -- (d);
+\draw[->, gray!30] (p) to [out=+45,in=+135, looseness=0.3] (d);
+\draw[->, gray!30] (d) -- (y);
+\draw[->, gray!30] (c) -- (dp);
+\draw[->, gray!30] (c) -- (pstar);
+\draw[->, gray!30] (cd) -- (d);
+\draw[->, gray!30] (cd) -- (y);
 \end{tikzpicture}
 ```
 
-What is the effect of a Pin1 targeting drug $(D)$ in the risk of ADRD over time *t* $(Y_{t})$  compared to standard treatments?
-
-]
+$P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis
 
 ???
-In hypothetical setting, if Pin1-targeting drug was developed, the best way to understand its effect on dementia risk would be to do a randomized trial in which we randomize eligible participants in late midlife to receive this drug or not, and closely monitor ADRD over follow-up. 
+In hypothetical setting, if Pin1-targeting drug was developed, the best way to understand its effect on dementia risk would be to do a randomized trial in which we randomize eligible participants in late midlife to receive this drug or not, and closely monitor ADRD over follow-up.
 
 ---
-### Pin1 expression as biomarker
+### Pin1 expression as biomarker (Problem 1: _Confounding_)
 
-<br><br>
-
-.center[
-```{tikz, fig.ext = 'png', echo = FALSE}
+```{tikz, echo = FALSE}
 \usetikzlibrary{arrows}
-\begin{tikzpicture}[node distance=2cm, auto,>=latex, scale = 0.5]
+\begin{tikzpicture}[node distance=2cm]
 \node (p) {$P_0$};
-\node [below of = p, yshift = 1cm, xshift = -1cm](l) {$L$};
-\node [right of = p] (y) {$Y_{t}$};
+\node [above of = p, yshift = -1cm, xshift = 1cm](l) {$L$};
+\node [right of = p, gray!30] (dp) {$D_t$};
+\node [right of = dp, gray!30] (pstar) {$P^*_t$};
+\node [right of = pstar, gray!30] (d) {$D_{t+1}$};
+\node [right of = d] (y) {$Y_{t+1}$};
+\node [below of = dp, yshift = 1cm, xshift = 1cm, gray!30](c) {$C_1$};
+\node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C_2$};
+\draw[->, gray!30] (p) -- (dp);
 \draw[->] (l) -- (p);
-\draw[->, violet] (p) -- (y);
-\draw[->] (l) -- (y);
+\draw[->] (l) to [out=0,in=90, looseness=0.4] (y);
+\draw[->, semithick] (p) to [out=45,in=135, looseness=0.3] (y);
+\draw[->, gray!30] (dp) -- (pstar);
+\draw[->, gray!30] (p) to [out=45,in=135, looseness=0.3] (pstar);
+\draw[->, gray!30] (pstar) -- (d);
+\draw[->, gray!30] (p) to [out=45,in=135, looseness=0.3] (d);
+\draw[->, gray!30] (d) -- (y);
+\draw[->, gray!30] (c) -- (dp);
+\draw[->, gray!30] (c) -- (pstar);
+\draw[->, gray!30] (cd) -- (d);
+\draw[->, gray!30] (cd) -- (y);
 \end{tikzpicture}
 ```
 
-$P_0$ = Pin1 over-expression; $L$ = shared factors between $P$ and $Y_t$
+$P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $L$ = Shared causes of $P_0$ and $Y_{t+1}$
 
-]
 
 ???
 We might be closer to developing biomarker for Pin1 expression in the future. So we can imagine a situation in which Pin1 exposure is measured in a population based cohort study, using stored blood samples.
 Since this would be a observational setting, Pin1 expression and ADRD at time may share causes such as smoking, and that assessing the causal relationship requires adjusting for these confounders.
 
 ---
-### Cancer diagnosis as the proxy of Pin1 biomarker
+### Cancer diagnosis as the proxy of Pin1 biomarker (Problem 2: _Time zero_)
 
-<br>
-
-.center[
-```{tikz, fig.ext = 'png', echo = FALSE, fig.cap = ""}
+```{tikz, echo = FALSE}
 \usetikzlibrary{arrows}
-\begin{tikzpicture}[node distance=2cm, auto,>=latex, scale = 0.5]
+\begin{tikzpicture}[node distance=2cm]
 \node (p) {$P_0$};
-\node [below of = p, yshift = 1cm, xshift = -1cm](l) {$L$};
-\node [above of = p, yshift = -1cm](pstar) {$P^*$};
-\node [right of = p] (y) {$Y_{t}$};
-\draw[->, violet] (p) -- (pstar);
-\draw[->, violet] (p) -- (y);
-\draw[->] (l) -- (p);
-\draw[->] (l) -- (y);
-
+\node [above of = p, yshift = -1cm, xshift = 1cm, gray!30](l) {$L$};
+\node [right of = p, gray!30] (dp) {$D_t$};
+\node [right of = dp] (pstar) {$P^*_t$};
+\node [right of = pstar, gray!30] (d) {$D_{t+1}$};
+\node [right of = d] (y) {$Y_{t+1}$};
+\node [below of = dp, yshift = 1cm, xshift = 1cm, gray!30](c) {$C_1$};
+\node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C_2$};
+\draw[->, gray!30] (p) -- (dp);
+\draw[->, gray!30] (l) -- (p);
+\draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (y);
+\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
+\draw[->, gray!30] (dp) -- (pstar);
+\draw[->] (p) to [out=45,in=135, looseness=0.3] (pstar);
+\draw[->, gray!30] (pstar) -- (d);
+\draw[->, gray!30] (p) to [out=+45,in=+135, looseness=0.3] (d);
+\draw[->, gray!30] (d) -- (y);
+\draw[->, gray!30] (c) -- (dp);
+\draw[->, gray!30] (c) -- (pstar);
+\draw[->, gray!30] (cd) -- (d);
+\draw[->, gray!30] (cd) -- (y);
 \end{tikzpicture}
 ```
 
-$P_0$ = Pin1 over-expression; $P^*$ = Cancer diagnosis; $L$ = shared factors between $P$ and $Y_t$ = ADRD diagnosis
-]
 
+$P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $P^*_t$ = Cancer diagnosis
 
 ???
 At this moment this biomarker is not available, but we know that Pin1 over-expression stimulates tumor growth and for this reason we use cancer diagnosis as the proxy for Pin1.
 
 ---
-### Zoom in the P and P* association
+### Death prior to cancer diagnosis (Problem 3: _Survival bias_)
 
-<br>
-
-.center[
-```{tikz, fig.ext = 'png', echo = FALSE}
+```{tikz, echo = FALSE}
 \usetikzlibrary{arrows}
-\begin{tikzpicture}[node distance=2cm, auto,>=latex, scale = 0.5]
+\begin{tikzpicture}[node distance=2cm]
 \node (p) {$P_0$};
-\node [right of = p] (d) {$D_{k} = 0$};
-\node [right of = d] (pstar) {$P^*_{k+1}$};
-\draw[->] (p) -- (d);
-\draw[->, violet] (p) to [out=45,in=135, looseness=0.4] (pstar);
-\draw[->] (d) -- (pstar);
-\end{tikzpicture}
-```
-
-<br> <br> 
-
-$P_0$ = Pin1 over-expression; $D_{k} = 0$ = surviving by time $k$; $P^*_{k+1}$ = Cancer diagnosis by time $k+1$ ; 
-
-]
-
-???
-
-
----
-### Selection bias in the P and P* association
-
-<br>
-
-.center[
-```{tikz, fig.ext = 'png', echo = FALSE}
-\usetikzlibrary{arrows}
-\begin{tikzpicture}[node distance=2cm, auto,>=latex, scale = 0.5]
-\node (p) {$P_0$};
-\node [right of = p] (d) {$D_{k} = 0$};
-\node [right of = d] (pstar) {$P^*_{k+1}$};
-\node [below of = p, yshift = 1cm, xshift = -1cm](l) {$C_1$};
-\node [below of = d, yshift = 1cm, xshift = 1cm](c) {$C_2$};
-\draw[->] (p) -- (d);
-\draw[->, violet] (p) to [out=45,in=135, looseness=0.4] (pstar);
-\draw[->] (d) -- (pstar);
-\draw[->] (l) -- (p);
-\draw[->] (l) -- (d);
-\draw[->] (c) -- (pstar);
-\draw[->] (c) -- (d);
-\end{tikzpicture}
-```
-
-<br> <br> 
-
-$P_0$ = Pin1 over-expression; $D_{k} = 0$ = surviving by time $k$; $P^*_{k+1}$ = Cancer diagnosis by time $k+1$; $C_1$, $C_2$ shared factors such as smoking
-
-]
-
-???
-In some way we need to assume that those who died would have the same risk of having a cancer diagnosis had they not died 
----
-### Direct effect vs. total effect, potential bias
-
-<br>
-
-.center[
-```{tikz, fig.ext = 'png', echo = FALSE, fig.cap = ""}
-\usetikzlibrary{arrows}
-\begin{tikzpicture}[node distance=2cm, auto,>=latex, scale = 0.5]
-\node (p) {$P$};
-\node [above of = p, yshift = -1cm](pstar) {$P^*$};
-\node [right of = p] (d) {$D_{t}$};
-\node [right of = d] (y) {$Y_{t+1}$};
-\node [below of = d, yshift = 1cm, xshift = +1cm](c) {$C$};
-\draw[->, violet] (p) -- (pstar);
-\draw[->] (p) -- (d);
-\draw[->, very thick] (d) -- (y);
-\draw[->] (c) -- (d);
-\draw[->] (c) -- (y);
-\draw[->, violet] (p) to [out=45,in=135, looseness=0.4] (y);
-\end{tikzpicture}
-```
-]
-
-???
-In this setting death is treated as a censoring event and it can be interpreted as those who died would have the same risk of developing dementia if prevented from dying than those who remained alive and free of dementia at a given time point, conditional on shared causes of dementia and death
-
----
-### All pieces together
-
-.center[
-```{tikz, fig.ext = 'png', echo = FALSE, fig.cap = ""}
-\usetikzlibrary{arrows}
-\begin{tikzpicture}[node distance=2cm, auto,>=latex, scale = 0.5]
-\node (p) {$P$};
-\node [below of = p, yshift = 1cm, xshift = -1cm](l) {$L$};
+\node [above of = p, yshift = -1cm, xshift = 1cm, gray!30](l) {$L$};
 \node [right of = p] (dp) {$D_t$};
-\node [right of = dp] (pstar) {$P*_t$};
-\node [right of = pstar] (d) {$D_{t+1}$};
+\node [right of = dp] (pstar) {$P^*_t$};
+\node [right of = pstar, gray!30] (d) {$D_{t+1}$};
 \node [right of = d] (y) {$Y_{t+1}$};
-\node [above of = dp, yshift = -1cm, xshift = +1cm](c) {$C_1$};
-\node [above of = d, yshift = -1cm, xshift = +1cm](cd) {$C_2$};
+\node [below of = dp, yshift = 1cm, xshift = 1cm, gray!30](c) {$C_1$};
+\node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C_2$};
 \draw[->] (p) -- (dp);
+\draw[->, gray!30] (l) -- (p);
+\draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (y);
+\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
 \draw[->] (dp) -- (pstar);
-\draw[->, violet] (p) to [out=-45,in=-135, looseness=0.3] (pstar);
-\draw[->] (pstar) -- (d);
-\draw[->] (p) to [out=-45,in=-135, looseness=0.3] (d);
-\draw[->, violet] (p) to [out=-45,in=-135, looseness=0.3] (y);
-\draw[->] (d) -- (y);
-\draw[->] (l) -- (p);
-\draw[->] (l) to [out=0,in=270, looseness=0.4] (y);
+\draw[->] (p) to [out=45,in=135, looseness=0.3] (pstar);
+\draw[->, gray!30] (pstar) -- (d);
+\draw[->, gray!30] (p) to [out=+45,in=+135, looseness=0.3] (d);
+\draw[->, gray!30] (d) -- (y);
+\draw[->, gray!30] (c) -- (dp);
+\draw[->, gray!30] (c) -- (pstar);
+\draw[->, gray!30] (cd) -- (d);
+\draw[->, gray!30] (cd) -- (y);
+\end{tikzpicture}
+```
+
+$P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $P^*_t$ = Cancer diagnosis; $D_t$ = Death prior to cancer diagnosis
+???
+
+---
+### Death prior to cancer diagnosis (Problem 3: _Survival bias_)
+
+```{tikz, echo = FALSE}
+\usetikzlibrary{arrows}
+\begin{tikzpicture}[node distance=2cm]
+\node (p) {$P_0$};
+\node [above of = p, yshift = -1cm, xshift = 1cm, gray!30](l) {$L$};
+\node [right of = p] (dp) {$D_t$};
+\node [right of = dp] (pstar) {$P^*_t$};
+\node [right of = pstar, gray!30] (d) {$D_{t+1}$};
+\node [right of = d] (y) {$Y_{t+1}$};
+\node [below of = dp, yshift = 1cm, xshift = 1cm](c) {$C_1$};
+\node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C_2$};
+\draw[->] (p) -- (dp);
+\draw[->, gray!30] (l) -- (p);
+\draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (y);
+\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
+\draw[->] (dp) -- (pstar);
+\draw[->] (p) to [out=45,in=135, looseness=0.3] (pstar);
+\draw[->, gray!30] (pstar) -- (d);
+\draw[->, gray!30] (p) to [out=+45,in=+135, looseness=0.3] (d);
+\draw[->, gray!30] (d) -- (y);
 \draw[->] (c) -- (dp);
 \draw[->] (c) -- (pstar);
+\draw[->, gray!30] (cd) -- (d);
+\draw[->, gray!30] (cd) -- (y);
+\end{tikzpicture}
+```
+
+$P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $P^*_t$ = Cancer diagnosis; $D_t$ = Death prior to cancer diagnosis; $C_1$ = Shared causes of $D_t$ and $P^*$
+???
+
+---
+### Death prior to dementia diagnosis (Problem 3: _Survival bias_)
+
+```{tikz, echo = FALSE}
+\usetikzlibrary{arrows}
+\begin{tikzpicture}[node distance=2cm]
+\node (p) {$P_0$};
+\node [above of = p, yshift = -1cm, xshift = 1cm, gray!30](l) {$L$};
+\node [right of = p, gray!30, gray!30] (dp) {$D_t$};
+\node [right of = dp, gray!30] (pstar) {$P^*_t$};
+\node [right of = pstar] (d) {$D_{t+1}$};
+\node [right of = d] (y) {$Y_{t+1}$};
+\node [below of = dp, yshift = 1cm, xshift = 1cm, gray!30](c) {$C_1$};
+\node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C_2$};
+\draw[->, gray!30] (p) -- (dp);
+\draw[->, gray!30] (l) -- (p);
+\draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (y);
+\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
+\draw[->, gray!30] (dp) -- (pstar);
+\draw[->, gray!30] (p) to [out=45,in=135, looseness=0.3] (pstar);
+\draw[->, gray!30] (pstar) -- (d);
+\draw[->] (p) to [out=+45,in=+135, looseness=0.3] (d);
+\draw[->] (d) -- (y);
+\draw[->, gray!30] (c) -- (dp);
+\draw[->, gray!30] (c) -- (pstar);
+\draw[->, gray!30] (cd) -- (d);
+\draw[->, gray!30] (cd) -- (y);
+\end{tikzpicture}
+```
+
+$P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $D_{t+1}$ = Death prior to dementia diagnosis
+
+---
+### Death prior to dementia diagnosis (Problem 3: _Survival bias_)
+
+
+```{tikz, echo = FALSE}
+\usetikzlibrary{arrows}
+\begin{tikzpicture}[node distance=2cm]
+\node (p) {$P_0$};
+\node [above of = p, yshift = -1cm, xshift = 1cm, gray!30](l) {$L$};
+\node [right of = p, gray!30, gray!30] (dp) {$D_t$};
+\node [right of = dp, gray!30] (pstar) {$P^*_t$};
+\node [right of = pstar] (d) {$D_{t+1}$};
+\node [right of = d] (y) {$Y_{t+1}$};
+\node [below of = dp, yshift = 1cm, xshift = 1cm, gray!30](c) {$C_1$};
+\node [below of = d, yshift = 1cm, xshift = 1cm](cd) {$C_2$};
+\draw[->, gray!30] (p) -- (dp);
+\draw[->, gray!30] (l) -- (p);
+\draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (y);
+\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
+\draw[->, gray!30] (dp) -- (pstar);
+\draw[->, gray!30] (p) to [out=45,in=135, looseness=0.3] (pstar);
+\draw[->, gray!30] (pstar) -- (d);
+\draw[->] (p) to [out=+45,in=+135, looseness=0.3] (d);
+\draw[->] (d) -- (y);
+\draw[->, gray!30] (c) -- (dp);
+\draw[->, gray!30] (c) -- (pstar);
 \draw[->] (cd) -- (d);
 \draw[->] (cd) -- (y);
 \end{tikzpicture}
 ```
 
-<br><br>
-
-At best we can test the sharp null hypothesis
-]
-
+$P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $D_{t+1}$ = Death prior to dementia diagnosis; $C_2$ as shared causes of $D_{t+1}$ and $Y_{t+1}$
 
 ---
 ## Application to the Rotterdam Study
 
-- Participants between 60 and 70 years old at study entry.
-
-- Data on cancer diagnosis, dementia diagnosis and death was collected from national registries and electronical clinical records.
-
-
-Three definitions of the proxy for Pin1 over-expression:
-
-- _"Cancer ever vs. never"_  
-
-- Cancer as a _"time-varying"_
-
-- _"Time to cancer diagnosis"_
-
----
-
-### Methods
-
-- Inverse probability treatment weights to address confounding
-  
-  + *Age, sex, education, smoking status*
+- Participants between 60 and 70 years old at study entry, free of cancer and dementia diagnosis at baseline
 
 --
 
-- Inverse probability censoring weights for death to relax the independent censoring assumption
+- Data on cancer diagnosis, dementia diagnosis and death was collected from national registries and electronical clinical records.
+
+--
+
+- Cancer as _"time-fixed ever vs. never"_ vs. cancer as a _time-varying proxy_ 
+
+---
+## Application to the Rotterdam Study
+
+
+- Inverse probability treatment weights to address confounding (IPTW)
+  
+  + *Age, sex, Apoe4, education* 
+
+--
+
+- Inverse probability censoring weights for death (IPCW)
 
   + *Age, sex, Apoe4, education and time-varying covariates: smoking, systolic blood pressure, BMI and incident cancer, heart disease, stroke and diabetes*
 
 --
 
-- We estimate the risk of dementia using a weighted Kaplan-Meier estimator. 
+- Risk of dementia is estimated with a weighted Kaplan-Meier estimator.
 
 ---
+### Peterson upper and lower bounds
 
-### Methods
 
-Since the independent censoring assumption is untestable, we can consider extreme scenarios of independence and fit Peterson upper and lower bounds.
-
+- **1) Lower Bound**: Total independence, that refers to an scenario were those who died would never develop dementia (Death as competing event)
 --
 
-1) Total independence, that refers to an scenario were those who died would never develop dementia (lower bound).
-  + Aalen-Johansen estimator treating death as a competing event.
-
---
-
-2) Complete dependency, that refers to an scenario where those who died would have dementia prior to death (upper bound). 
-  + The Kaplan Meier estimator for the combined outcome of dementia or death.
+- **2) Upper Bound**: Complete dependency, that refers to an scenario where those who died would have dementia prior to death (Composite outcome, death + dementia)
 
 ---
 ### Results
 
-.pull-left[
-```{r, echo = FALSE}
+.center[
+```{r, echo = FALSE, fig.retina = 3}
 plot_distribution +
     theme_xaringan()
 ```
+
+In the cancer arm 6% had dementia and 63% died, in the free of cancer arm 14% had dementia and 23% died.
+
 ]
 
---
-
-.pull-right[
-- 24% had cancer, the median age of cancer diagnosis was 73 (IQR: 69-77). 
-
-- Among participants with cancer, 6% had dementia and 63% (n = 549) died.
-
-- Among participants free of cancer diagnosis, 14% had dementia and 23% died.
-]
 ---
-### Cancer as: never vs. ever
+### Cancer as time-fixed ever vs. never proxy
 
 .pull-left[
 ```{r}
@@ -374,11 +391,11 @@ plot_1c
 
 ---
 
-### Time to cancer
+### Cancer diagnosis as time-varying proxy
 
 .pull-left[
 ```{r}
-plot_3a
+plot_2b
 ```
 
 ]
@@ -387,21 +404,22 @@ plot_3a
 
 .pull-right[
 ```{r}
-plot_3b
+plot_2c
 ```
 
 ]
 ---
 ### Results
 
-<br> 
+<br>
 
 .center[
 ```{r, echo = FALSE}
 tb <- table_results %>%
-  filter(model != "Unadjusted") %>% 
-  select(-c(3, 4)) %>%
-  rename(RD = rd, RR = rr, `HR (95%CI)` = hr)
+  filter(model != "Unadjusted") %>%
+  select(-c(3, 4, 5)) %>%
+  rename(RR = rr, `HR (95%CI)` = hr) %>% 
+  filter(Proxy != "Time to cancer")
 
 tb %>% kbl() %>%
 kable_styling(bootstrap_options = c("striped", "hover"))
@@ -413,7 +431,7 @@ kable_styling(bootstrap_options = c("striped", "hover"))
 
 .pull-left[
 ```{r, echo = FALSE}
-table_results_bounds %>% 
+table_results_bounds %>%
   select(-3, -4, - 6) %>%
     pivot_wider(names_from = c(model),
               values_from = rd) %>%
@@ -430,7 +448,7 @@ table_results_bounds %>%
                   color = "#0072B2") +
   geom_errorbar(width = 0.2, color = "#0072B2") +
   labs(x = "Risk difference",
-       y = NULL) + 
+       y = NULL) +
   theme_xaringan()
 ```
 ]
@@ -439,7 +457,7 @@ table_results_bounds %>%
 
 .pull-right[
 ```{r, echo = FALSE}
-table_results_bounds %>% 
+table_results_bounds %>%
   select(-3, -4, - 5) %>%
     pivot_wider(names_from = c(model),
               values_from = rr) %>%
@@ -456,7 +474,7 @@ table_results_bounds %>%
                   color = "#0072B2") +
   geom_errorbar(width = 0.2, color = "#0072B2") +
   labs(x = "Risk Ratio",
-       y = NULL) + 
+       y = NULL) +
    scale_x_continuous(
     trans = "log10",
     # breaks = seq(0.7, 1.2, by = 0.1)
