@@ -73,15 +73,23 @@ background-position: 5% 95%, 95% 5%
 background-size: 25%, 15%
 class: center, middle
 
+<br>
+
 ## Towards a clearer understanding of the inverse association between cancer and dementia
 
 
 
 <br> <br> <br>
 
-.right[L. Paloma Rojas-Saunero, MD 
+.right[
 
-**Epidemiology department**]
+L. Paloma Rojas-Saunero, MD 
+
+**Epidemiology department**
+
+`r icons::fontawesome$brands$twitter` @palolili23
+
+]
 
 ---
 ### Introduction
@@ -336,7 +344,7 @@ $P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $D_{t+1}$ = Death 
 $P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $D_{t+1}$ = Death prior to dementia diagnosis; $C_2$ as shared causes of $D_{t+1}$ and $Y_{t+1}$
 
 ---
-## Application to the Rotterdam Study
+### Application to the Rotterdam Study
 
 - Participants between 60 and 70 years old at study entry, free of cancer and dementia diagnosis at baseline
 
@@ -353,7 +361,7 @@ $P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $D_{t+1}$ = Death 
   + _Time-varying_
 
 ---
-## Application to the Rotterdam Study
+### Application to the Rotterdam Study
 
 
 - Inverse probability treatment weights to address confounding (IPTW)
@@ -538,18 +546,44 @@ results %>%
 
 ]
 
-
 ---
 ### Conclusions
 
-- The process of connecting our real question to the data help us identify the structure that will later represent the analytic decisions and assumptions.
+- Defining the underlying mechanism behind cancer diagnosis helps in multiple way.
+
+  + Helps identify sources of bias and guides analysis
+  
+  + Opens conversations about future data collection
 
 --
 
-- Cancer as the proxy for a molecular mechanism is tricky...
---
+- Since death acts as a competing event, we first need to define the estimand of interest. 
 
-- When death is a competing event, prior to choosing the estimator we need to define what is the estimand of interest and be explicit about the assumptions and interpretations.
+  + The direct effect relies on the independent censoring assumption
+  
+  + Interpretation implies preventing death.
+  
+  + The separable effects provides a clearer intuition to address this question. 
+
 
 ---
+class: middle
 
+### Acknowledgments
+
+- Sonja A. Swanson
+
+- Kimberly van der Willik
+
+- Arfan M. Ikram
+
+---
+class:middle
+
+### Gracias!   Thank you!
+
+`r icons::fontawesome("paper-plane", style = "solid")` </i>&nbsp; l.rojassaunero@erasmusmc.nl </a> <br>
+
+`r icons::fontawesome$brands$twitter` @palolili23
+
+`r icons::fontawesome$brands$github` @palolili23
