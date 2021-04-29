@@ -91,12 +91,15 @@ L. Paloma Rojas-Saunero, MD
 
 ]
 
+???
+Hello, my name is Paloma Rojas-Saunero, I am a PhD candidate at Erasmus MC and today I will present my work called "towards a clearer understanding of the inverse association between cancer and dementia".
+
 ---
 ### Introduction
 
 <br><br>
 
-- Observational studies have found an inverse association between cancer and dementia risk.
+- Observational studies have found an inverse association between cancer and dementia.
 
 --
 
@@ -105,6 +108,15 @@ L. Paloma Rojas-Saunero, MD
 --
 
 - Researchers have raised concerns related to measurement error, unmeasured confounding and selection bias.
+
+???
+
+...with the intention of identifying drug targets to prevent dementia.
+However, researchers have raised concerns related to measurement error, unmeasured confounding and selection bias.
+
+But to understand the potential sources and magnitude of bias, we first need to define the causal question which implies defining what is the mechanism of interest behind cancer diagnosis as an exposure.
+
+
 
 ---
 
@@ -138,6 +150,15 @@ L. Paloma Rojas-Saunero, MD
 ```
 
 $P_0$ = Pin1 targeted-drug; $Y_{t+1}$ = Dementia diagnosis
+
+???
+
+For example, in this graph we defined a drug target for Pin1. This is an enzyme that is over-expressed in tumor development, but it's depletion is associated to neurodegeneration.
+
+We can imagine that someday in the future, there will be a drug that targets Pin1 to delay or prevent dementia, and the effectiveness of this drug would be assessed in an RCT.
+
+Since this drug is not available yet, we can at least imagine that Pin1 expression could become a biomarker in a closer future. Once this is available we could measure Pin1 expression in stored blood samples in population based cohort studies.
+
 
 ---
 ### Pin1 expression as biomarker (Problem 1: _Confounding_)
@@ -173,8 +194,9 @@ $P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $L$ = Shared cause
 
 
 ???
-We might be closer to developing biomarker for Pin1 expression in the future. So we can imagine a situation in which Pin1 exposure is measured in a population based cohort study, using stored blood samples.
-Since this would be a observational setting, Pin1 expression and ADRD at time may share causes such as smoking, and that assessing the causal relationship requires adjusting for these confounders.
+So in this graph we changed P0 to pin1 overexpression. Since this study would be performed within an observational study, Pin1 expression and dementia may share risk factors such as behavioural or environmental, represented as L. Thus to identify the causal relationship we will have to adjust for all L.
+
+Now, since Pin1 is not available we defined a proxy for it. 
 
 ---
 ### Cancer diagnosis as the proxy of Pin1 (Problem 2: _Time zero_)
@@ -210,7 +232,9 @@ Since this would be a observational setting, Pin1 expression and ADRD at time ma
 $P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $P^*_t$ = Cancer diagnosis
 
 ???
-At this moment this biomarker is not available, but we know that Pin1 over-expression stimulates tumor growth and for this reason we use cancer diagnosis as the proxy for Pin1.
+Given that Pin1-expression is present in tumors, and tumors are only measured through diagnosis, cancer diagnosis may act as the proxy for Pin1 over-expression, which is represented as Pstar.
+This would mean that if we study the association between pstar and y in the observed data, we assume that the captured effect is only through P.
+The challenge here is that there might be a gap in time between our intended exposure and cancer diagnosis. So we need to be careful to adjust for post-baseline covariates of P or mediators between P and Pstar.
 
 ---
 ### Death prior to cancer diagnosis (Problem 3: _Survival bias_)
@@ -243,7 +267,9 @@ At this moment this biomarker is not available, but we know that Pin1 over-expre
 ```
 
 $P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $P^*_t$ = Cancer diagnosis; $D_t$ = Death prior to cancer diagnosis
+
 ???
+One of the mediators between P and Pstar is death prior to cancer diagnosis. Since individuals are at risk of dying from other causes (such as cardiovascular death), we can only measure Pstar in the subset of individuals who have survived long enough to have a cancer diagnosis. 
 
 ---
 ### Death prior to cancer diagnosis (Problem 3: _Survival bias_)
@@ -276,7 +302,10 @@ $P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $P^*_t$ = Cancer d
 ```
 
 $P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $P^*_t$ = Cancer diagnosis; $D_t$ = Death prior to cancer diagnosis; $C_1$ = Shared causes of $D_t$ and $P^*$
+
 ???
+
+And since several risk factors that increase the risk of cancer might also cause death prior to cancer diagnosis, we need to block this backdoor pathways by adjusting for C.
 
 ---
 ### Death prior to dementia diagnosis (Problem 3: _Survival bias_)
@@ -309,6 +338,9 @@ $P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $P^*_t$ = Cancer d
 ```
 
 $P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $D_{t+1}$ = Death prior to dementia diagnosis
+
+???
+Even if we could have measured Pin1 or a drug in everybody at the same time, death is going to play the rol of a competing event, death prior to dementia diagnosis prevents us from observing dementia. This is key because it puts us in a situation where we have to choose an estimand. In this case a total effect that includes all causal pathways, including the ones mediated through dead would not be of interest, since one of the leading causes of death is cancer we would see an inverse association. 
 
 ---
 ### Death prior to dementia diagnosis (Problem 3: _Survival bias_)
@@ -343,10 +375,17 @@ $P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $D_{t+1}$ = Death 
 
 $P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $D_{t+1}$ = Death prior to dementia diagnosis; $C_2$ as shared causes of $D_{t+1}$ and $Y_{t+1}$
 
+???
+
+Besides, dementia and death share risk factors (represented as C2). So if we are interested in the direct effect of Pin1 in dementia, which means that we would treat death as a censoring event, we rely in the independent censoring assumption that indicates that dementia and death are independent if we condition on C.
+
 ---
 ### Application to the Rotterdam Study
 
 - Participants between 60 and 70 years old at study entry, free of cancer and dementia diagnosis at baseline
+
+???
+To show how this causal structure and assumptions connect to the analytic decisions, we use data from the rotterdam study (a population based cohort with over 25 years of follow up).
 
 --
 
@@ -359,6 +398,9 @@ $P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $D_{t+1}$ = Death 
   + _Time-fixed ever vs. never_
   
   + _Time-varying_
+
+???
+We defined Cancer as a proxy in two ways.
 
 ---
 ### Application to the Rotterdam Study
@@ -375,23 +417,18 @@ $P_0$ = Pin1 over-expression; $Y_{t+1}$ = Dementia diagnosis; $D_{t+1}$ = Death 
   + *Age, sex, Apoe4, education and time-varying covariates: smoking, systolic blood pressure, BMI and incident cancer, heart disease, stroke and diabetes*
 
 --
+  + *Lower Bound*: Total independence, that refers to an scenario were those who died would never develop dementia.
+
+  + *Upper Bound*: Complete dependency, that refers to an scenario where those who died would have dementia prior to death.
+
+---
+class: middle
 
 - Risk of dementia and risk ratios are estimated with a weighted Kaplan-Meier estimator.
 
 --
 
 - Hazard ratios are estimated with a weighted Cox Proportional-Hazards Model for comparative purposes.
-
----
-### Bounds 
-
-<br><br>
-
-- **1) Lower Bound**: Total independence, that refers to an scenario were those who died would never develop dementia (Death as competing event)
-
---
-
-- **2) Upper Bound**: Complete dependency, that refers to an scenario where those who died would have dementia prior to death (Composite outcome, death + dementia)
 
 ---
 ### Results
@@ -405,6 +442,9 @@ plot_distribution +
   labs(title = "Proportion of participants in each status")
 ```
 ]
+
+???
+If we look at the proportion of participants who was in each status over follow up, we observe that dementia diagnosis becomes more frequent after age of 80, while cancer diagnosis distribution is more homogenous across life span. In yellow we observe the amount of participants who died over followup, in larger proportion compared to dementia. Last, in pink we have participants who had cancer and dementia, which represents a 6% from all participants.
 
 ---
 
@@ -478,6 +518,14 @@ results %>%
 
 ]
 
+???
+First I will show all results related to cancer as ever vs. never.
+In this graph I present three situations, unadjusted, after weighting for confounding, and after weighting for confounding and censoring for death.
+In each case we have risk ratios and hazard ratios.
+We observe the inverse association in these two settings, and after including weights for censoring it shifts towards above the null. 
+Lets recall that the model with censoring weights is our best effort to achieve the conditional independence, but if we observe the bounds that represent extreme scenarios, these bounds cross the null.
+
+
 --
 
 .pull-right[
@@ -545,6 +593,12 @@ results %>%
 ```
 
 ]
+
+???
+When we define cancer as a time-varying exposure, we observe a shift towards the null prior to adjustment. An estimates and confidence shift above one by including the weights.
+And again, in our best scenario to achieve conditional independence, if we look at the bounds of extreme independency and dependency, they are far apart in both sides of the null.
+
+Please note that in all cases, we would interpret this results as if death could have been prevented.
 
 ---
 ### Conclusions
