@@ -116,45 +116,43 @@ summary(data_wide$cancer_weight_t)
 
 # 1.2. IPCW for death, based on baseline covariates ----------------------------
 
-w.out_death <-
-  weightit(
+## Death weights were once death = 1
+
+death_den <-
+  glm(
     competing_plr ~ bs(age_0, 3) + sex + education + apoe4 + 
       as.factor(smoke1) + ht1 + bs(sbp1, 3) + bs(bmi1,3) +
       as.factor(diabetes_prev) +  cancer_v + cohort,
     data = data_wide,
-    stabilize = TRUE,
-    estimand = "ATE",
-    method = "ps"
+    family = binomial
   )
 
-w.out_death
+death_num <-
+  glm(
+    competing_plr ~ 1,
+    data = data_wide,
+    family = binomial
+  )
 
-data_wide <- data_wide %>% 
-  mutate(death_weight = w.out_death$weights)
-
-love.plot(w.out_death) +
-  theme_minimal() +
-  theme(legend.position = "bottom") +
-  scale_color_manual(values = c("#011A5E", "#e4a803"))
+data_wide %<>% mutate(
+  p_death_den = predict(object = death_den, type = "response"),
+  p_death_num = predict(object = death_num, type = "response"),
+  sw_death = if_else(competing_plr == 0, (1-p_death_num)/(1-p_death_den), 1))
 
 data_wide %<>%
-  mutate(death_weight_t = ifelse(
-    death_weight > quantile(death_weight, 0.99),
-    quantile(death_weight, 0.99),
-    death_weight
+  mutate(sw_death_t = ifelse(
+    sw_death > quantile(sw_death, 0.99),
+    quantile(sw_death, 0.99),
+    sw_death
   ))
 
-
-summary(data_wide$death_weight)
-summary(data_wide$death_weight_t)
 
 ## Multiply weights
 
 data_wide %<>%
   mutate(
-    baseline_w = cancer_weight * death_weight,
-    baseline_wt = cancer_weight_t * death_weight_t)
-
+    baseline_w = cancer_weight * sw_death,
+    baseline_wt = cancer_weight_t * sw_death_t)
 
 # 1.a. KM Unadjusted ------------------------------------------------------
 
@@ -247,7 +245,7 @@ km_ever_ipcw_low_bound <- survfit(
     type = 'mstate'
   ) ~ cancer_v,
   data = data_wide,
-  weights = baseline_wt)
+  weights = cancer_weight_t)
 
 rd_1d <- lower_bound(km_ever_ipcw_low_bound)
 
@@ -259,7 +257,7 @@ km_ever_ipcw_up_bound <- survfit(
     event = combined_outcome_efu,
   ) ~ cancer_v,
   data = data_wide,
-  weights = baseline_wt)
+  weights = cancer_weight_t)
 
 rd_1e  <- km_ever_ipcw_up_bound %>% 
   risks_km()  %>% 
@@ -298,9 +296,10 @@ data_long <- data_long %>%
   group_by(id) %>% 
   mutate(
     sw_cancer = ifelse(cancer_v == 1, p_num/p_denom, (1 - p_num)/(1- p_denom)),
-    sw_cancer = cumprod(sw_cancer),
+    # sw_cancer = cumprod(sw_cancer),
     w_cancer = ifelse(cancer_v == 1, 1/p_denom, 1/(1- p_denom)),
-    w_cancer = cumprod(w_cancer)) %>% 
+    # w_cancer = cumprod(w_cancer)
+    ) %>% 
   ungroup()
 
 data_long %<>% 

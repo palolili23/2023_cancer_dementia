@@ -1,10 +1,10 @@
 Proxy,model,cancer_v=0,cancer_v=1,rd,rr
-Ever vs. never,Lower bound,16.6,15.3,-1.3,0.92
-Ever vs. never,IPTW + IPCW,21.1,21.7,0.7,1.03
-Ever vs. never,Upper bound,50.7,53.1,2.4,1.05
-Time-varying cancer,Lower bound,15,9.4,-5.6,0.63
-Time-varying cancer,IPTW + IPCW,19,29.1,10.1,1.53
-Time-varying cancer,Upper bound,42.2,90.6,48.4,2.15
+Ever vs. never,Lower bound,16.6,6.8,-9.8,0.41
+Ever vs. never,IPTW + IPCW,21.7,19.8,-2,0.91
+Ever vs. never,Upper bound,44.4,73.1,28.7,1.65
+Time-varying cancer,Lower bound,16.7,6.3,-10.5,0.37
+Time-varying cancer,IPTW + IPCW,20.1,22.9,2.8,1.14
+Time-varying cancer,Upper bound,41.2,93.7,52.5,2.27
 Time to cancer,Lower bound,16.9,5.7,-11.2,0.34
 Time to cancer,IPTW + IPCW,20.3,21.9,1.7,1.08
 Time to cancer,Upper bound,41.1,93.8,52.7,2.28

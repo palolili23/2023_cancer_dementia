@@ -1,9 +1,9 @@
 point,conf.low,conf.high,model,Proxy
 0.55,0.41,0.73,Unadjusted,Ever vs. Never
 0.54,0.4,0.74,IPTW,Ever vs. Never
-0.92,0.67,1.25,IPTW + IPCW,Ever vs. Never
+0.76,0.56,1.04,IPTW + IPCW,Ever vs. Never
 0.98,0.73,1.32,Unadjusted,Time-varying cancer
-1.37,0.91,2.05,IPTW,Time-varying cancer
-1.6,1.05,2.43,IPTW + IPCW,Time-varying cancer
+1.02,0.75,1.38,IPTW,Time-varying cancer
+1.13,0.82,1.56,IPTW + IPCW,Time-varying cancer
 0.96,0.7,1.31,IPTW,Time to cancer
 1.07,0.77,1.49,IPTW + IPCW,Time to cancer

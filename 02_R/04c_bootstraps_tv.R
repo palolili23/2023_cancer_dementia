@@ -71,9 +71,10 @@ km_tv <- function(data_long, crude = TRUE, ipcw = FALSE) {
       group_by(id) %>% 
       mutate(
         sw_cancer = ifelse(cancer_v == 1, p_num/p_denom, (1 - p_num)/(1- p_denom)),
-        sw_cancer = cumprod(sw_cancer),
+        # sw_cancer = cumprod(sw_cancer),
         w_cancer = ifelse(cancer_v == 1, 1/p_denom, 1/(1- p_denom)),
-        w_cancer = cumprod(w_cancer)) %>% 
+        # w_cancer = cumprod(w_cancer)
+        ) %>% 
       ungroup()
     
     data_long %<>% 

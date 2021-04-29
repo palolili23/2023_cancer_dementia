@@ -69,7 +69,7 @@ km_ever <- function(data, crude = TRUE, ipcw = FALSE) {
         mutate(
           dp_num = predict(death_num, type = "response"),
           dp_denom = predict(death_den, type = "response"),
-          w_death = ifelse(competing_plr == 1, dp_num/dp_denom, (1 - dp_num)/(1- dp_denom)))
+          w_death = if_else(competing_plr == 0, (1-dp_num)/(1-dp_denom), 1))
       
       data %<>%
         mutate(w_death_t = ifelse(
