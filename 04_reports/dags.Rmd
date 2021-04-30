@@ -1,0 +1,179 @@
+---
+title: "Dags"
+output:
+  xaringan::moon_reader
+---
+
+```{tikz, echo = FALSE, fig.cap = "Pin1 as biomarker and risk of dementia"}
+\usetikzlibrary{arrows}
+\begin{tikzpicture}[node distance=2cm]
+\node (p) {$P_0$};
+\node [above of = p, yshift = -1cm, xshift = 1cm](l) {$L$};
+\node [right of = p, gray!30] (dp) {$D_t$};
+\node [right of = dp, gray!30] (pstar) {$P^*_t$};
+\node [right of = pstar, gray!30] (d) {$D_{t+1}$};
+\node [right of = d] (y) {$Y_{t+1}$};
+\node [below of = dp, yshift = 1cm, xshift = 1cm, gray!30](c) {$C_1$};
+\node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C_2$};
+\draw[->, gray!30] (p) -- (dp);
+\draw[->] (l) -- (p);
+\draw[->] (l) to [out=0,in=90, looseness=0.4] (y);
+\draw[->, semithick] (p) to [out=45,in=135, looseness=0.3] (y);
+\draw[->, gray!30] (dp) -- (pstar);
+\draw[->, gray!30] (p) to [out=45,in=135, looseness=0.3] (pstar);
+\draw[->, gray!30] (pstar) -- (d);
+\draw[->, gray!30] (p) to [out=45,in=135, looseness=0.3] (d);
+\draw[->, gray!30] (d) -- (y);
+\draw[->, gray!30] (c) -- (dp);
+\draw[->, gray!30] (c) -- (pstar);
+\draw[->, gray!30] (cd) -- (d);
+\draw[->, gray!30] (cd) -- (y);
+\end{tikzpicture}
+```
+
+---
+
+```{tikz, echo = FALSE, fig.cap = "Cancer diagnosis as proxy for Pin1 expression"}
+\usetikzlibrary{arrows}
+\begin{tikzpicture}[node distance=2cm]
+\node (p) {$P_0$};
+\node [above of = p, yshift = -1cm, xshift = 1cm, gray!30](l) {$L$};
+\node [right of = p, gray!30] (dp) {$D_t$};
+\node [right of = dp] (pstar) {$P^*_t$};
+\node [right of = pstar, gray!30] (d) {$D_{t+1}$};
+\node [right of = d] (y) {$Y_{t+1}$};
+\node [below of = dp, yshift = 1cm, xshift = 1cm, gray!30](c) {$C_1$};
+\node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C_2$};
+\draw[->, gray!30] (p) -- (dp);
+\draw[->, gray!30] (l) -- (p);
+\draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (y);
+\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
+\draw[->, gray!30] (dp) -- (pstar);
+\draw[->] (p) to [out=45,in=135, looseness=0.3] (pstar);
+\draw[->, gray!30] (pstar) -- (d);
+\draw[->, gray!30] (p) to [out=+45,in=+135, looseness=0.3] (d);
+\draw[->, gray!30] (d) -- (y);
+\draw[->, gray!30] (c) -- (dp);
+\draw[->, gray!30] (c) -- (pstar);
+\draw[->, gray!30] (cd) -- (d);
+\draw[->, gray!30] (cd) -- (y);
+\end{tikzpicture}
+```
+
+---
+
+```{tikz, echo = FALSE, fig.cap = "Survival bias when treating cancer diagnosis as the proxy for Pin1 expression"}
+
+\usetikzlibrary{arrows}
+\begin{tikzpicture}[node distance=2cm]
+\node (p) {$P_0$};
+\node [above of = p, yshift = -1cm, xshift = 1cm, gray!30](l) {$L$};
+\node [right of = p] (dp) {$D_t$};
+\node [right of = dp] (pstar) {$P^*_t$};
+\node [right of = pstar, gray!30] (d) {$D_{t+1}$};
+\node [right of = d] (y) {$Y_{t+1}$};
+\node [below of = dp, yshift = 1cm, xshift = 1cm](c) {$C_1$};
+\node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C_2$};
+\draw[->] (p) -- (dp);
+\draw[->, gray!30] (l) -- (p);
+\draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (y);
+\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
+\draw[->] (dp) -- (pstar);
+\draw[->] (p) to [out=45,in=135, looseness=0.3] (pstar);
+\draw[->, gray!30] (pstar) -- (d);
+\draw[->, gray!30] (p) to [out=+45,in=+135, looseness=0.3] (d);
+\draw[->] (d) -- (y);
+\draw[->] (c) -- (dp);
+\draw[->] (c) -- (pstar);
+\draw[->, gray!30] (cd) -- (d);
+\draw[->, gray!30] (cd) -- (y);
+\end{tikzpicture}
+```
+
+---
+
+```{tikz, echo = FALSE, fig.cap = "Death as a competing event for dementia over follow-up"}
+\usetikzlibrary{arrows}
+\begin{tikzpicture}[node distance=2cm]
+\node (p) {$P_0$};
+\node [above of = p, yshift = -1cm, xshift = 1cm, gray!30](l) {$L$};
+\node [right of = p, gray!30, gray!30] (dp) {$D_t$};
+\node [right of = dp, gray!30] (pstar) {$P^*_t$};
+\node [right of = pstar] (d) {$D_{t+1}$};
+\node [right of = d] (y) {$Y_{t+1}$};
+\node [below of = dp, yshift = 1cm, xshift = 1cm, gray!30](c) {$C_1$};
+\node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C_2$};
+\draw[->, gray!30] (p) -- (dp);
+\draw[->, gray!30] (l) -- (p);
+\draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (y);
+\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
+\draw[->, gray!30] (dp) -- (pstar);
+\draw[->, gray!30] (p) to [out=45,in=135, looseness=0.3] (pstar);
+\draw[->, gray!30] (pstar) -- (d);
+\draw[->, gray!30] (p) to [out=+45,in=+135, looseness=0.3] (d);
+\draw[->] (d) -- (y);
+\draw[->, gray!30] (c) -- (dp);
+\draw[->, gray!30] (c) -- (pstar);
+\draw[->, gray!30] (cd) -- (d);
+\draw[->, gray!30] (cd) -- (y);
+\end{tikzpicture}
+```
+
+---
+
+```{tikz, echo = FALSE, fig.cap = "Direct effect"}
+\usetikzlibrary{arrows}
+\begin{tikzpicture}[node distance=2cm]
+\node (p) {$P_0$};
+\node [above of = p, yshift = -1cm, xshift = 1cm, gray!30](l) {$L$};
+\node [right of = p, gray!30, gray!30] (dp) {$D_t$};
+\node [right of = dp] (pstar) {$P^*_t$};
+\node [right of = pstar] (d) {$D_{t+1}$};
+\node [right of = d] (y) {$Y_{t+1}$};
+\node [below of = dp, yshift = 1cm, xshift = 1cm, gray!30](c) {$C_1$};
+\node [below of = d, yshift = 1cm, xshift = 1cm](cd) {$C_2$};
+\draw[->, gray!30] (p) -- (dp);
+\draw[->, gray!30] (l) -- (p);
+\draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (y);
+\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
+\draw[->, gray!30] (dp) -- (pstar);
+\draw[->] (p) to [out=45,in=135, looseness=0.3] (pstar);
+\draw[->] (pstar) -- (d);
+\draw[->] (p) to [out=+45,in=+135, looseness=0.3] (d);
+\draw[->] (d) -- (y);
+\draw[->, gray!30] (c) -- (dp);
+\draw[->, gray!30] (c) -- (pstar);
+\draw[->] (cd) -- (d);
+\draw[->] (cd) -- (y);
+\end{tikzpicture}
+```
+
+---
+
+```{tikz, echo = FALSE, fig.cap = "Direct effect"}
+\usetikzlibrary{arrows}
+\begin{tikzpicture}[node distance=2cm]
+\node (p) {$P_0$};
+\node [above of = p, yshift = -1cm, xshift = 1cm](l) {$L$};
+\node [right of = p] (dp) {$D_t$};
+\node [right of = dp] (pstar) {$P^*_t$};
+\node [right of = pstar] (d) {$D_{t+1}$};
+\node [right of = d] (y) {$Y_{t+1}$};
+\node [below of = dp, yshift = 1cm, xshift = 1cm](c) {$C_1$};
+\node [below of = d, yshift = 1cm, xshift = 1cm](cd) {$C_2$};
+\draw[->] (p) -- (dp);
+\draw[->] (l) -- (p);
+\draw[->] (l) to [out=0,in=90, looseness=0.4] (y);
+\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
+\draw[->] (dp) -- (pstar);
+\draw[->] (p) to [out=45,in=135, looseness=0.3] (pstar);
+\draw[->] (pstar) -- (d);
+\draw[->] (p) to [out=+45,in=+135, looseness=0.3] (d);
+\draw[->] (d) -- (y);
+\draw[->] (c) -- (dp);
+\draw[->] (c) -- (pstar);
+\draw[->] (cd) -- (d);
+\draw[->] (cd) -- (y);
+\end{tikzpicture}
+```
+
