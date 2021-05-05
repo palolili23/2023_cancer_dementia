@@ -2,7 +2,7 @@
 title: "Dissecting the causal question underlying the association between cancer and ADRD "
 author: "L. Paloma Rojas-Saunero"
 date: ""
-output: [pdf_document]
+output: [html_document]
 editor_options: 
   chunk_output_type: console
 ---
@@ -44,26 +44,21 @@ For simplicity, we treat Pin1 expression as a point intervention and we fix the 
 \usetikzlibrary{arrows}
 \begin{tikzpicture}[node distance=2cm]
 \node (p) {$P_0$};
-\node [above of = p, yshift = -1cm, xshift = 1cm](l) {$L$};
+\node [above of = p, yshift = -0.8cm, xshift = -1cm](l) {$L$};
 \node [right of = p, gray!30] (dp) {$D_t$};
 \node [right of = dp, gray!30] (pstar) {$P^*_t$};
 \node [right of = pstar, gray!30] (d) {$D_{t+1}$};
 \node [right of = d] (y) {$Y_{t+1}$};
-\node [below of = dp, yshift = 1cm, xshift = 1cm, gray!30](c) {$C_1$};
-\node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C_2$};
-\draw[->, gray!30] (p) -- (dp);
+\node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C$};
 \draw[->] (l) -- (p);
 \draw[->] (l) to [out=0,in=90, looseness=0.4] (y);
-\draw[->, semithick] (p) to [out=45,in=135, looseness=0.3] (y);
 \draw[->, gray!30] (dp) -- (pstar);
 \draw[->, gray!30] (p) to [out=45,in=135, looseness=0.3] (pstar);
 \draw[->, gray!30] (pstar) -- (d);
-\draw[->, gray!30] (p) to [out=45,in=135, looseness=0.3] (d);
 \draw[->, gray!30] (d) -- (y);
-\draw[->, gray!30] (c) -- (dp);
-\draw[->, gray!30] (c) -- (pstar);
 \draw[->, gray!30] (cd) -- (d);
 \draw[->, gray!30] (cd) -- (y);
+\draw[->, semithick] (p) to [out=45,in=135, looseness=0.2] (y);
 \end{tikzpicture}
 ```
 
@@ -73,26 +68,21 @@ However, unfortunately, in current studies we do not even have a single measurem
 \usetikzlibrary{arrows}
 \begin{tikzpicture}[node distance=2cm]
 \node (p) {$P_0$};
-\node [above of = p, yshift = -1cm, xshift = 1cm, gray!30](l) {$L$};
+\node [above of = p, yshift = -0.8cm, xshift = -1cm, gray!30](l) {$L$};
 \node [right of = p, gray!30] (dp) {$D_t$};
 \node [right of = dp] (pstar) {$P^*_t$};
 \node [right of = pstar, gray!30] (d) {$D_{t+1}$};
 \node [right of = d] (y) {$Y_{t+1}$};
-\node [below of = dp, yshift = 1cm, xshift = 1cm, gray!30](c) {$C_1$};
-\node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C_2$};
-\draw[->, gray!30] (p) -- (dp);
+\node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C$};
 \draw[->, gray!30] (l) -- (p);
 \draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (y);
-\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
 \draw[->, gray!30] (dp) -- (pstar);
 \draw[->] (p) to [out=45,in=135, looseness=0.3] (pstar);
 \draw[->, gray!30] (pstar) -- (d);
-\draw[->, gray!30] (p) to [out=+45,in=+135, looseness=0.3] (d);
 \draw[->, gray!30] (d) -- (y);
-\draw[->, gray!30] (c) -- (dp);
-\draw[->, gray!30] (c) -- (pstar);
 \draw[->, gray!30] (cd) -- (d);
 \draw[->, gray!30] (cd) -- (y);
+\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
 \end{tikzpicture}
 ```
 
@@ -107,26 +97,21 @@ Furthermore, we note that this is only one of the issues with considering cancer
 \usetikzlibrary{arrows}
 \begin{tikzpicture}[node distance=2cm]
 \node (p) {$P_0$};
-\node [above of = p, yshift = -1cm, xshift = 1cm, gray!30](l) {$L$};
+\node [above of = p, yshift = -0.8cm, xshift = -1cm, gray!30](l) {$L$};
 \node [right of = p] (dp) {$D_t$};
 \node [right of = dp] (pstar) {$P^*_t$};
 \node [right of = pstar, gray!30] (d) {$D_{t+1}$};
 \node [right of = d] (y) {$Y_{t+1}$};
-\node [below of = dp, yshift = 1cm, xshift = 1cm](c) {$C_1$};
-\node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C_2$};
-\draw[->] (p) -- (dp);
+\node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C$};
 \draw[->, gray!30] (l) -- (p);
 \draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (y);
-\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
 \draw[->] (dp) -- (pstar);
 \draw[->] (p) to [out=45,in=135, looseness=0.3] (pstar);
 \draw[->, gray!30] (pstar) -- (d);
-\draw[->, gray!30] (p) to [out=+45,in=+135, looseness=0.3] (d);
 \draw[->] (d) -- (y);
-\draw[->] (c) -- (dp);
-\draw[->] (c) -- (pstar);
 \draw[->, gray!30] (cd) -- (d);
 \draw[->, gray!30] (cd) -- (y);
+\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
 \end{tikzpicture}
 ```
 
@@ -136,30 +121,25 @@ Up to this point we have outlined certain underlying assumptions of using incide
 \usetikzlibrary{arrows}
 \begin{tikzpicture}[node distance=2cm]
 \node (p) {$P_0$};
-\node [above of = p, yshift = -1cm, xshift = 1cm, gray!30](l) {$L$};
+\node [above of = p, yshift = -0.8cm, xshift = -1cm, gray!30](l) {$L$};
 \node [right of = p, gray!30, gray!30] (dp) {$D_t$};
 \node [right of = dp, gray!30] (pstar) {$P^*_t$};
 \node [right of = pstar] (d) {$D_{t+1}$};
 \node [right of = d] (y) {$Y_{t+1}$};
-\node [below of = dp, yshift = 1cm, xshift = 1cm, gray!30](c) {$C_1$};
-\node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C_2$};
-\draw[->, gray!30] (p) -- (dp);
+\node [below of = d, yshift = 1cm, xshift = 1cm,](cd) {$C$};
 \draw[->, gray!30] (l) -- (p);
 \draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (y);
-\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
 \draw[->, gray!30] (dp) -- (pstar);
 \draw[->, gray!30] (p) to [out=45,in=135, looseness=0.3] (pstar);
 \draw[->, gray!30] (pstar) -- (d);
-\draw[->, gray!30] (p) to [out=+45,in=+135, looseness=0.3] (d);
 \draw[->] (d) -- (y);
-\draw[->, gray!30] (c) -- (dp);
-\draw[->, gray!30] (c) -- (pstar);
-\draw[->, gray!30] (cd) -- (d);
-\draw[->, gray!30] (cd) -- (y);
+\draw[->] (cd) -- (d);
+\draw[->] (cd) -- (y);
+\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
 \end{tikzpicture}
 ```
 
-However, if the drug has any side-effects we have to decide if either we want to estimate a total effect (that is, the effect on ADRD even if partly mediated by the effect on death) or a direct effect (that is, the effect directly on ADRD not mediated by death) (ref). We face this challenge in our observational data setting, since we are measuring cancer diagnosis as the proxy for Pin1 over-expression, and cancer is a leading cause of death29. We can visualize this data feature in the causal diagram in Figure 5. In this causal diagram we include $D_{t+1}$ as a representation of death over follow-up, an arrow between $P_0$ and $D_{t+1}$ since $P_0$ may increase the mortality risk. We also include an arrow between $P^*_t$ and $D_{t+1}$ since cancer diagnosis, and subsequent treatment (or lack of treatment) may have an effect on death. Last, the arrow from $D_{t+1}$ and $Y_{t+1}$ represents the key feature of a competing events data structure: an individual who dies over follow-up (prior to dementia diagnosis) cannot subsequently develop ADRD, and since $D_{t+1}$ and $Y_{t+1}$ are events related to aging, $C_2$ represent the shared causes of both events.
+However, if the drug has any side-effects we have to decide if either we want to estimate a total effect (that is, the effect on ADRD even if partly mediated by the effect on death) or a direct effect (that is, the effect directly on ADRD not mediated by death) (ref). We face this challenge in our observational data setting, since we are measuring cancer diagnosis as the proxy for Pin1 over-expression, and cancer is a leading cause of death29. We can visualize this data feature in the causal diagram in Figure 5. In this causal diagram we include $D_{t+1}$ as a representation of death over follow-up, an arrow between $P_0$ and $D_{t+1}$ since $P_0$ may increase the mortality risk. We also include an arrow between $P^*_t$ and $D_{t+1}$ since cancer diagnosis, and subsequent treatment (or lack of treatment) may have an effect on death. Last, the arrow from $D_{t+1}$ and $Y_{t+1}$ represents the key feature of a competing events data structure: an individual who dies over follow-up (prior to dementia diagnosis) cannot subsequently develop ADRD, and since $D_{t+1}$ and $Y_{t+1}$ are events related to aging, $C$ represent the shared causes of both events.
 
 In this causal diagram we observe that, had we measured and adjusted for $L$, we could estimate the total effect of $P_0$ in $Y_{t+1}$ without further assumptions. However the total effect includes all pathways between $P_0$ and $Y_{20}$28. This means that if Pin1 has an effect on mortality through cancer or other mechanisms, we will observe a protective effect of Pin1 over-expression in ADRD, partially or fully mediated through death. Since the question of interest is focused on the direct effect of $P_0$ in $Y_{t+1}$ as in Figure 4 (violet arrows) we need to conceptualize the different mechanisms through which $P_0$ could affect $D_{t+1}$ and $Y_{20}$. With this in mind we can conceive different causal questions (estimands) to represent this direct effect , such as the controlled direct effect (CDE) and the natural separable direct effect. In this section we discuss the controlled direct effect as the causal question of interest since it translates to frequently used methods in this literature (such as Kaplan-Meier estimator and Cox-proportional hazard model) and leave the separable direct effects question for discussion. 
 
@@ -167,26 +147,21 @@ In this causal diagram we observe that, had we measured and adjusted for $L$, we
 \usetikzlibrary{arrows}
 \begin{tikzpicture}[node distance=2cm]
 \node (p) {$P_0$};
-\node [above of = p, yshift = -1cm, xshift = 1cm, gray!30](l) {$L$};
+\node [above of = p, yshift = -0.8cm, xshift = -1cm, gray!30](l) {$L$};
 \node [right of = p, gray!30, gray!30] (dp) {$D_t$};
 \node [right of = dp] (pstar) {$P^*_t$};
 \node [right of = pstar] (d) {$D_{t+1}$};
 \node [right of = d] (y) {$Y_{t+1}$};
-\node [below of = dp, yshift = 1cm, xshift = 1cm, gray!30](c) {$C_1$};
-\node [below of = d, yshift = 1cm, xshift = 1cm](cd) {$C_2$};
-\draw[->, gray!30] (p) -- (dp);
+\node [below of = d, yshift = 1cm, xshift = 1cm](cd) {$C$};
 \draw[->, gray!30] (l) -- (p);
 \draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (y);
-\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
 \draw[->, gray!30] (dp) -- (pstar);
 \draw[->] (p) to [out=45,in=135, looseness=0.3] (pstar);
 \draw[->] (pstar) -- (d);
-\draw[->] (p) to [out=+45,in=+135, looseness=0.3] (d);
 \draw[->] (d) -- (y);
-\draw[->, gray!30] (c) -- (dp);
-\draw[->, gray!30] (c) -- (pstar);
 \draw[->] (cd) -- (d);
 \draw[->] (cd) -- (y);
+\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
 \end{tikzpicture}
 ```
 
@@ -198,26 +173,21 @@ Therefore, if we combine the challenges in section two related to cancer diagnos
 \usetikzlibrary{arrows}
 \begin{tikzpicture}[node distance=2cm]
 \node (p) {$P_0$};
-\node [above of = p, yshift = -1cm, xshift = 1cm](l) {$L$};
+\node [above of = p, yshift = -0.8cm, xshift = -1cm](l) {$L$};
 \node [right of = p] (dp) {$D_t$};
 \node [right of = dp] (pstar) {$P^*_t$};
 \node [right of = pstar] (d) {$D_{t+1}$};
 \node [right of = d] (y) {$Y_{t+1}$};
-\node [below of = dp, yshift = 1cm, xshift = 1cm](c) {$C_1$};
-\node [below of = d, yshift = 1cm, xshift = 1cm](cd) {$C_2$};
-\draw[->] (p) -- (dp);
+\node [below of = d, yshift = 1cm, xshift = 1cm](cd) {$C$};
 \draw[->] (l) -- (p);
 \draw[->] (l) to [out=0,in=90, looseness=0.4] (y);
-\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
 \draw[->] (dp) -- (pstar);
 \draw[->] (p) to [out=45,in=135, looseness=0.3] (pstar);
 \draw[->] (pstar) -- (d);
-\draw[->] (p) to [out=+45,in=+135, looseness=0.3] (d);
 \draw[->] (d) -- (y);
-\draw[->] (c) -- (dp);
-\draw[->] (c) -- (pstar);
 \draw[->] (cd) -- (d);
 \draw[->] (cd) -- (y);
+\draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
 \end{tikzpicture}
 ```
 
