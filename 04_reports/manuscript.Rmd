@@ -50,6 +50,8 @@ For simplicity, we treat Pin1 expression as a point intervention and we fix the 
 \node [right of = pstar, gray!30] (d) {$D_{t+1}$};
 \node [right of = d] (y) {$Y_{t+1}$};
 \node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C$};
+\draw[->, gray!30] (l) to (dp);
+\draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (d);
 \draw[->] (l) -- (p);
 \draw[->] (l) to [out=0,in=90, looseness=0.4] (y);
 \draw[->, gray!30] (dp) -- (pstar);
@@ -74,6 +76,8 @@ However, unfortunately, in current studies we do not even have a single measurem
 \node [right of = pstar, gray!30] (d) {$D_{t+1}$};
 \node [right of = d] (y) {$Y_{t+1}$};
 \node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C$};
+\draw[->, gray!30] (l) to (dp);
+\draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (d);
 \draw[->, gray!30] (l) -- (p);
 \draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (y);
 \draw[->, gray!30] (dp) -- (pstar);
@@ -97,18 +101,20 @@ Furthermore, we note that this is only one of the issues with considering cancer
 \usetikzlibrary{arrows}
 \begin{tikzpicture}[node distance=2cm]
 \node (p) {$P_0$};
-\node [above of = p, yshift = -0.8cm, xshift = -1cm, gray!30](l) {$L$};
+\node [above of = p, yshift = -0.8cm, xshift = -1cm](l) {$L$};
 \node [right of = p] (dp) {$D_t$};
 \node [right of = dp] (pstar) {$P^*_t$};
 \node [right of = pstar, gray!30] (d) {$D_{t+1}$};
 \node [right of = d] (y) {$Y_{t+1}$};
 \node [below of = d, yshift = 1cm, xshift = 1cm, gray!30](cd) {$C$};
-\draw[->, gray!30] (l) -- (p);
+\draw[->] (l) to (dp);
+\draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (d);
+\draw[->] (l) -- (p);
 \draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (y);
 \draw[->] (dp) -- (pstar);
 \draw[->] (p) to [out=45,in=135, looseness=0.3] (pstar);
 \draw[->, gray!30] (pstar) -- (d);
-\draw[->] (d) -- (y);
+\draw[->, gray!30] (d) -- (y);
 \draw[->, gray!30] (cd) -- (d);
 \draw[->, gray!30] (cd) -- (y);
 \draw[->, semithick] (p) to [out=+45,in=+135, looseness=0.3] (y);
@@ -129,6 +135,8 @@ Up to this point we have outlined certain underlying assumptions of using incide
 \node [below of = d, yshift = 1cm, xshift = 1cm,](cd) {$C$};
 \draw[->, gray!30] (l) -- (p);
 \draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (y);
+\draw[->, gray!30] (l) to (dp);
+\draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (d);
 \draw[->, gray!30] (dp) -- (pstar);
 \draw[->, gray!30] (p) to [out=45,in=135, looseness=0.3] (pstar);
 \draw[->, gray!30] (pstar) -- (d);
@@ -147,14 +155,16 @@ In this causal diagram we observe that, had we measured and adjusted for $L$, we
 \usetikzlibrary{arrows}
 \begin{tikzpicture}[node distance=2cm]
 \node (p) {$P_0$};
-\node [above of = p, yshift = -0.8cm, xshift = -1cm, gray!30](l) {$L$};
+\node [above of = p, yshift = -0.8cm, xshift = -1cm](l) {$L$};
 \node [right of = p, gray!30, gray!30] (dp) {$D_t$};
 \node [right of = dp] (pstar) {$P^*_t$};
 \node [right of = pstar] (d) {$D_{t+1}$};
 \node [right of = d] (y) {$Y_{t+1}$};
 \node [below of = d, yshift = 1cm, xshift = 1cm](cd) {$C$};
-\draw[->, gray!30] (l) -- (p);
+\draw[->] (l) -- (p);
 \draw[->, gray!30] (l) to [out=0,in=90, looseness=0.4] (y);
+\draw[->, gray!30] (l) to (dp);
+\draw[->] (l) to [out=0,in=90, looseness=0.4] (d);
 \draw[->, gray!30] (dp) -- (pstar);
 \draw[->] (p) to [out=45,in=135, looseness=0.3] (pstar);
 \draw[->] (pstar) -- (d);
@@ -180,6 +190,8 @@ Therefore, if we combine the challenges in section two related to cancer diagnos
 \node [right of = d] (y) {$Y_{t+1}$};
 \node [below of = d, yshift = 1cm, xshift = 1cm](cd) {$C$};
 \draw[->] (l) -- (p);
+\draw[->] (l) to (dp);
+\draw[->] (l) to [out=0,in=90, looseness=0.4] (d);
 \draw[->] (l) to [out=0,in=90, looseness=0.4] (y);
 \draw[->] (dp) -- (pstar);
 \draw[->] (p) to [out=45,in=135, looseness=0.3] (pstar);
