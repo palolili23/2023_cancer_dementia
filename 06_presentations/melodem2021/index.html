@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Dissecting the causal question underlying the association between cancer and ADRD</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="L. Paloma Rojas-Saunero" />
+    <meta name="date" content="2021-06-03" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+background-image: url(./figs/erasmus.png)
+background-position: 5% 95%
+background-size: 25%, 15%
+class: center, middle
+
+## Dissecting the causal question underlying the association between cancer and dementia
+
+
+
+&lt;br&gt; &lt;br&gt; &lt;br&gt;
+
+.right[L. Paloma Rojas-Saunero, MD
+
+**Epidemiology department**]
+
+---
+
+## Introduction
+
+.pull-left[
+
+Observational studies have found a protective effect of cancer diagnosis in the risk of Alzheimer´s disease or related dementias (ADRD).
+
+These studies lead to discussions of repurposing or augmenting current cancer chemotherapeutics for ADRD
+]
+
+--
+
+.pull-right[ 
+![](figs/forest_plot.PNG)
+]
+
+
+.footnote[Ospina-Romero M. JAMA Network Open. 2020]
+
+---
+
+## Cancer diagnosis as an exposure
+
+&lt;img src="figs/causal_risks.PNG" width="40%" style="display: block; margin: auto;" /&gt;
+.footnote[L. Frain et al. Alzheimer’s &amp; Dementia. 2017]
+
+---
+
+.pull-left[
+![](figs/pin_knockout.PNG)
+Driver J. et al. (2015)
+]
+
+--
+
+.pull-right[
+
+![](figs/linna2021.PNG)
+&lt;br&gt;
+Lanni C. et al. (2021)
+]
+
+---
+
+class: middle, center
+
+## How can identify a causal pathways like Pin1 with real-world data?
+
+---
+
+## Aims
+
+- To build a causal directed acyclic graph (DAG) which help us connect the causal question to real-world data on cancer and ADRD and spell out the assumptions we need to identify the effect.  
+
+--
+
+- To describe the challenges and how they translate into the analytic decisions.
+
+--
+
+- To exemplify this process in an application using data from the Rotterdam Study.
+
+---
+### Pin1 targeted-drug and ADRD diagnosis
+
+![](index_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+
+`\(P\)` = Pin1 targeted-drug; `\(Y_{t+1}\)` = Dementia diagnosis
+
+???
+In a setting where this hypothetical Pin1-targeting drug was developed, the best way to understand its effect on dementia risk would be to have a well-conducted randomized trial in which we randomize eligible participants in late midlife (e.g., ages 50-60 years) to receive this drug or not, and closely monitor ADRD over a lengthy follow-up.
+
+---
+### Pin1 expression as biomarker
+
+![](index_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+
+`\(P_{t-1}\)` = Pin1 over-expression; `\(Y_{t+1}\)` = Dementia diagnosis; `\(L\)` = Shared causes of `\(P_{t-1}\)` and `\(Y_{t+1}\)`
+
+???
+Since this drug is not currently available, at best we can use observational data on Pin1 expression measurements. For example, suppose that a biomarker test was available to measure Pin1 and we measured this biomarker from (stored) baseline blood samples in a population based-cohort that recruited participants in late midlife. In the observational setting, confounding could explain the observed association between Pin1 and ADRD. 
+
+---
+### Cancer diagnosis as the proxy of Pin1
+
+![](index_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+
+
+`\(P_{t-1}\)` and `\(P_{t}\)`= Pin1 over-expression; `\(P^*_{t-1}\)` and `\(P^*_t\)` = Cancer diagnosis; `\(Y_{t+1}\)` = Dementia diagnosis; `\(L\)` = Shared causes;
+
+???
+But Pin1 is not an available biomarker for population-based research, so at best we can only rely on a proxy for it. Because Pin1 over-expression is present in tumors, and tumors are only measured through diagnosis, we may use cancer as a proxy. 
+However, unlike measuring Pin1 at the same time to all participants cancer diagnosis is a time-varying process. Although this means we would measure the association between cancer diagnosis over time and ADRD in the observed data, we are assuming that the captured effect is only through the pathway that involves Pin1 expression over time.
+
+---
+### Time-varying cancer diagnosis and inmortal-time bias
+
+![](index_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+
+
+`\(P_{t-1}\)` and `\(P_{t}\)`= Pin1 over-expression; `\(P^*_{t-1}\)` and `\(P^*_t\)` = Cancer diagnosis; `\(Y_{t+1}\)` = Dementia diagnosis; `\(L\)` = Shared causes; `\(D_t\)` = Death prior to `\(P_{t}\)`
+
+???
+A challenge that arises by defining cancer diagnosis as the proxy for Pin1 is defining the time zero, the time where follow-up and screening for ADRD would begin after having the exposure measured. The eligibility criteria to join the study may not align with the time cancer diagnosis is measured. This situation may introduce inmortal-time bias. A participant needs to survive to have a cancer diagnosis over time.
+
+This problem is avoided by recognizing the time-varying nature of cancer diagnosis. And previous studies have defined cancer as a tv or time dependant exposure, though only adjusted for baseline covariates.
+
+The price we pay with this approximation is that implicitly, this means that Pin1 would over-express at the time of cancer diagnosis, which is biologically implausible.
+
+---
+### Death as a competing event of ADRD
+
+--
+![](index_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+
+`\(P_{t}\)`= Pin1 targeted drug; `\(D_{t+1}\)` = Death prior to `\(Y_{t+1}\)`; `\(Y_{t+1}\)` = Dementia diagnosis; `\(C\)` = shared causes
+
+???
+Let's step back for a minute and imagine that we had indeed randomized participants to pin1 drug.
+Even in the context of an RCT, death will act as a competing event since it prevents dementia at future time-points. Talk about the total effect.
+---
+###  Death as a competing event of ADRD
+
+![](index_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
+
+???
+Talk about the issue with total effect when we look at the cancer dx.
+Talk about separable effects and the CDE
+
+---
+### Causal structure for the effect of Pin1 in ADRD using cancer diagnosis as a proxy for Pin1
+
+
+![](index_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
+
+---
+### And there is more we could add...
+
+&lt;br&gt;
+.pull-left[
+
+![](https://media.giphy.com/media/fVeAI9dyD5ssIFyOyM/giphy.gif)
+]
+
+--
+
+&lt;br&gt;
+
+- Time-varying confounding loops
+
+- Error terms for cancer diagnosis 
+
+- Measurement and error term for ADRD
+
+- Differential or dependent error structures
+
+---
+### Application to the Rotterdam Study
+
+- Participants between 60 and 70 years old at study entry
+
+- Without history of cancer diagnosis and dementia at study entry
+
+--
+
+- Cancer diagnosis and dementia diagnosis is measured through follow-up and linkage with national registries.
+
+- Date and cause of death was collected on a weekly basis via municipal population registries
+
+- Data on covariates is measured repeatedly over visits and through linkage to EHR
+
+
+---
+### Methods
+
+We considered 2 scenarios to define Pin1 over-expression:
+
+--
+
+- "Cancer ever vs. never" to replicate previous studies (such as Driver 2012)
+
+--
+
+- Pin1 and cancer diagnosis as a time-varying exposure
+
+--
+
+20 years of follow-up or up to time of death/ADRD
+
+---
+### Methods
+
+- Inverse probability treatment weights to address confounding (IPTW)
+  
+  + Time-varying cancer diagnosis: weights represent the product of the inverse probability of being diagnosed with cancer over time conditional on time-varying covariate history.
+
+--
+
+- Inverse probability of censoring weights for death (IPCW)*
+
+  + For an individual still alive in year _t_, weights represent the the product of the inverse probability of surviving in each year prior to _t_, conditional on measured common causes of death and dementia. 
+
+.footnote[Rojas-Saunero et al. Choosing questions before methods in dementia research with competing events and causal goals.MedRxiv.2021]
+
+---
+
+### Methods
+
+- Risk of dementia and risk ratios are estimated with a weighted Kaplan-Meier estimator.
+--
+
+- Assessed extreme scenarios of independence and fit upper and lower bounds:
+
+  + Total independence: those who died would never develop dementia (lower bound). Aalen-Johanssen estimator treating death as a competing event.
+
+  + Complete dependency: those who died would have dementia prior to death (upper bound). The KM estimator for a composite outcome
+--
+
+- Hazard ratios are estimated with a weighted Cox Proportional-Hazards Model for comparative purposes.
+
+Peterson AV. Bounds for a joint distribution function with fixed sub distribution functions: Application to competing risks. 1976
+
+---
+### Results
+
+.center[
+&lt;img src="index_files/figure-html/unnamed-chunk-9-1.png" width="1008" /&gt;
+]
+
+???
+If we look at the proportion of participants who was in each status over follow up, we observe that dementia diagnosis becomes more frequent after age of 80, while cancer diagnosis distribution is more homogenous across life span. In yellow we observe the amount of participants who died over followup, in larger proportion compared to dementia. Last, in pink we have participants who had cancer and dementia, which represents a 6% from all participants.
+
+---
+
+### Results
+
+.pull-left[
+&lt;img src="index_files/figure-html/unnamed-chunk-10-1.png" width="504" /&gt;
+
+]
+
+???
+First I will show all results related to cancer as ever vs. never.
+In this graph I present three situations, unadjusted, after weighting for confounding, and after weighting for confounding and censoring for death.
+In each case we have risk ratios and hazard ratios.
+We observe the inverse association in these two settings, and after including weights for censoring it shifts towards above the null.
+Lets recall that the model with censoring weights is our best effort to achieve the conditional independence, but if we observe the bounds that represent extreme scenarios, these bounds cross the null.
+
+
+--
+
+.pull-right[
+&lt;img src="index_files/figure-html/unnamed-chunk-11-1.png" width="504" /&gt;
+
+]
+
+???
+When we define cancer as a time-varying exposure, we observe a shift towards the null prior to adjustment. An estimates and confidence shift above one by including the weights.
+And again, in our best scenario to achieve conditional independence, if we look at the bounds of extreme independency and dependency, they are far apart in both sides of the null.
+
+Please note that in all cases, we would interpret this results as if death could have been prevented.
+
+---
+### Causes of death
+
+&lt;img src="index_files/figure-html/unnamed-chunk-12-1.png" width="1008" /&gt;
+
+---
+### Thoughts so far...
+
+
+- Being explicit about the causal mechanism is useful:
+
+  + Helps identify sources of bias and guides analysis.
+
+  + Opens conversations about future data collection.
+
+--
+
+- We need to define the estimand of interest in respect to death.
+
+  + The direct effect relies on the independent censoring assumption.
+
+  + Interpretation implies preventing death.
+
+  + The separable effects can provide a clearer intuition
+  
+  + % of people who died in each arm should be always presented.
+
+---
+### Gracias!   Thank you!
+
+.pull-left[
+![](https://media.giphy.com/media/XHVmD4RyXgSjd8aUMb/giphy.gif)
+]
+
+--
+&lt;br&gt; 
+
+.pull-right[
+
+&lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"&gt;&lt;/path&gt;&lt;/svg&gt; &lt;/i&gt;&amp;nbsp; l.rojassaunero@erasmusmc.nl &lt;/a&gt; &lt;br&gt;
+
+&lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"&gt;&lt;/path&gt;&lt;/svg&gt; @palolili23
+
+&lt;svg viewBox="0 0 496 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"&gt;&lt;/path&gt;&lt;/svg&gt; @palolili23
+
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightLanguage": ["r", "css"],
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

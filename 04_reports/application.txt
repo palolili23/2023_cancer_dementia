@@ -1,6 +1,6 @@
 ## 4. Application to the Rotterdam Study
 
-In this section we conduct an analysis of the cancer-ADRD association that is structured to the best of the available data’s abilities to inform the possible effect of Pin1 on all cause-dementia . We use data collected in the Rotterdam Study, a population-based prospective cohort study among persons living in the Ommoord district in Rotterdam, the Netherlands. Recruitment and initial assessments were held between 1990 and 1993; it was later extended between 2000 and 2001 consisting of individuals who had reached the age of 55 years or who had moved into the study area. Participants from first subcohort had follow-up visits between 1993-1995, 1997-1999, 2002-2005, and 2008-2010, second subcohort had follow-up visits between 2004 and 2005, and between 2011 and 2012. All participants had data on incident cancer diagnosis and incident dementia diagnosis through follow-up, collected from medical records of general practitioners (including hospital discharge letters) and through linkage with national registries. Date and cause of death was collected on a weekly basis via municipal population registries. Data on clinical outcomes was available until 2015. Further study details can be found in _Supplementary Material x_.
+In this section we conduct an analysis of the cancer-ADRD association that is structured to the best of the available data?s abilities to inform the possible effect of Pin1 on all cause-dementia . We use data collected in the Rotterdam Study, a population-based prospective cohort study among persons living in the Ommoord district in Rotterdam, the Netherlands. Recruitment and initial assessments were held between 1990 and 1993; it was later extended between 2000 and 2001 consisting of individuals who had reached the age of 55 years or who had moved into the study area. Participants from first subcohort had follow-up visits between 1993-1995, 1997-1999, 2002-2005, and 2008-2010, second subcohort had follow-up visits between 2004 and 2005, and between 2011 and 2012. All participants had data on incident cancer diagnosis and incident dementia diagnosis through follow-up, collected from medical records of general practitioners (including hospital discharge letters) and through linkage with national registries. Date and cause of death was collected on a weekly basis via municipal population registries. Data on clinical outcomes was available until 2015. Further study details can be found in _Supplementary Material x_.
 
 To match the analysis to our initial question, we considered as inclusion criteria being between 60 and 70 years old at study entry, without history of cancer diagnosis, free of cognitive decline or with previous history of dementia. Out of 10998 persons who participated at study entry, `r total_n` were considered eligible. Time to cancer diagnosis, time to dementia diagnosis and death status was measured for all participants. All participants were followed from study entry until dementia diagnosis, death or 20 years after their individual baseline date, whichever occurred first.
 
@@ -62,40 +62,43 @@ Efforts to prevent and treat cancer should converge with similar efforts to prev
 
 - We could have change Pin1 to other molecular mechanism (MAYBE). This also extends to other questions that study the effect of one disease in the risk of another disease to understand the biological mechanisms behind the.
 
+Some of the covariates that are represented by $L$ could include: screening guidelines, type of health care coverage, health-seeking behaviors, and health care availability. These covariates would also explain the potential unmeasured and differential measurement error that affect cancer, death and also ADRD over follow-up. 
+
+Although this means we could measure the biomarker at a particular time in everyone, defined by the cohort study design, an unanswered question that would remain is related to the best time to measure the biomarker in an applied setting. This question is beyond the scope of this exercise and for didactic purpose we may consider that the study entrance (and subsequent data collection) date was part of a screening process.
 
 \newpage
 
 ### References
 
-1.	Ma, L. L. et al. Association between cancer and Alzheimer’s disease: Systematic review and meta-analysis. J. Alzheimer’s Dis. 42, 565–573 (2014).
-2.	Hanson, H. A., Horn, K. P., Rasmussen, K. M., Hoffman, J. M. & Smith, K. R. Is Cancer Protective for Subsequent Alzheimer’s Disease Risk? Evidence from the Utah Population Database. Journals Gerontol. - Ser. B Psychol. Sci. Soc. Sci. 72, 1032–1043 (2017).
-3.	van der Willik, K. D., Schagen, S. B. & Ikram, M. A. Cancer and dementia: Two sides of the same coin? Eur. J. Clin. Invest. 48, 1–12 (2018).
+1.	Ma, L. L. et al. Association between cancer and Alzheimer?s disease: Systematic review and meta-analysis. J. Alzheimer?s Dis. 42, 565?573 (2014).
+2.	Hanson, H. A., Horn, K. P., Rasmussen, K. M., Hoffman, J. M. & Smith, K. R. Is Cancer Protective for Subsequent Alzheimer?s Disease Risk? Evidence from the Utah Population Database. Journals Gerontol. - Ser. B Psychol. Sci. Soc. Sci. 72, 1032?1043 (2017).
+3.	van der Willik, K. D., Schagen, S. B. & Ikram, M. A. Cancer and dementia: Two sides of the same coin? Eur. J. Clin. Invest. 48, 1?12 (2018).
 4.	Ospina-Romero, M. et al. Association Between Alzheimer Disease and Cancer With Evaluation of Study Biases: A Systematic Review and Meta-analysis. JAMA Netw. open 3, e2025515 (2020).
-5.	Behrens, M., Lendon, C. & Roe, C. A Common Biological Mechanism in Cancer and Alzheimers Disease? Curr. Alzheimer Res. 6, 196–204 (2009).
-6.	Harris, R. A., Tindale, L. & Cumming, R. C. Age-dependent metabolic dysregulation in cancer and Alzheimer’s disease. Biogerontology 15, 559–577 (2014).
-7.	Nudelman, K. N. H., McDonald, B. C., Lahiri, D. K. & Saykin, A. J. Biological Hallmarks of Cancer in Alzheimer’s Disease. Mol. Neurobiol. 56, 7173–7187 (2019).
-8.	Papin, S. & Paganetti, P. Emerging evidences for an implication of the neurodegeneration-associated protein tau in cancer. Brain Sci. 10, 1–24 (2020).
-9.	Driver, J. A. Inverse association between cancer and neurodegenerative disease: review of the epidemiologic and biological evidence. Biogerontology 15, 547–557 (2014).
-10.	Olson, B. & Marks, D. L. Pretreatment cancer-related cognitive impairment—mechanisms and outlook. Cancers (Basel). 11, 1–18 (2019).
-11.	Li, J. et al. Roles of peptidyl-prolyl isomerase Pin1 in disease pathogenesis. Theranostics 11, 3348–3358 (2021).
-12.	Driver, J. A., Zhou, X. Z. & Lu, K. P. Pin1 dysregulation helps to explain the inverse association between cancer and Alzheimer’s disease. Biochim. Biophys. Acta - Gen. Subj. 1850, 2069–2076 (2015).
-13.	Snyder, H. M. et al. Exploring the nexus of Alzheimer’s disease and related dementias with cancer and cancer therapies: A convening of the Alzheimer’s Association & Alzheimer’s Drug Discovery Foundation. Alzheimer’s Dement. 13, 267–273 (2017).
-14.	Ganguli, M. Cancer and dementia. Alzheimer Dis. Assoc. Disord. 29, 177–182 (2015).
-15.	Angelucci, F. & Hort, J. Prolyl isomerase Pin1 and neurotrophins: A loop that may determine the fate of cells in cancer and neurodegeneration. Ther. Adv. Med. Oncol. 9, 59–62 (2017).
-16.	Hernán, M. A. & Robins, J. M. Causal Inference: What If (Harvard book) - Last version. (2019).
-17.	Musicco, M. et al. Inverse occurrence of cancer and Alzheimer disease: A population-based incidence study. Neurology 81, 322–328 (2013).
-18.	Aiello Bowles, E. J. et al. Risk of Alzheimer’s disease or dementia following a cancer diagnosis. PLoS One 12, 1–11 (2017).
-19.	Ording, A. G. et al. Cancer and risk of Alzheimer’s disease: Small association in a nationwide cohort study. Alzheimer’s Dement. 16, 953–964 (2020).
+5.	Behrens, M., Lendon, C. & Roe, C. A Common Biological Mechanism in Cancer and Alzheimers Disease? Curr. Alzheimer Res. 6, 196?204 (2009).
+6.	Harris, R. A., Tindale, L. & Cumming, R. C. Age-dependent metabolic dysregulation in cancer and Alzheimer?s disease. Biogerontology 15, 559?577 (2014).
+7.	Nudelman, K. N. H., McDonald, B. C., Lahiri, D. K. & Saykin, A. J. Biological Hallmarks of Cancer in Alzheimer?s Disease. Mol. Neurobiol. 56, 7173?7187 (2019).
+8.	Papin, S. & Paganetti, P. Emerging evidences for an implication of the neurodegeneration-associated protein tau in cancer. Brain Sci. 10, 1?24 (2020).
+9.	Driver, J. A. Inverse association between cancer and neurodegenerative disease: review of the epidemiologic and biological evidence. Biogerontology 15, 547?557 (2014).
+10.	Olson, B. & Marks, D. L. Pretreatment cancer-related cognitive impairment?mechanisms and outlook. Cancers (Basel). 11, 1?18 (2019).
+11.	Li, J. et al. Roles of peptidyl-prolyl isomerase Pin1 in disease pathogenesis. Theranostics 11, 3348?3358 (2021).
+12.	Driver, J. A., Zhou, X. Z. & Lu, K. P. Pin1 dysregulation helps to explain the inverse association between cancer and Alzheimer?s disease. Biochim. Biophys. Acta - Gen. Subj. 1850, 2069?2076 (2015).
+13.	Snyder, H. M. et al. Exploring the nexus of Alzheimer?s disease and related dementias with cancer and cancer therapies: A convening of the Alzheimer?s Association & Alzheimer?s Drug Discovery Foundation. Alzheimer?s Dement. 13, 267?273 (2017).
+14.	Ganguli, M. Cancer and dementia. Alzheimer Dis. Assoc. Disord. 29, 177?182 (2015).
+15.	Angelucci, F. & Hort, J. Prolyl isomerase Pin1 and neurotrophins: A loop that may determine the fate of cells in cancer and neurodegeneration. Ther. Adv. Med. Oncol. 9, 59?62 (2017).
+16.	Hern?n, M. A. & Robins, J. M. Causal Inference: What If (Harvard book) - Last version. (2019).
+17.	Musicco, M. et al. Inverse occurrence of cancer and Alzheimer disease: A population-based incidence study. Neurology 81, 322?328 (2013).
+18.	Aiello Bowles, E. J. et al. Risk of Alzheimer?s disease or dementia following a cancer diagnosis. PLoS One 12, 1?11 (2017).
+19.	Ording, A. G. et al. Cancer and risk of Alzheimer?s disease: Small association in a nationwide cohort study. Alzheimer?s Dement. 16, 953?964 (2020).
 20.	Sun, M., Wang, Y., Sundquist, J., Sundquist, K. & Ji, J. The Association Between Cancer and Dementia: A National Cohort Study in Sweden. Front. Oncol. 10, (2020).
-21.	Frain, L. et al. Association of cancer and Alzheimer’s disease risk in a national cohort of veterans. Alzheimer’s Dement. 13, 1364–1370 (2017).
-22.	Schmidt, S. A. J., Ording, A. G., Horváth-Puhó, E., Sørensen, H. T. & Henderson, V. W. Non-melanoma skin cancer and risk of Alzheimer’s disease and all-cause dementia. PLoS One 12, 1–13 (2017).
-23.	Freedman, D. M. et al. Associations between cancer and Alzheimer’s disease in a U.S. Medicare population. Cancer Med. 5, 2965–2976 (2016).
-24.	Driver, J. A. et al. Inverse association between cancer and Alzheimer’s disease: Results from the Framingham Heart Study. BMJ 344, 19 (2012).
+21.	Frain, L. et al. Association of cancer and Alzheimer?s disease risk in a national cohort of veterans. Alzheimer?s Dement. 13, 1364?1370 (2017).
+22.	Schmidt, S. A. J., Ording, A. G., Horv?th-Puh?, E., S?rensen, H. T. & Henderson, V. W. Non-melanoma skin cancer and risk of Alzheimer?s disease and all-cause dementia. PLoS One 12, 1?13 (2017).
+23.	Freedman, D. M. et al. Associations between cancer and Alzheimer?s disease in a U.S. Medicare population. Cancer Med. 5, 2965?2976 (2016).
+24.	Driver, J. A. et al. Inverse association between cancer and Alzheimer?s disease: Results from the Framingham Heart Study. BMJ 344, 19 (2012).
 25.	Bolch, C. A. et al. Inverse probability of treatment-weighted competing risks analysis: An application on long-term risk of urinary adverse events after prostate cancer treatments. BMC Med. Res. Methodol. (2017) doi:10.1186/s12874-017-0367-8.
-26.	Mezencev, R. & Chernoff, Y. O. Risk of alzheimer’s disease in cancer patients: Analysis of mortality data from the US SEER population-based registries. Cancers (Basel). 12, (2020).
-27.	Soriano, J. B. et al. Prevalence and attributable health burden of chronic respiratory diseases, 1990–2017: a systematic analysis for the Global Burden of Disease Study 2017. Lancet Respir. Med. 8, 585–596 (2020).
-28.	Young, J. G., Stensrud, M. J., Tchetgen, E. J. T. & Hernán, M. A. A causal framework for classical statistical estimands in failure time settings with competing events. Stat. Med. 1, 1–38 (2020).
-29.	Bennett, J. E. et al. NCD Countdown 2030: worldwide trends in non-communicable disease mortality and progress towards Sustainable Development Goal target 3.4. Lancet 392, 1072–1088 (2018).
+26.	Mezencev, R. & Chernoff, Y. O. Risk of alzheimer?s disease in cancer patients: Analysis of mortality data from the US SEER population-based registries. Cancers (Basel). 12, (2020).
+27.	Soriano, J. B. et al. Prevalence and attributable health burden of chronic respiratory diseases, 1990?2017: a systematic analysis for the Global Burden of Disease Study 2017. Lancet Respir. Med. 8, 585?596 (2020).
+28.	Young, J. G., Stensrud, M. J., Tchetgen, E. J. T. & Hern?n, M. A. A causal framework for classical statistical estimands in failure time settings with competing events. Stat. Med. 1, 1?38 (2020).
+29.	Bennett, J. E. et al. NCD Countdown 2030: worldwide trends in non-communicable disease mortality and progress towards Sustainable Development Goal target 3.4. Lancet 392, 1072?1088 (2018).
 
 
 \newpage
