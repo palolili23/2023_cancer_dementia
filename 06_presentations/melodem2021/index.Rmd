@@ -35,7 +35,7 @@ rd_results_ever <- rio::import(here::here("02_R", "rd_results_ever.csv"))
 rd_results_tv <- rio::import(here::here("02_R", "rd_results_tv.csv"))
 table_results_bounds <- rio::import(here::here("02_R", "table_results_bounds.csv")) %>%
   select(1,2,rr) %>%
-  filter(Proxy != "Time to cancer",
+  filter(Proxy != "Time-varing",
          model != "IPTW + IPCW") %>%
   pivot_wider(names_from = model, values_from = rr)
 
@@ -45,15 +45,13 @@ rr <- rd_results_ever %>%
   pivot_wider(names_from = conf,
               values_from = rr) %>%
   mutate(contrast = "Risk Ratio") %>%
-  rename(conf.high = conf.higher) %>%
-  mutate(Proxy = str_replace(Proxy, "Time-varing", "Time-varying"))
+  rename(conf.high = conf.higher)
 
 results <- hr_results %>%
   mutate(contrast = "Hazard Ratio") %>%
-  filter(Proxy != "Time to cancer") %>%
-  mutate(Proxy = ifelse(
-    Proxy == "Ever vs. Never", "Ever vs. never", "Time-varying")) %>%
   bind_rows(rr) %>%
+  mutate(Proxy = str_replace(Proxy, "Time-varying", "Time to cancer"),
+         Proxy = str_replace(Proxy, "never", "Never")) %>%
   mutate(Proxy = str_to_sentence(Proxy))
 ```
 
@@ -83,6 +81,18 @@ class: center, middle
 .right[L. Paloma Rojas-Saunero, MD
 
 **Epidemiology department**]
+
+---
+
+class: middle
+
+### Acknowledgments
+
+- Sonja A. Swanson
+
+- Kimberly van der Willik
+
+- M. Arfan Ikram
 
 ---
 
@@ -491,7 +501,7 @@ We considered 2 scenarios to define Pin1 over-expression:
 
 - Inverse probability of censoring weights for death (IPCW)*
 
-  + For an individual still alive in year _t_, weights represent the the product of the inverse probability of surviving in each year prior to _t_, conditional on measured common causes of death and dementia. 
+  + For an individual still alive in year _t_, weights represent the product of the inverse probability of surviving in each year prior to _t_, conditional on measured common causes of death and dementia. 
 
 .footnote[Rojas-Saunero et al. Choosing questions before methods in dementia research with competing events and causal goals.MedRxiv.2021]
 
@@ -531,7 +541,7 @@ If we look at the proportion of participants who was in each status over follow 
 
 ---
 
-### Results
+### Preliminary results
 
 .pull-left[
 ```{r, echo = FALSE, fig.retina = 3}
@@ -618,7 +628,7 @@ temp <-
   rename(conf.low = `Lower bound`, conf.high = `Upper bound`)
 
 results %>%
-  filter(Proxy == "Time-varying") %>%
+  filter(Proxy == "Time to cancer") %>%
   mutate(model = fct_relevel(model, c("Unadjusted", "IPTW", "IPTW + IPCW"))) %>%
   ggplot(aes(
     y = contrast,
