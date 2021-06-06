@@ -53,39 +53,65 @@ km_tv <- function(data_long, crude = TRUE, ipcw = FALSE) {
   }
   
   else {  
-    cancer_den <-
-      glm(
-        cancer_v ~ bs(age_0, 3) + sex + education + as.factor(smoke1) + cohort,
-        data = data_long,
-        family = binomial
-      )
-    
-    cancer_num <- glm(cancer_v ~ 1 , data = data_long)
-    
-    data_long <- data_long %>%
-      mutate(
-        p_num = predict(cancer_num, type = "response"),
-        p_denom = predict(cancer_den, type = "response"))
-    
-    data_long <- data_long %>%
-      group_by(id) %>% 
-      mutate(
-        sw_cancer = ifelse(cancer_v == 1, p_num/p_denom, (1 - p_num)/(1- p_denom)),
-        # sw_cancer = cumprod(sw_cancer),
-        w_cancer = ifelse(cancer_v == 1, 1/p_denom, 1/(1- p_denom)),
-        # w_cancer = cumprod(w_cancer)
-        ) %>% 
-      ungroup()
     
     data_long %<>% 
-      mutate(sw_cancer_t = ifelse((sw_cancer > quantile(sw_cancer, 0.99)), 
-                                  quantile(sw_cancer, 0.99), sw_cancer),
-             w_cancer_t = ifelse((w_cancer > quantile(w_cancer, 0.99)), 
-                                 quantile(w_cancer, 0.99), w_cancer))
+      group_by(id) %>%
+      mutate(pastcancer = ifelse(cancer_v == 1 & lag(cancer_v) == 0, 0, cancer_v),
+             pastcancer = ifelse(is.na(pastcancer), 0, pastcancer)) %>% 
+      ungroup() 
+    
+    
+    # denominator
+    mod <- glm(cancer_v ~ bs(time, 3) + bs(age_0, 3) + sex + education + apoe4 +
+                 as.factor(smoke) + bs(sbp, 3) + bs(bmi, 3) + 
+                 ht + ht_drug + diab_v + cohort,
+               family = quasibinomial(), data = subset(data_long , 
+                                                       pastcancer == 0))
+    
+    summary(mod)
+    
+    data_long %<>%
+      mutate(pred_a_den = ifelse(pastcancer == 1, 
+                                 1, # the pr of ever having cancer is 1 for those with cancer
+                                 predict(mod, type = 'response'))) 
+    
+    # numerator
+    
+    mod_num <- glm(cancer_v ~ bs(time, 3),
+                   family = quasibinomial(),
+                   data = subset(data_long, pastcancer == 0))
+    
+    data_long %<>% 
+      mutate(pred_a_num = ifelse(pastcancer == 1, 
+                                 1, # the pr of ever having cancer is 1 for those with cancer
+                                 predict(mod_num, type = 'response'))) 
+    
+    data_long %<>% 
+      mutate(num_a = ifelse(cancer_v == 1, pred_a_num, 1 - pred_a_num),
+             den_a = ifelse(cancer_v == 1, pred_a_den, 1 - pred_a_den)) %>% 
+      group_by(id) %>% 
+      mutate(numcum = cumprod(num_a),
+             dencum = cumprod(den_a)) %>% 
+      ungroup() %>% 
+      mutate(sw_cancer = numcum/dencum,
+             w_cancer = 1/dencum)
+    
+    
+    data_long %<>%
+      mutate(
+        sw_cancer_t = ifelse((sw_cancer > quantile(sw_cancer, 0.99)),
+                             quantile(sw_cancer, 0.99),
+                             sw_cancer
+        ),
+        w_cancer_t = ifelse((w_cancer > quantile(w_cancer, 0.99)),
+                            quantile(w_cancer, 0.99),
+                            w_cancer
+        )
+      )
+    
     
     
     if (ipcw != FALSE) {
-      
       death_den <- glm(
         competing_plr ~ cancer_v + bs(time, 3) + bs(age_0, 3) + sex + education + apoe4 +
           as.factor(smoke) + bs(sbp, 3) + bs(bmi, 3) + 
@@ -93,6 +119,8 @@ km_tv <- function(data_long, crude = TRUE, ipcw = FALSE) {
         data = data_long,
         family = quasibinomial
       )
+      
+      summary(death_den)
       
       death_num <-
         glm(
@@ -203,6 +231,6 @@ boots_km_ipcw$model <- "IPTW + IPCW"
 
 rd_results_tv <- bind_rows(point_km_crude, point_km_iptw, point_km_ipcw) %>%
   bind_rows(boots_km_crude, boots_km_iptw, boots_km_ipcw) %>%
-  mutate(Proxy = "Time-varing")
+  mutate(Proxy = "Time-varying")
 
 export(rd_results_tv, here::here("02_R", "rd_results_tv.csv"))

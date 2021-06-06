@@ -58,7 +58,7 @@ km_ever <- function(data, crude = TRUE, ipcw = FALSE) {
         glm(
           competing_plr ~ bs(age_0, 3) + sex + education + apoe4 + 
             as.factor(smoke1) + ht1 + bs(sbp1, 3) + bs(bmi1,3) +
-            as.factor(diabetes_prev) +  cancer_v + cohort,
+            as.factor(diabetes_prev) + cohort + cancer_v,
           data = data,
           family = binomial
         )

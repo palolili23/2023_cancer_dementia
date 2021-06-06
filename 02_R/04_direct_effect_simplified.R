@@ -122,7 +122,7 @@ death_den <-
   glm(
     competing_plr ~ bs(age_0, 3) + sex + education + apoe4 + 
       as.factor(smoke1) + ht1 + bs(sbp1, 3) + bs(bmi1,3) +
-      as.factor(diabetes_prev) +  cancer_v + cohort,
+      as.factor(diabetes_prev) + cohort + cancer_v,
     data = data_wide,
     family = binomial
   )
@@ -266,53 +266,69 @@ rd_1e  <- km_ever_ipcw_up_bound %>%
 
 # 2. Time-varying cancer -----------------------------------------------------
 
+# 2.1. Weights for t2cancer -----------------------------------------------
 
-# 2.1. IPTW for t-v cancer, with baseline covariates -------------------
-
-smoke1 <- data_wide %>% select(id, smoke1, ht1, sbp1, bmi1)
-
-data_long <- data_long %>% 
-  left_join(smoke1)
-
-cancer_den <-
-  glm(
-    cancer_v ~ bs(age_0, 3) + sex + education + as.factor(smoke1) + cohort,
-    data = data_long,
-    family = binomial
-  )
-
-summary(cancer_den)
-
-cancer_num <- glm(cancer_v ~ 1 , data = data_long)
-
-summary(cancer_num)
-
-data_long <- data_long %>%
-  mutate(
-    p_num = predict(cancer_num, type = "response"),
-    p_denom = predict(cancer_den, type = "response"))
-  
-data_long <- data_long %>%
-  group_by(id) %>% 
-  mutate(
-    sw_cancer = ifelse(cancer_v == 1, p_num/p_denom, (1 - p_num)/(1- p_denom)),
-    # sw_cancer = cumprod(sw_cancer),
-    w_cancer = ifelse(cancer_v == 1, 1/p_denom, 1/(1- p_denom)),
-    # w_cancer = cumprod(w_cancer)
-    ) %>% 
-  ungroup()
+# We want the probability of having a cancer dx at each 
+# time point for each participant who has not yet being diagnosed
 
 data_long %<>% 
-  mutate(sw_cancer_t = ifelse((sw_cancer > quantile(sw_cancer, 0.99)), 
-                            quantile(sw_cancer, 0.99), sw_cancer),
-         w_cancer_t = ifelse((w_cancer > quantile(w_cancer, 0.99)), 
-                            quantile(w_cancer, 0.99), w_cancer))
+  group_by(id) %>%
+  mutate(pastcancer = ifelse(cancer_v == 1 & lag(cancer_v) == 0, 0, cancer_v),
+         pastcancer = ifelse(is.na(pastcancer), 0, pastcancer)) %>% 
+  ungroup() 
 
-summary(data_long$w_cancer)
-summary(data_long$w_cancer_t)
-summary(data_long$sw_cancer)
-summary(data_long$sw_cancer_t)
 
+# denominator
+mod <- glm(cancer_v ~ bs(time, 3) + bs(age_0, 3) + sex + education + apoe4 +
+             as.factor(smoke) + bs(sbp, 3) + bs(bmi, 3) + 
+             ht + ht_drug + diab_v + cohort,
+           family = quasibinomial(), data = subset(data_long , 
+                                                   pastcancer == 0))
+
+summary(mod)
+
+data_long %<>%
+  mutate(pred_a_den = ifelse(pastcancer == 1, 
+                             1, # the pr of ever having cancer is 1 for those with cancer
+                             predict(mod, type = 'response'))) 
+
+# numerator
+
+mod_num <- glm(cancer_v ~ bs(time, 3),
+               family = quasibinomial(),
+               data = subset(data_long, pastcancer == 0))
+
+data_long %<>% 
+  mutate(pred_a_num = ifelse(pastcancer == 1, 
+                             1, # the pr of ever having cancer is 1 for those with cancer
+                             predict(mod_num, type = 'response'))) 
+
+data_long %<>% 
+  mutate(num_a = ifelse(cancer_v == 1, pred_a_num, 1 - pred_a_num),
+         den_a = ifelse(cancer_v == 1, pred_a_den, 1 - pred_a_den)) %>% 
+  group_by(id) %>% 
+  mutate(numcum = cumprod(num_a),
+         dencum = cumprod(den_a)) %>% 
+  ungroup() %>% 
+  mutate(sw_cancer = numcum/dencum,
+         w_cancer = 1/dencum)
+
+
+data_long %<>%
+  mutate(
+    sw_cancer_t = ifelse((sw_cancer > quantile(sw_cancer, 0.99)),
+                           quantile(sw_cancer, 0.99),
+                         sw_cancer
+    ),
+    w_cancer_t = ifelse((w_cancer > quantile(w_cancer, 0.99)),
+                          quantile(w_cancer, 0.99),
+                        w_cancer
+    )
+  )
+
+data_long %>% 
+  ggplot(aes(x = as_factor(time), y = w_cancer_t)) +
+  geom_boxplot()
 
 # 2.2. IPCW. Weights on death - dementia ---------------------------------------------
 
@@ -364,245 +380,74 @@ data_long %<>%
          sw_weights_both = sw_cancer * sw_death,
          sw_weights_both_t = sw_cancer_t * sw_death_t)
 
-# data_long %>% select(
-#   id,
-#   tstart,
-#   fuptime,
-#   outcome_plr,
-#   cancer_v,
-#   competing_plr,
-#   contains("w")
-# ) %>% View()
 
-# 2.a. KM t-v unadjusted --------------------------------------------------
+# 3.a. KM unadjusted ------------------------------------------------------
 
-km_tv_unadjusted <- survfit(Surv(
-  tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
-  data = data_long)
-
-# plot(km_tv_unadjusted)
-
-plot_km(km_tv_unadjusted, "Risk of dementia, time-varying cancer") + 
-  labs(subtitle = "Unadjusted")
-
-cox_tv_unadjusted <- coxph(Surv(
+km_t2cancer <- survfit(Surv(
   tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
   data = data_long, cluster = id)
 
-hr_2a <- cox_tv_unadjusted %>% 
+plot_3a <- plot_km(km_t2cancer, "Risk of dementia, time to cancer") + 
+  labs(subtitle = "Unadjusted")
+
+
+cox_t2cancer <- coxph(Surv(
+  tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
+  data = data_long, cluster = id)
+
+hr_3a <- cox_t2cancer %>% 
   tidy_hr() %>% 
   mutate(model = "Unadjusted")
 
-rd_2a <- risks_km(km_tv_unadjusted) %>% 
+rd_3a <- risks_km(km_t2cancer) %>% 
   mutate(model = "Unadjusted")
 
-# 2.b. KM independent censoring, with confounding ------------------------------
-
-km_tv_iptw <- survfit(Surv(
-  tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
-  data = data_long, cluster = id, weights = sw_cancer_t)
-
-# plot(km_iptw)
-
-plot_2b <- plot_km(km_tv_iptw, "Risk of dementia, Time-varying cancer") + 
-  labs(subtitle = "IPTW")
-
-cox_tv_iptw <- coxph(Surv(
-  tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
-  data = data_long, cluster = id, weights = sw_cancer_t)
-
-hr_2b <- cox_tv_iptw %>% 
-  tidy_hr() %>%
-  mutate(model = "IPTW")
-
-rd_2b <- risks_km(km_tv_iptw) %>% 
-  mutate(model = "IPTW")
-
-
-# 2.c. KM with IPCW time-varying covariates -------------------------------
-
-km_tv_ipcw <- survfit(Surv(
-  tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
-  data = data_long, cluster = id, weights = sw_weights_both_t)
-
-# plot(km_ipcw)
-
-plot_2c <- plot_km(km_tv_ipcw, "Risk of dementia, time-varying cancer") + 
-  labs(subtitle = "IPTW + IPCW")
-
-cox_tv_ipcw <- coxph(Surv(
-  tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
-  data = data_long, cluster = id, weights = sw_weights_both_t)
-
-hr_2c <- cox_tv_ipcw %>% 
-  tidy_hr() %>% 
-  mutate(model = "IPTW + IPCW")
-
-rd_2c <- risks_km(km_tv_ipcw) %>% 
-    mutate(model = "IPTW + IPCW")
-
-hr_timevar <- bind_rows(hr_2a, hr_2b, hr_2c) %>% 
-  mutate(Proxy = "Time-varying cancer")
-
-#  2.d. Lower bound ------------------------------------------------------------
-
-km_tv_ipcw_low_bound <- survfit(
-  Surv(
-    tstart,
-    time2 = fuptime,
-    event = as.factor(both_outcomes),
-    type = 'mstate'
-  ) ~ cancer_v,
-  data = data_long,
-  cluster = id,
-  id = id,
-  weights = sw_cancer_t
-)
-
-rd_2d <- lower_bound(km_tv_ipcw_low_bound)
-
-# 2.e. Upper bound -------------------------------------------------------------
-
-km_tv_ipcw_up_bound <- survfit(
-  Surv(
-    tstart,
-    time2 = fuptime,
-    event = combined_outcome,
-  ) ~ cancer_v,
-  data = data_long,
-  cluster = id,
-  id = id,
-  weights = sw_cancer_t
-)
-
-rd_2e <- km_tv_ipcw_up_bound %>% 
-  risks_km()  %>% 
-  mutate(model = "Upper bound")
-
-
-# 3. Time to cancer -------------------------------------------------------
-
-# 3.1. Weights for t2cancer -----------------------------------------------
-
-# We want the probability of having a cancer dx at each 
-# time point for each participant who has not yet being diagnosed
-
-data_long %<>% 
-  group_by(id) %>%
-  mutate(pastcancer = ifelse(cancer_v == 1 & lag(cancer_v) == 0, 0, cancer_v),
-         pastcancer = ifelse(is.na(pastcancer), 0, pastcancer)) %>% 
-  ungroup() 
-
-
-# denominator
-mod <- glm(cancer_v ~ bs(age_0,3) + sex + education + as.factor(smoke1) + cohort,
-           family = quasibinomial(), data = subset(data_long , 
-                                                   pastcancer == 0))
-
-summary(mod)
-
-data_long %<>%
-  mutate(pred_a_den = ifelse(pastcancer == 1, 
-                             1, # the pr of ever having cancer is 1 for those with cancer
-                             predict(mod, type = 'response'))) 
-
-# numerator
-
-mod_num <- glm(cancer_v ~ bs(time, 3),
-               family = quasibinomial(),
-               data = subset(data_long, pastcancer == 0))
-
-data_long %<>% 
-  mutate(pred_a_num = ifelse(pastcancer == 1, 
-                             1, # the pr of ever having cancer is 1 for those with cancer
-                             predict(mod_num, type = 'response'))) 
-
-data_long %<>% 
-  mutate(num_a = ifelse(cancer_v == 1, pred_a_num, 1 - pred_a_num),
-         den_a = ifelse(cancer_v == 1, pred_a_den, 1 - pred_a_den)) %>% 
-  group_by(id) %>% 
-  mutate(numcum = cumprod(num_a),
-         dencum = cumprod(den_a)) %>% 
-  ungroup() %>% 
-  mutate(sw_t2cancer = numcum/dencum,
-         w_t2cancer = 1/dencum)
-
-
-data_long %<>%
-  mutate(
-    sw_t2cancer_t = ifelse((sw_t2cancer > quantile(sw_t2cancer, 0.99)),
-                           quantile(sw_t2cancer, 0.99),
-                           sw_t2cancer
-    ),
-    w_t2cancer_t = ifelse((w_t2cancer > quantile(w_t2cancer, 0.99)),
-                          quantile(w_t2cancer, 0.99),
-                          w_t2cancer
-    )
-  )
-
-data_long %>% 
-  ggplot(aes(x = as_factor(time), y = w_t2cancer_t)) +
-  geom_boxplot()
-
-# Multiply weights
-
-data_long %<>%
-  mutate(
-    both_weights2 = w_death_t * w_t2cancer_t,
-    sw_both2 = sw_death_t * sw_t2cancer_t) 
-
-
-data_long %>% 
-  ggplot(aes(x = as_factor(time), y = sw_both2)) +
-  geom_boxplot()
-
-
-# 3.a. KM IPTW 2tcancer  ------------------------------
+# 3.b. KM IPTW 2tcancer  ------------------------------
 
 km_t2cancer_iptw <- survfit(Surv(
   tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
-  data = data_long, cluster = id, weights = sw_t2cancer_t)
+  data = data_long, cluster = id, weights = sw_cancer_t)
 
-plot_3a <- plot_km(km_t2cancer_iptw, "Risk of dementia, time to cancer") + 
+plot_3b <- plot_km(km_t2cancer_iptw, "Risk of dementia, time to cancer") + 
   labs(subtitle = "IPTW")
 
 
 cox_t2cancer_iptw <- coxph(Surv(
   tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
-  data = data_long, cluster = id, weights = sw_t2cancer_t)
+  data = data_long, cluster = id, weights = sw_cancer_t)
 
-hr_3a <- cox_t2cancer_iptw %>% 
+hr_3b <- cox_t2cancer_iptw %>% 
   tidy_hr() %>% 
   mutate(model = "IPTW")
 
-rd_3a <- risks_km(km_t2cancer_iptw) %>% 
+rd_3b <- risks_km(km_t2cancer_iptw) %>% 
   mutate(model = "IPTW")
 
-# 3.b. KM IPCW T2cancer  ---------------
+# 3.c. KM IPCW T2cancer  ---------------
 
 km_t2cancer_ipcw <- survfit(Surv(
   tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
-  data = data_long, cluster = id, weights = sw_both2)
+  data = data_long, cluster = id, weights = sw_weights_both_t)
 
 cox_t2cancer_ipcw <- coxph(Surv(
   tstart, time2 = fuptime, event = outcome_plr) ~ cancer_v,
-  data = data_long, cluster = id, weights = sw_both2)
+  data = data_long, cluster = id, weights = sw_weights_both_t)
 
-plot_3b <- plot_km(km_t2cancer_ipcw, "Risk of dementia, time to cancer") + 
+plot_3c <- plot_km(km_t2cancer_ipcw, "Risk of dementia, time to cancer") + 
   labs(subtitle = "IPTW + IPCW")
 
-hr_3b <- cox_t2cancer_ipcw %>% 
+hr_3c <- cox_t2cancer_ipcw %>% 
   tidy_hr() %>% 
   mutate(model = "IPTW + IPCW")
 
-rd_3b <- risks_km(km_t2cancer_ipcw) %>% 
+rd_3c <- risks_km(km_t2cancer_ipcw) %>% 
   mutate(model = "IPTW + IPCW")
 
-hr_t2cancer <- bind_rows(hr_3a, hr_3b) %>% 
+hr_t2cancer <- bind_rows(hr_3a, hr_3b, hr_3c)%>% 
   mutate(Proxy = "Time to cancer") 
 
 
-# 3.c. Lower bound ------------------------------------------------------------------
+# 3.d. Lower bound ------------------------------------------------------------------
 
 km_t2c_ipcw_low_bound <- survfit(
   Surv(
@@ -614,12 +459,12 @@ km_t2c_ipcw_low_bound <- survfit(
   data = data_long,
   cluster = id,
   id = id,
-  weights = sw_t2cancer_t
+  weights = sw_cancer_t
 )
 
-rd_3c  <- lower_bound(km_t2c_ipcw_low_bound)
+rd_3d  <- lower_bound(km_t2c_ipcw_low_bound)
 
-# 3.d. Upper bound -------------------------------------------------------------
+# 3.e. Upper bound -------------------------------------------------------------
 
 km_t2cancer_ipcw_up_bound <- survfit(
   Surv(
@@ -630,10 +475,10 @@ km_t2cancer_ipcw_up_bound <- survfit(
   data = data_long,
   cluster = id,
   id = id,
-  weights = sw_t2cancer_t
+  weights = sw_cancer_t
 )
 
-rd_3d  <- km_t2cancer_ipcw_up_bound %>% 
+rd_3e  <- km_t2cancer_ipcw_up_bound %>% 
   risks_km()  %>% 
   mutate(model = "Upper bound")
 
@@ -641,7 +486,7 @@ rd_3d  <- km_t2cancer_ipcw_up_bound %>%
 
 # 4. All results ----------------------------------------------------------
 
-hr_results <- bind_rows(hr_ever_never, hr_timevar, hr_t2cancer)
+hr_results <- bind_rows(hr_ever_never, hr_t2cancer)
 
 export(hr_results, here::here("02_R", "hr_results.csv"))
 
@@ -653,22 +498,17 @@ bounds_ever_cancer <- bind_rows(rd_1c, rd_1d, rd_1e) %>%
   arrange(rd) %>% 
   mutate(Proxy = "Ever vs. never")
 
-bounds_tv_cancer <- bind_rows(rd_2c, rd_2d, rd_2e) %>% 
-  select(model, everything()) %>% 
-  arrange(rd) %>% 
-  mutate(Proxy = "Time-varying cancer")
-
-bounds_t2vcancer <- bind_rows(rd_3b, rd_3c, rd_3d) %>% 
+bounds_t2vcancer <- bind_rows(rd_3c, rd_3d, rd_3e) %>% 
   select(model, everything()) %>% 
   arrange(rd) %>% 
   mutate(Proxy = "Time to cancer")
 
-table_results_bounds <- bind_rows(bounds_ever_cancer, bounds_tv_cancer, bounds_t2vcancer) %>% 
+table_results_bounds <- bind_rows(bounds_ever_cancer, bounds_t2vcancer) %>% 
   select(Proxy, everything())
 
 export(table_results_bounds, here::here("02_R", "table_results_bounds.csv"))
 
 plots <- list(
-  plot_1b, plot_1c, plot_2b, plot_2c, plot_3a, plot_3b)
+  plot_1b, plot_1c, plot_3b, plot_3c)
 
 save(plots, file = here::here("03_figs", "plots.RData"))
