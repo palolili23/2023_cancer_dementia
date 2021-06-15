@@ -327,7 +327,7 @@ data_long %<>%
   )
 
 data_long %>% 
-  ggplot(aes(x = as_factor(time), y = w_cancer_t)) +
+  ggplot(aes(x = as_factor(time), y = sw_cancer_t)) +
   geom_boxplot()
 
 # 2.2. IPCW. Weights on death - dementia ---------------------------------------------

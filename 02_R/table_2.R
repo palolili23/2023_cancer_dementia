@@ -33,3 +33,9 @@ rd <- ever %>%
   select(Proxy, model, `Risk Difference`)
 
 complete_table <- rd %>% left_join(rr) %>% left_join(hr)
+
+complete_table <- complete_table %>% 
+  mutate(model = as_factor(model),
+         model = fct_relevel(model, c("Unadjusted", "IPTW", "IPTW + IPCW"))) %>% 
+  group_by(Proxy) %>% 
+  arrange(model)
