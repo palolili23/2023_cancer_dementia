@@ -39,3 +39,9 @@ complete_table <- complete_table %>%
          model = fct_relevel(model, c("Unadjusted", "IPTW", "IPTW + IPCW"))) %>% 
   group_by(Proxy) %>% 
   arrange(model)
+
+bounds <- rio::import(here::here("02_R", "table_results_bounds.csv"))
+
+bounds_tv_ipw <- bounds %>% slice(4,6) %>% select(model, rr) %>% pull(rr)
+
+bounds_tv_ipw <- paste0("RR: ", bounds_tv_ipw[1], ", ", bounds_tv_ipw[2])
