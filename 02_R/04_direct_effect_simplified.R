@@ -9,7 +9,7 @@ library(WeightIt)
 library(cobalt)
 
 # Import data -------------------------------------------------------------
-source(here::here("02_R", "04b_auxiliary_fx.R"))
+source(here::here("02_R", "04_auxiliary_fx.R"))
 
 data_long <-
   import(here::here("01_data", "clean_data", "dementia_long.RData"))
@@ -280,8 +280,8 @@ data_long %<>%
 
 # denominator
 mod <- glm(cancer_v ~ bs(time, 3) + bs(age_0, 3) + sex + education + apoe4 +
-             as.factor(smoke) + bs(sbp, 3) + bs(bmi, 3) + 
-             ht + ht_drug + diab_v + cohort,
+             as.factor(smoke_lag) + bs(sbp_lag, 3) + bs(bmi_lag, 3) + 
+             ht_lag + ht_drug_lag + diab_lag + cohort,
            family = quasibinomial(), data = subset(data_long , 
                                                    pastcancer == 0))
 
@@ -333,21 +333,23 @@ data_long %>%
 # 2.2. IPCW. Weights on death - dementia ---------------------------------------------
 
 death_den <- glm(
-  competing_plr ~ cancer_v + bs(time, 3) + bs(age_0, 3) + sex + education + apoe4 +
-    as.factor(smoke) + bs(sbp, 3) + bs(bmi, 3) + 
-    ht + ht_drug + hd_v + stroke_v + diab_v + cohort,
+  competing_plr ~ cancer_v + cancer_lag + bs(time, 3) + bs(age_0, 3) + sex + education + apoe4 +
+    as.factor(smoke_lag) + bs(sbp_lag, 3) + bs(bmi_lag, 3) + 
+    ht_lag + ht_drug_lag + hd_lag + stroke_lag + diab_lag + cohort,
   data = data_long,
   family = quasibinomial
 )
 
-summary(death_den)
+broom::tidy(death_den, exponentiate = TRUE)
 
 death_num <-
   glm(
-    competing_plr ~ cancer_v + bs(time, 3) + cohort,
+    competing_plr ~ cancer_lag + bs(time, 3) + cohort,
     data = data_long,
     family = binomial
   )
+
+broom::tidy(death_num, exponentiate = TRUE)
 
 data_long$p_denom = predict(death_den, data_long, type = "response")
 
@@ -512,3 +514,7 @@ plots <- list(
   plot_1b, plot_1c, plot_3b, plot_3c)
 
 save(plots, file = here::here("03_figs", "plots.RData"))
+
+models <- list(cancer_ever_km_ipcw, km_t2cancer_ipcw)
+
+save(models, file = here::here("02_R", "models.RData"))
