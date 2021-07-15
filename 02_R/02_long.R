@@ -17,8 +17,8 @@ data_long <- data %>%
          sex, age_0, education, apoe4, 
          hd_prev, hd_date, diabetes_prev, diabetes_date, stroke_prev, 
          stroke_date) %>% 
-  filter(t2death >= 1) %>% 
   mutate(t2death_y = round(t2death_y,0)) %>% 
+  filter(t2death_y >= 1) %>% 
   group_by(id) %>% 
   slice(rep(1:n(), each = t2death_y + 2)) %>% #repeat rows by #years until death
   mutate(year = year(e1),
@@ -129,6 +129,28 @@ data_long_2015 %<>%
     death_v = ifelse(is.na(death_v),0, death_v)) %>% 
   ungroup()
 
+data_long_2015 %<>% 
+  group_by(id) %>% 
+  mutate(cancer_lag = lag(cancer_v),
+         cancer_lag = ifelse(is.na(cancer_lag), 0, cancer_lag),
+         stroke_lag = lag(stroke_v),
+         stroke_lag = ifelse(is.na(stroke_lag), 0, stroke_lag),
+         hd_lag = lag(hd_v),
+         hd_lag = ifelse(is.na(hd_lag), 0, hd_lag),
+         diab_lag = lag(diab_v),
+         diab_lag = ifelse(is.na(diab_lag), 0, diab_lag),
+         sbp_lag = lag(sbp),
+         sbp_lag = ifelse(is.na(sbp_lag), sbp, sbp_lag),
+         bmi_lag = lag(bmi),
+         bmi_lag = ifelse(is.na(bmi_lag), bmi, bmi_lag),
+         smoke_lag = lag(smoke),
+         smoke_lag = ifelse(is.na(smoke_lag), smoke, smoke_lag),
+         ht_lag = lag(ht),
+         ht_lag = ifelse(is.na(ht_lag), ht, ht_lag),
+         ht_drug_lag = lag(ht_drug),
+         ht_drug_lag = ifelse(is.na(ht_drug_lag), ht_drug, ht_drug_lag),
+         ) %>% 
+  ungroup()
 
 data_long_2015 %>%
   select(
@@ -147,6 +169,7 @@ data_long_2015 %>%
     death_year,
     t2death_y
   ) %>% View()
+
 #### Create a "status" variable
 
 data_long_2015 %<>% 
@@ -178,7 +201,7 @@ data_long_dem <- data_long_2015 %>%
   mutate(end_dementia_death = ifelse(!is.na(dementia_date), 
                                      as.numeric(year(dementia_date)),
                                      as.numeric(year(end_fup_2015))),
-         time = row_number()) %>%
+         time = row_number() - 1) %>%
   filter(year <= end_dementia_death,
          time <= 20) %>%
   ungroup() %>% 
@@ -196,7 +219,7 @@ data_long_dem %>%
   count(outcome_plr, competing_plr)
 
 ### There are some differences between the wide structure and the long,
-### There are 100 less cases of dementia because they had it after 20 yof
+### There are 73 less cases of dementia because they had it after 21 yof
 ### but it is that a few had over 20 years of follow up
 
 dem_a <- data_long_dem %>% filter(outcome_plr == 1) %>% pull(id)
@@ -205,12 +228,12 @@ dem_b <- data %>% filter(dementia == 1) %>% pull(id)
 dif <- setdiff(dem_b, dem_a)
 
 data %>% filter(id %in% dif) %>% View()
-data %>% filter(id %in% dif) %>% count(t2dem_y >= 19)
+data %>% filter(id %in% dif) %>% count(t2dem_y >= 20)
 
 data_long_dem %>% 
   filter(id %in% dif) %>% 
   count(id) %>% 
-  filter(n < 20)
+  filter(n < 19)
 
 export(data_long_dem, here::here("01_data", "clean_data", "dementia_long.RData"))
 
