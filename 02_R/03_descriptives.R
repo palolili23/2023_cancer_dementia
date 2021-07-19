@@ -46,7 +46,7 @@ total_status <- data_wide %>%
   group_by(cancer_v) %>% 
   count(status) %>% 
   mutate(prop = round(100*n/sum(n),0)) %>% 
-  mutate(total = paste0(prop, "%", " (n =", n,")")) %>% 
+  mutate(total = paste0(prop, "%", " (n=", n,")")) %>% 
   select(cancer_v, status, total)
 
 cancer_dem <- total_status %>% filter(cancer_v == 1, status == "Cancer and Dementia") %>% pull(3)
@@ -138,7 +138,8 @@ data_tableone %<>%
          stroke_prev = as_factor(stroke_prev),
          stroke_v = ifelse(stroke_v == 1, "Incident stroke", "No incident stroke"),
          stroke_v = as_factor(stroke_v),
-         cancer_v = ifelse(cancer_v == 1, "Incident cancer", "No incident cancer"))
+         cancer_v = ifelse(cancer_v == 1, "Incident cancer", "No incident cancer"),
+         cancer_v = as_factor(cancer_v))
 
 
 
@@ -146,7 +147,8 @@ num <- c("age_0","bmi1", "oh1", "sbp1" )
 
 cat <- myvars[!myvars %in% num]
 
-tableone <- CreateTableOne(vars = myvars, data = data_tableone, factorVars = cat, strata = "cancer_v")
+library(tableone)
+tableone <- CreateTableOne(vars = myvars, data = data_tableone, factorVars = cat)
 
 
 tableone_exp <-
@@ -178,8 +180,8 @@ tableone_complete <- tableone_exp %>% as_tibble() %>%
     Characteristics = str_replace(Characteristics, "Unknown", "Unknown history of diabetes"),
     Characteristics = str_replace(Characteristics, "stroke_prev = ", ""),
     Characteristics = str_replace(Characteristics, "stroke_v = ", ""),
+    Characteristics = str_replace(Characteristics, "cancer_v = ", ""),
   ) %>% 
-  filter(!Characteristics %in% c("oh1 (mean (SD))", "diabetes_prev (%)", "cancer_v = No incident cancer (%)")) %>% 
-  filter(!Characteristics %in% str_detect(Characteristics, "No history of diabetes")) %>%  ## Not working :S
-  rename(`Incident cancer during follow-up` = `Incident cancer`,
-         `No incident cancer observed during follow-up` = `No incident cancer`)
+  filter(!Characteristics %in% c("oh1 (mean (SD))", "diabetes_prev (%)")) %>% 
+  filter(!Characteristics %in% str_detect(Characteristics, "No history of diabetes")) ## Not working :S
+

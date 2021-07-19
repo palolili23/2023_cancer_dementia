@@ -33,18 +33,25 @@ causes_death <- count_cancer_death %>%
   geom_col() +
   ggthemes::scale_fill_tableau() +
   coord_flip() + 
-  theme_minimal() +
-  labs(y = "% of participants that died",
+  labs(y = "% of participants that died prior to a dementia diagnosis",
        x = NULL,
        fill = NULL) +
+  theme_minimal(base_family = "serif") +
   theme(legend.position = "bottom",
-        legend.text = element_text(size=10)) +
-  theme(
-    strip.text.x = element_text(size = 10),
-    # strip.background = element_blank(),
-    strip.background = element_rect(fill=NA),
-    axis.text=element_text(size=10),
-    axis.title=element_text(size=10))
+        legend.text = element_text(size=12)) +
+  theme(strip.text.x = element_text(size = 11),
+        strip.background = element_rect(fill=NA),
+        axis.text=element_text(size=12),
+        axis.title=element_text(size=12))
+
+ggsave(filename = "causes_death.tiff",
+       plot = causes_death,
+       path = here::here("03_figs"),
+       device = "tiff",
+       width = 8,
+       height = 4.1,
+       dpi = "retina")
+
 
 count_dementia_death <- data %>% 
   filter(competing_plr == 0) %>% 

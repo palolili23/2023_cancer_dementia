@@ -1,10 +1,10 @@
 cancer_v=0,cancer_v=1,rd,rr,model,conf,Proxy
-19.4,18.8,-0.6,0.97,Unadjusted,point,Time-varying
-19.4,18.6,-0.8,0.96,IPTW,point,Time-varying
-20.2,22.2,2,1.1,IPTW + IPCW,point,Time-varying
-18.1475,15.795,-4.0575,0.7995,Unadjusted,conf.low,Time-varying
-21.205,22.9,3.91999999999999,1.211,Unadjusted,conf.higher,Time-varying
-18.1475,15.6475,-4.41,0.7795,IPTW,conf.low,Time-varying
-21.105,23.61,3.9525,1.21,IPTW,conf.higher,Time-varying
-18.6475,17.8475,-2.9,0.86,IPTW + IPCW,conf.low,Time-varying
-22,27.3575,7.5575,1.38525,IPTW + IPCW,conf.higher,Time-varying
+21.6,20.2,-1.4,0.94,Unadjusted,point,Time-varying
+21.5,21.1,-0.3,0.98,IPTW,point,Time-varying
+22.4,23.6,1.2,1.05,IPTW + IPCW,point,Time-varying
+20.1,17.19,-5,0.78,Unadjusted,conf.low,Time-varying
+23.0525,24.1525,3.01999999999999,1.151,Unadjusted,conf.higher,Time-varying
+20.1475,15.895,-6.6675,0.709,IPTW,conf.low,Time-varying
+22.9,25.2,3.78749999999999,1.18675,IPTW,conf.higher,Time-varying
+20.895,18.5,-5.01,0.7895,IPTW + IPCW,conf.low,Time-varying
+24.0575,28.505,6.37249999999999,1.28525,IPTW + IPCW,conf.higher,Time-varying

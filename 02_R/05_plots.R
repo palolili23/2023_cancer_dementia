@@ -41,7 +41,7 @@ data_dem <- import(here::here("01_data", "clean_data", "dementia_long.RData"))
 plot_distribution <- data_long %>% 
   group_by(age_scale) %>% 
   count(status) %>%
-  mutate(prop = round(100*n/sum(n)),0) %>% 
+  mutate(prop = round(100*n/sum(n),2)) %>% 
   ungroup() %>% 
   filter(age_scale <= 90) %>% 
   ggplot(aes(age_scale, prop, fill = status)) +
@@ -52,15 +52,13 @@ plot_distribution <- data_long %>%
     fill = NULL,
     y = NULL,
     x = 'Age over follow-up') +
-  theme_minimal() +
-  theme(legend.position = "bottom",
-        legend.text = element_text(size=10)) +
-  theme(
-    strip.text.x = element_text(size = 10),
-        # strip.background = element_blank(),
+  theme_minimal(base_family = "serif") +
+  theme(legend.position = "left",
+        legend.text = element_text(size=12)) +
+  theme(strip.text.x = element_text(size = 11),
         strip.background = element_rect(fill=NA),
-        axis.text=element_text(size=10),
-        axis.title=element_text(size=10))
+        axis.text=element_text(size=12),
+        axis.title=element_text(size=12))
 
 # data_wide %>% 
 #   ggplot(aes(age_0)) +
@@ -115,3 +113,82 @@ plot_distribution <- data_long %>%
 #   facet_wrap(.~cancer)
 # 
 
+
+
+ggsave(filename = "plot_distribution.tiff",
+       plot = plot_distribution,
+       path = here::here("03_figs"),
+       device = "tiff",
+       width = 8,
+       height = 4.1,
+       dpi = "retina")
+
+
+# CIR curves --------------------------------------------------------------
+load(here::here("02_R", "models.RData")) 
+
+model1 <- models %>% pluck(1) %>% broom::tidy() %>% 
+  transmute(
+    time = time,
+    strata = strata,
+    cif = 1 - estimate,
+    conf.low2 = 1 - conf.low,
+    conf.high2 = 1 - conf.high
+  ) %>%
+  rename(conf.high = conf.low2,
+         conf.low = conf.high2)
+
+model2 <- models %>% pluck(2) %>% broom::tidy() %>% 
+  transmute(
+    time = time,
+    strata = strata,
+    cif = 1 - estimate,
+    conf.low2 = 1 - conf.low,
+    conf.high2 = 1 - conf.high
+  ) %>%
+  rename(conf.high = conf.low2,
+         conf.low = conf.high2)
+
+model1 <- model1 %>% 
+  complete(strata, time) %>%
+  arrange(strata, time) %>%
+  group_by(strata) %>%
+  fill(cif, conf.high, conf.low) %>% 
+  filter(time %in% c(seq(0, 240, 12))) %>% 
+  mutate(time = row_number() - 1,
+         model = "A. Cancer is defined as 'ever vs. never' proxy") %>% 
+  ungroup()
+
+model2 <- model2 %>% 
+  arrange(strata, time) %>%
+  mutate(model = "B. Cancer is defined as 'time-varying proxy'")
+
+table_plot <- bind_rows(model1, model2) %>% 
+  mutate(strata = ifelse(strata == "cancer_v=0", "Free of cancer diagnosis", "With cancer cancer diagnosis"))
+
+cif_plot <- table_plot %>% 
+  ggplot(aes(time, cif, group = strata)) +
+  geom_line(aes(color = strata), size = 1) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high) ,alpha = 0.2) +
+  scale_color_manual(values = c("#011A5E", "#e4a803")) +
+  facet_wrap(.~model) + 
+  labs(
+    color = NULL,
+    y = NULL,
+    x = "Years of follow-up") +
+  theme_bw(base_family = "serif") +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size=12)) +
+  theme(strip.text.x = element_text(size = 11),
+        # strip.background = element_blank(),
+        strip.background = element_rect(fill=NA),
+        axis.text=element_text(size=12),
+        axis.title=element_text(size=12))
+
+ggsave(filename = "cif_plot.tiff",
+       plot = cif_plot,
+       path = here::here("03_figs"),
+       device = "tiff",
+       width = 8,
+       height = 4.1,
+       dpi = "retina")

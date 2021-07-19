@@ -20,7 +20,7 @@ data_wide <-
 data_long %<>% 
   group_by(id) %>% 
   mutate(
-    fuptime = time - 1,
+    fuptime = time,
     tstart = lag(fuptime),
     tstart = ifelse(is.na(tstart), -1, tstart)) %>% 
   ungroup()
@@ -333,7 +333,7 @@ data_long %>%
 # 2.2. IPCW. Weights on death - dementia ---------------------------------------------
 
 death_den <- glm(
-  competing_plr ~ cancer_v + cancer_lag + bs(time, 3) + bs(age_0, 3) + sex + education + apoe4 +
+  competing_plr ~ cancer_lag + bs(time, 3) + bs(age_0, 3) + sex + education + apoe4 +
     as.factor(smoke_lag) + bs(sbp_lag, 3) + bs(bmi_lag, 3) + 
     ht_lag + ht_drug_lag + hd_lag + stroke_lag + diab_lag + cohort,
   data = data_long,
@@ -346,7 +346,7 @@ death_num <-
   glm(
     competing_plr ~ cancer_lag + bs(time, 3) + cohort,
     data = data_long,
-    family = binomial
+    family = quasibinomial
   )
 
 broom::tidy(death_num, exponentiate = TRUE)
@@ -382,6 +382,7 @@ data_long %<>%
          sw_weights_both = sw_cancer * sw_death,
          sw_weights_both_t = sw_cancer_t * sw_death_t)
 
+data_long %>% filter(tstart >= fuptime) %>% select(id, time, tstart, fuptime)
 
 # 3.a. KM unadjusted ------------------------------------------------------
 

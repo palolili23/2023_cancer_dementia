@@ -213,7 +213,7 @@ data_long_dem %<>%
     outcome_plr = ifelse(end_dementia_death == year & dementia == 1, 1, 0),
     competing_plr = ifelse(!is.na(dementia_date), 0, death_v)) %>%
   ungroup() %>%
-  filter(!time == 0 & !competing_plr == 1) %>%
+  filter(!(time == 0 & competing_plr == 1)) %>%
   arrange(id, time)
 
 id2 <- data_long_dem %>% 

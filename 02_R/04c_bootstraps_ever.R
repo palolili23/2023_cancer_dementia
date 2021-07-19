@@ -1,4 +1,4 @@
-source(here::here("02_R", "04b_auxiliary_fx.R"))
+source(here::here("02_R", "04_auxiliary_fx.R"))
 
 data_wide <-
   import(here::here("01_data", "clean_data", "wide_after_truncation.RData"))

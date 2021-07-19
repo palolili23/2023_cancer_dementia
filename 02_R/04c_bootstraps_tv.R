@@ -20,7 +20,7 @@ data_wide <-
 data_long %<>% 
   group_by(id) %>% 
   mutate(
-    fuptime = time - 1,
+    fuptime = time,
     tstart = lag(fuptime),
     tstart = ifelse(is.na(tstart), -1, tstart)) %>% 
   ungroup()
@@ -113,7 +113,7 @@ km_tv <- function(data_long, crude = TRUE, ipcw = FALSE) {
     
     if (ipcw != FALSE) {
       death_den <- glm(
-        competing_plr ~ cancer_v + cancer_lag + bs(time, 3) + bs(age_0, 3) + sex + education + apoe4 +
+        competing_plr ~ cancer_lag + bs(time, 3) + bs(age_0, 3) + sex + education + apoe4 +
           as.factor(smoke_lag) + bs(sbp_lag, 3) + bs(bmi_lag, 3) + 
           ht_lag + ht_drug_lag + hd_lag + stroke_lag + diab_lag + cohort,
         data = data_long,
