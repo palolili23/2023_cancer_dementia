@@ -83,7 +83,7 @@ dem_time <- data_long %>%
 ## Baseline covs
 
 mean_age <- data_wide %>% 
-  summarize(temp = round(mean(age_0),  2)) %>% 
+  summarize(temp = round(mean(age_0),  1)) %>% 
   #           b = round(sd(age_0),  2)) %>%
   # mutate(temp = paste0(a, " (SD:", b, ")")) %>% 
   pull(temp)
