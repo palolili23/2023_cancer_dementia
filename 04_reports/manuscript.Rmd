@@ -125,6 +125,8 @@ We underscore that our study is just one case study for how observed association
 
 ### Table 1: Descriptive characteristics of individuals who had a cancer diagnosis and of those free of cancer diagnosis over follow-up.
 
+<br>
+
 ```{r, echo = FALSE}
 tableone_complete %>% 
   flextable() %>% 
