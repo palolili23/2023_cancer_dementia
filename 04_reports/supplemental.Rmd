@@ -1,0 +1,29 @@
+---
+title: "supplemental"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## Supplementary material
+
+### 1. Modeling description
+
+
+
+### 2. Figure 1. Distribution of participants under each health status, by age over follow-up
+
+```{r}
+knitr::include_graphics(here::here("03_figs", "plot_distribution.tiff"))
+```
+
+### 3. Figure 2. Causes of death for participants who died prior to dementia diagnosis
+
+
+```{r}
+knitr::include_graphics(here::here("03_figs", "causes_death.tiff"))
+```

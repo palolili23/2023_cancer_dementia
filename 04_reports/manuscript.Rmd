@@ -7,7 +7,7 @@ always_allow_html: true
 editor_options: 
   chunk_output_type: console
 bibliography: cancer_dementia.bib
-csl: AnD_journal.csl
+csl: epidemiology.csl
 ---
 ```{r, echo =  FALSE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
@@ -23,8 +23,18 @@ source(here::here("02_R", "05_plots.R"))
 source(here::here("02_R", "05_plots.R"))
 ```
 
+## Abstract
 
-## 1. Introduction
+**Background:** Several observational studies have described an inverse association between cancer diagnosis and dementia. Several biological mechanisms and sources of bias have been proposed. Since bias cannot be assessed without a clear causal question, we propose to study the controlled direct effect of the protein Pin1 on the risk of dementia. With this case-study, we will outline the needed assumptions and potential sources of bias and exemplify how these translate into the analytic decisions under the guidance of causal directed acyclic graphs. 
+**Methods:** We used data from the Rotterdam Study, a population-based cohort. We illustrate the association between cancer diagnosis (as proxy for Pin1) and dementia diagnosis under two scenarios: (A) cancer proxy as "cancer ever vs. never"; (B) cancer diagnosis as time-varying proxy. We address confounding and censoring for death with inverse probability weights and contrast the complement of a weighted Kaplan-Meier survival estimator at 20-years of follow-up.
+**Results:** Out of 3634 participants, 899 (25%) were diagnosed with cancer, of whom 53 (6%) had dementia, and 567 (63%) died. Among those without cancer, 15% (411) were diagnosed with dementia, and 667 (24%) died over follow-up. In Scenario A, the risk ratio (and 95%CI) after adjustment for confounding was 0.70 (0.49, 0.93); and with additional weights for death 0.91 (0.65, 1.19). In Scenario B, the risk ratio was 0.98 (0.71,1.19) and 1.05 (0.79, 1.29), respectively.
+**Conclusion**: Being explicit about the underlying mechanism of interest and defining a clear causal contrast is key to maximize what we can learn about this association given available or readily-collected data, detecting and preventing potential biases.
+
+
+\newpage
+
+## Towards a clearer causal question underlying the association between cancer and dementia
+
 
 Many observational studies have consistently found that individuals with cancer have a lower risk of developing dementia when compared to individuals with no history of cancer [@ma2014;@hanson2016;@vanderwillik2018;@ospina2020]. These findings have motivated substantial research toward mechanistic explanations, including molecular and genetic pathways that may explain this association[@behrens2009;@harris2014;@nudelman2019;@Papin2020;@driverbiogeront2014;@olson2019;@li2021;@driverpin12015]. These research questions have led to discussions of repurposing or augmenting current cancer treatments, including chemotherapy, for dementia [@Snyder2017].
 
@@ -80,7 +90,7 @@ Eligibility criteria included: ages 60 to 70 years at study entry; no history of
 
 We illustrate the association between cancer and dementia diagnosis under two scenarios, the first of which replicates a common analytic strategy and the second which mitigates some (but not all) the biases described above. Scenario A replicates the setting that defines cancer proxy as _"cancer ever vs. never"_[@driver2012], meaning we compare dementia outcomes in individuals who ever develop cancer during follow-up to those who were not observed to develop cancer during follow-up. Scenario B defines cancer diagnosis as time-varying meaning that time prior to cancer diagnosis is allocated to the non-exposed arm, and the time after cancer diagnosis to the exposed arm. To address confounding, we fit inverse probability treatment weights, stabilized and truncated at the 99th percentile. In Scenario A, weights were defined as the inverse of the probability of cancer diagnosis conditional on baseline covariates such as age at study entry, sex, educational attainment, cohort, smoking status. In contrast, for Scenario B, weights were defined to represent the product of the inverse probability of being diagnosed with cancer over time, conditional on the time-varying covariate history prior to cancer diagnosis[@hernan2000]. Baseline covariates included age at study entry, sex, ApoE4 status, educational attainment and the time-varying covariates such as smoking status, systolic blood pressure, body mass index and prevalent and incident hypertension and diabetes. 
 
-Inverse probability censoring weights for death were calculated, assuming independent censoring conditional on measured covariates. In Scenario A, weights represent the inverse of the probability of not dying conditional on cancer diagnosis (ever vs. never) and baseline covariates such as age, educational attainment, ApoE4, and baseline measurements of smoking status, hypertension status, systolic blood pressure, BMI, history of diabetes and cohort. For individuals who died, their censoring weight is zero[@whatif2020]. In Scenario B time-varying weights represent the product of the inverse probability of surviving in each year prior to _t_, conditional on the measured shared causes of death and dementia. For an individual who has died by time _t_, the year _t_ censoring weight is zero[@young2020]. Weights were fitted including the same covariates used to estimate weights for time-varying cancer diagnosis, though we additionally added time-varying cancer, stroke, and heart disease diagnosis as predictors for death. Further details on modeling specifications and weights assessment are presented as **Supplementary material**.
+Inverse probability censoring weights for death were calculated, assuming independent censoring conditional on measured covariates. In Scenario A, weights represent the inverse of the probability of not dying conditional on cancer diagnosis (ever vs. never) and baseline covariates such as age, educational attainment, ApoE4, and baseline measurements of smoking status, hypertension status, systolic blood pressure, BMI, history of diabetes and cohort. For individuals who died, their censoring weight is zero[@whatif2020]. In Scenario B time-varying weights represent the product of the inverse probability of surviving in each year prior to _t_, conditional on the measured shared causes of death and dementia. For an individual who has died by time _t_, the year _t_ censoring weight is zero[@young2020]. Weights were fitted including the same covariates used to estimate weights for time-varying cancer diagnosis, though we additionally added time-varying cancer, stroke, and heart disease diagnosis as predictors for death. Further details on modeling specifications and weights assessment are presented in the **eAppendix**.
 
 To estimate the controlled direct effect of Pin1 on the risk of dementia, we compared the complement of a weighted Kaplan-Meier survival estimator for participants who developed cancer versus those who did not, with time indexed in years. The weights are time-varying by follow-up year, defined as a product of the year-specific inverse probability of treatment weights and the inverse probability of censoring by death weights. Estimates of the controlled direct effect are presented as 20-year risk differences (RD) and risk ratios (RR). All 95% confidence intervals were calculated using percentile-based bootstrapping based on 500 bootstrap samples.
 
@@ -92,9 +102,9 @@ All analysis were performed using R. Code is provided in supplementary material 
 
 ## 3. Results
 
-Participants had a mean age of `r mean_age` years, and `r women_prop` were women (Table 1). Over follow-up, `r yes_cancer` developed cancer, with a median age of cancer diagnosis at `r cancer_time`. From the total sample, `r dem_total` were diagnosed with dementia over follow-up with a median age of at `r dem_time` years. Among participants with incident cancer, `r cancer_dem` had dementia diagnosis, `r cancer_death` died over follow-up, and `r cancer_alive` remained alive and dementia-free at 20 years since study entry. In contrast, among participants free of cancer diagnosis over follow-up, `r no_cancer_dem` were diagnosed with dementia, `r no_cancer_death` died over follow-up, and `r no_cancer_alive` were alive and dementia-free at the end of follow-up. The proportion of participants in each possible status over follow-up and leading causes of death for both arms are presented as Figure 1 and 2 in Supplementary Material.
+Participants had a mean age of `r mean_age` years, and `r women_prop` were women (Table 1). Over follow-up, `r yes_cancer` developed cancer, with a median age of cancer diagnosis at `r cancer_time`. From the total sample, `r dem_total` were diagnosed with dementia over follow-up with a median age of at `r dem_time` years. Among participants with incident cancer, `r cancer_dem` had dementia diagnosis, `r cancer_death` died over follow-up, and `r cancer_alive` remained alive and dementia-free at 20 years since study entry. In contrast, among participants free of cancer diagnosis over follow-up, `r no_cancer_dem` were diagnosed with dementia, `r no_cancer_death` died over follow-up, and `r no_cancer_alive` were alive and dementia-free at the end of follow-up. The proportion of participants in each possible status over follow-up and leading causes of death for both arms are presented as eFigure 1 and 2 in the eAppendix.
 
-Results for all scenarios are presented in Table 2. Using Scenario A’s analytic design and without adjusting for confounding or selection bias due to conditioning on death, we observe a protective association with a risk ratio (RR, 95% Confidence interval) of `r complete_table[3,4]` and a hazard ratio [HR, (95% Confidence interval)] of `r complete_table[3,5]`. Though adjusting for measured confounding only minimally changed the observed association, the association is closer to the null after including censoring weights for death [RR: `r complete_table[5,4]`; HR: `r complete_table[5,5]`]. In contrast, using Scenario B's analytic design, the fully adjusted model results in a RR of RR: `r complete_table[6,4]` and a HR of `r complete_table[6,5]`, though confidence intervals cross the null. The cumulative incidence curves for dementia for participants free of cancer diagnosis and with incident cancer diagnosis, under Scenarios A and B, reflect that the difference between groups changes over time and flips direction when considering cancer as a time-varying proxy. Bounds (rather than point estimates) were wide and covered the null **(lower bound RR 0.39; upper bound RR 2.08).” (`r bounds_tv_ipw`).**
+Results for all scenarios are presented in Table 2. Using Scenario A’s analytic design and without adjusting for confounding or selection bias due to conditioning on death, we observe a protective association with a risk ratio (RR, 95% Confidence interval) of `r complete_table[3,4]` and a hazard ratio [HR, (95% Confidence interval)] of `r complete_table[3,5]`. Though adjusting for measured confounding only minimally changed the observed association, the association is closer to the null after including censoring weights for death [RR: `r complete_table[5,4]`; HR: `r complete_table[5,5]`]. In contrast, using Scenario B's analytic design, the fully adjusted model results in a RR of RR: `r complete_table[6,4]` and a HR of `r complete_table[6,5]`, though confidence intervals cross the null. The cumulative incidence curves for dementia for participants free of cancer diagnosis and with incident cancer diagnosis, under Scenarios A and B, reflect that the difference between groups changes over time and flips direction when considering cancer as a time-varying proxy. Bounds (rather than point estimates) were wide and covered the null (Lower bound RR: 0.39; Upper bound RR: 2.08).”**
 
 ## 4. Discussion
 
@@ -102,18 +112,12 @@ Several observational studies have defined “cancer diagnosis” as an exposure
 
 For instance, a key challenge of cancer diagnosis as a proxy for Pin1 is the incapacity of defining a clear time zero[@hernanInmortal2016]. In the setting where cancer diagnosis is defined as "ever vs. never", this definition introduces immortal time bias. All results pertaining to this definition had an inverse association between cancer diagnosis and dementia, while results that did not introduce this particular form of immortal-time bias had point estimates closer to the null. Although we attempt to prevent this bias with statistical methods, we can only fully prevent it by having a clear definition of time-zero. Importantly, this definition does not depend on the collected data nor in analytic decisions: it relies on a deeper discussion related to when would be the best moment to potentially intervene on this biomarker and to what purpose. Thus, we hope that these unsolved questions guide future discussions and data collection efforts.
 
-On the other hand, death as a competing event is a challenge that has some straightforward strategies, beginning first and foremost by choosing the causal parameter (or estimand) of interest [@young2020, @rojas_medrxiv]. In this study we chose the controlled direct effect, which represents the effect of Pin1 (or cancer) in a setting where death due to cancer and other causes could have been prevented, yet without an explicit intervention, which makes it ambiguous. This is different than conceiving a drug-target that increases Pin1 expression only in brain tissue, with no side effects that could increase cancer risk (and thus, death due to cancer). As opposed to prior studies that implicitly address a direct effect, and that define censoring as ignorable[@frain2017], we show how point estimates change substantially when we include weights for death to relax the independent censoring assumption [@vangeloven2014, @willems2018, @young2020] when the estimand of interest is the controlled direct effect. Bounds to assess extreme scenarios of dependence between death and dementia[@peterson1976] illustrate the wide range of possible point estimates that cross the null. This shows that even with the effort of adjusting for time-varying covariates, we may be far from meeting this assumption and thus better efforts to measure shared (time-varying) causes of dementia and death are needed. In addition, presenting the proportion of participants that died prior to dementia diagnosis in each arm, as well as the proportion of participants in each status over time, improves transparency and puts in evidence the limitations of the data to answer this question.
+On the other hand, death as a competing event is a challenge that has some straightforward strategies, beginning first and foremost by choosing the causal parameter (or estimand) of interest [@young2020, @rojas_medrxiv]. In this study we chose the controlled direct effect, which represents the effect of Pin1 (or cancer) in a setting where death due to cancer and other causes could have been prevented, yet without an explicit intervention, which makes it ambiguous. This is different than conceiving a drug-target that increases Pin1 expression only in brain tissue, with no side effects that could increase cancer risk (and thus, death due to cancer). As opposed to prior studies that implicitly address a direct effect, and that define censoring as ignorable[@frain2017], we show how point estimates change substantially when we include weights for death to relax the independent censoring assumption [@weave2012, @vangeloven2014, @willems2018, @young2020] when the estimand of interest is the controlled direct effect. Bounds to assess extreme scenarios of dependence between death and dementia[@peterson1976] illustrate the wide range of possible point estimates that cross the null. This shows that even with the effort of adjusting for time-varying covariates, we may be far from meeting this assumption and thus better efforts to measure shared (time-varying) causes of dementia and death are needed. In addition, presenting the proportion of participants that died prior to dementia diagnosis in each arm, as well as the proportion of participants in each status over time, improves transparency and puts in evidence the limitations of the data to answer this question.
 
 Pin1 is only one of the several mechanisms proposed by other investigators as an explanation for the inverse cancer-dementia relationship. Certainly, cancer diagnosis represents a complex and heterogeneous health condition that exceeds the representation of Pin1 expression. To understand how – if at all – the cancer-dementia association informs the potential effects of any other mechanism or treatment strategy, and its connection to collected data, we may require different causal representations. For example, if researchers used this association to inform the possible effects of different chemotherapeutics on cognitive decline among patients undergoing treatment for cancer, different challenges would arise for mapping the observed association to the hypothetical randomized trial underlying that new research question. Notably, that target trial, unlike the one considered here, would include cancer diagnosis as part of the eligibility, and thus researchers would need to instead grapple with how using data on persons without cancer is useful and useable [@huitfeldt2016].
 Each question requires thinking about bias anew and each question brings its own set of challenges and opportunities. 
 
 We underscore that our study is just one case study for how observed associations between two diseases or health states may be disentangled to more transparently unveil possible mechanisms (and sources of bias) behind them, and how to maximize what we can learn about the potential mechanisms given available or readily-collected data. We hope to stimulate researchers first have a discussion about the exact research question, rather than trying to replicate the cancer and dementia relation in their dataset. Such discussion is needed to obtain meaningful conclusions.
-
-\newpage
-
-## References
-
-<div id="refs"></div>
 
 \newpage
 
@@ -174,7 +178,8 @@ complete_table %>%
 \end{tikzpicture}
 ```
 
-**Figure 1. Pin1 as biomarker and risk of dementia.** Causal directed acyclic graph where Pin1 at time $t$ is represented as $P_t$, Dementia at time $t+k$ is represented as $Y_{t+k}$. $L_1$ represents shared causes of Pin1 and Dementia, such as smoking. To isolate the effect of $P_t$ on $Y_{y+k}$ we need to block the backdoor path $Y_{t+k} \leftarrow L_1 \rightarrow P_t$. 
+**Figure 1. Pin1 as biomarker and risk of dementia.** Causal directed acyclic graph where Pin1 at time $t$ is represented as $P_t$, Dementia at time $t+k$ is represented as $Y_{t+k}$. $L_1$ represents shared causes of Pin1 and Dementia, such as smoking. To isolate the effect of $P_t$ on $Y_{t+k}$ we need to block the backdoor path $Y_{t+k} \leftarrow L_1 \rightarrow P_t$. 
+Gray nodes and arrows, which represent additional data-generating mechanisms, will be described progressively in the following figures. 
 
 ```{tikz, echo = FALSE, fig.cap = " Incident cancer diagnosis as proxy for Pin1 expression"}
 \usetikzlibrary{arrows}
@@ -207,7 +212,7 @@ complete_table %>%
 \end{tikzpicture}
 ```
 
-**Figure 2. Incident cancer diagnosis as proxy for Pin1 expression.** This causal graph is an expansion of Figure 1, includes Pin1 expression at time $P_{t+1}$. Incident cancer diagnosis is represented as $C_t$ and $C_{t+1}$. To isolate the effect of $P_t$ and $P_{t+1}$ on $Y_{y+k}$ we need to block the backdoor path $Y_{t+k} \leftarrow L_1 \rightarrow P_t$ and $Y_{t+k} \leftarrow L_1 \rightarrow P_{t+1}$. Although we represent $L_1$ as a single node for readability, $L_1$ is time-varying too.
+**Figure 2. Incident cancer diagnosis as proxy for Pin1 expression.** This causal graph is an expansion of Figure 1, includes Pin1 expression at time $P_{t+1}$. Incident cancer diagnosis is represented as $C_t$ and $C_{t+1}$. To isolate the effect of $P_t$ and $P_{t+1}$ on $Y_{t+k}$ we need to block the backdoor path $Y_{t+k} \leftarrow L_1 \rightarrow P_t$ and $Y_{t+k} \leftarrow L_1 \rightarrow P_{t+1}$. Although we represent $L_1$ as a single node for readability, $L_1$ is time-varying too.
 
 ```{tikz, echo = FALSE, fig.cap = "Time-varying cancer diagnosis and inmortal-time bias"}
 \usetikzlibrary{arrows}
@@ -240,7 +245,7 @@ complete_table %>%
 \end{tikzpicture}
 ```
 
-**Figure 3. Time-varying cancer diagnosis and immortal-time bias.**  This causal graph is an expansion of Figure 2, where $D_{t+1}$ represents death at time $t+1$. Cancer diagnosis at $t+1$ can only be measured among those who are alive at $t+1$. 
+**Figure 3. Time-varying cancer diagnosis and immortal-time bias.**  This causal graph is an expansion of Figure 2, where $D_{t+1}$ represents death at time $t+1$. Cancer diagnosis at $t+1$ can only be measured among those who are alive at $t+1$
 
 ```{tikz, echo = FALSE, fig.cap = "Death as a competing event"}
 \usetikzlibrary{arrows}
@@ -273,7 +278,7 @@ complete_table %>%
 \end{tikzpicture}
 ```
 
-**Figure 4. Death as competing event of dementia.** In this graph we only focus attention to the exposure as if it was measured for all at time $P_{t+1}$. We include $D_{t+k}$ as death at time $t+k$, $L_2$ represents possible shared causes of dementia and death (such as cardiovascular comorbidities). Pin1 may affect the risk of death through cancer diagnosis, represented as an arrow between $C_{t+1}$ and  $D_{t+k}$. To isolate the direct effect of $P_{t+1}$ and $Y_{y+k}$, we have to block the backdoor pathway from $Y_{t+k} \leftarrow L_2 \rightarrow D_{t+k} \leftarrow C_{t+1} \leftarrow P_{t+1}$ and $Y_{t+k} \leftarrow D_{t+k} \leftarrow L_1 \rightarrow P_{t+1}$
+**Figure 4. Death as competing event of dementia.** In this graph we only focus attention to the exposure as if it was measured for all at time $P_{t+1}$. We include $D_{t+k}$ as death at time $t+k$ since $Y_{t+1}$ is only observable when participants are alive at $t+k$. $L_2$ represents possible shared causes of dementia and death (such as cardiovascular comorbidities). Pin1 may affect the risk of death through cancer diagnosis, represented as an arrow between $C_{t+1}$ and $D_{t+k}$. To isolate the direct effect of $P_{t+1}$ and $Y_{t+k}$, we have to block the backdoor pathway from $Y_{t+k} \leftarrow L_2 \rightarrow D_{t+k} \leftarrow C_{t+1} \leftarrow P_{t+1}$ and $Y_{t+k} \leftarrow D_{t+k} \leftarrow L_1 \rightarrow P_{t+1}$
 
 ```{tikz, echo = FALSE, fig.cap = "Direct effect of Pin1 in the risk of dementia"}
 \usetikzlibrary{arrows}
@@ -314,22 +319,8 @@ knitr::include_graphics(here::here("03_figs", "cif_plot.tiff"))
 
 **Figure 6. Risk of dementia under elimination of death over 20 years of follow-up by cancer diagnosis status.** Panel A. represents the scenario where cancer was considered as “ever vs. never”. Panel B. represents the scenario where cancer was considered as a time-varying proxy.
 
+\newpage
 
-## Supplementary material
+## References
 
-### 1. Modeling description
-
-
-
-### 2. Figure 1. Distribution of participants under each health status, by age over follow-up
-
-```{r}
-knitr::include_graphics(here::here("03_figs", "plot_distribution.tiff"))
-```
-
-### 3. Figure 2. Causes of death for participants who died prior to dementia diagnosis
-
-
-```{r}
-knitr::include_graphics(here::here("03_figs", "causes_death.tiff"))
-```
+<div id="refs"></div>
