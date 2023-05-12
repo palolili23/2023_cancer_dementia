@@ -38,13 +38,10 @@ km_ever <- function(data, crude = TRUE, ipcw = FALSE) {
         family = binomial
       )
     
-    cancer_num <- glm(cancer_v ~ 1, data = data)
-    
-    data <- data %>%
+     data <- data %>%
       mutate(
-        p_num = predict(cancer_num, type = "response"),
         p_denom = predict(cancer_den, type = "response"),
-        w_cancer = ifelse(cancer_v == 1, p_num/p_denom, (1 - p_num)/(1- p_denom)))
+        w_cancer = ifelse(cancer_v == 1, 1/p_denom, 1/(1- p_denom)))
     
     data %<>%
       mutate(w_cancer_t = ifelse(
@@ -63,11 +60,8 @@ km_ever <- function(data, crude = TRUE, ipcw = FALSE) {
           family = binomial
         )
       
-      death_num <- glm(competing_plr ~ 1, data = data)
-      
       data <- data %>%
         mutate(
-          dp_num = predict(death_num, type = "response"),
           dp_denom = predict(death_den, type = "response"),
           w_death = if_else(competing_plr == 0, (1-dp_num)/(1-dp_denom), 1))
       
